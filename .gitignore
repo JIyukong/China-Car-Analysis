@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+env/
+.Python
+*.egg-info/
+
+# 环境配置（含密钥，禁止提交）
+.env
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# Power BI 二进制（大文件，用 Git LFS 单独管理）
+*.pbix
+
+# 操作系统
+.DS_Store
+Thumbs.db
+
+# 日志
+*.log
+
+# 汽车之家爬虫数据（JSON/CSV 不入库，保留目录结构）
+scripts/crawl_autohome/data/*.json
+scripts/crawl_autohome/data/*.csv
+
+# 车主之家长三角上牌数据爬虫（JSON/CSV 不入库，保留目录结构）
+scripts/crawl_16888_city/data/*.json
+scripts/crawl_16888_city/data/*.csv
+
