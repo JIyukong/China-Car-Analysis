@@ -35,3 +35,13 @@ scripts/crawl_autohome/data/*.csv
 scripts/crawl_16888_city/data/*.json
 scripts/crawl_16888_city/data/*.csv
 
+# Trae 工作目录与计划文档
+.trae/
+docs/superpowers/plans/
+
+# 当前项目爬虫产物（代码入库，抓取结果不入库）
+pipelines/ingest/huawei_ads/data/
+pipelines/ingest/sales/crawl_16888_city/data/
+pipelines/ingest/sales/crawl_16888_style/data/
+pipelines/ingest/sales/crawl_autohome/data/
+pipelines/ingest/sales/crawl_autohome_img/data/
