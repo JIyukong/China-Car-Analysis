@@ -172,7 +172,7 @@
 | 字段名 | 类型 | 说明 |
 |--------|------|------|
 | `id` | `BIGINT UNSIGNED` | 主键 ID |
-| `stat_month` | `DATE` | 统计月份 |
+| `stat_month` | `CHAR(7)` | 统计月份（`YYYY-MM`，如 `2026-07`） |
 | `source` | `VARCHAR(32)` | 数据来源 |
 | `model_name` | `VARCHAR(128)` | 标准化车型名 |
 | `model_name_raw` | `VARCHAR(128)` | 原始车型名 |
@@ -181,10 +181,91 @@
 | `oem_id` | `BIGINT UNSIGNED` | 主机厂 ID |
 | `brand_id` | `BIGINT UNSIGNED` | 品牌 ID |
 | `company_id` | `BIGINT UNSIGNED` | 上市公司 ID |
+| `ads_id` | `BIGINT UNSIGNED` | 智驾 ADS 拉链 ID（冗余自 `dim_model.ads_id`） |
+| `ads_supplier_name` | `VARCHAR(128)` | 智驾供应商名称快照 |
 | `sales_volume` | `INT UNSIGNED` | 月销量 |
 | `price_min` | `DECIMAL(10,2)` | 价格下限 |
 | `price_max` | `DECIMAL(10,2)` | 价格上限 |
 | `rank_no` | `INT UNSIGNED` | 排名 |
+| `row_hash` | `CHAR(32)` | 幂等哈希 |
+
+### 4.2 `dwd_sales_monthly_model_city`（已落地）
+
+| 字段名 | 类型 | 说明 |
+|--------|------|------|
+| `id` | `BIGINT UNSIGNED` | 主键 ID |
+| `stat_month` | `CHAR(7)` | 统计月份（`YYYY-MM`） |
+| `source` | `VARCHAR(32)` | 数据来源 |
+| `model_name` | `VARCHAR(128)` | 标准化车型名 |
+| `model_name_raw` | `VARCHAR(128)` | 原始车型名 |
+| `model_id` | `BIGINT UNSIGNED` | 车型 ID |
+| `oem_id` | `BIGINT UNSIGNED` | 主机厂 ID |
+| `brand_id` | `BIGINT UNSIGNED` | 品牌 ID |
+| `company_id` | `BIGINT UNSIGNED` | 上市公司 ID |
+| `ads_id` | `BIGINT UNSIGNED` | 智驾 ADS 拉链 ID（冗余自 `dim_model.ads_id`） |
+| `ads_supplier_name` | `VARCHAR(128)` | 智驾供应商名称快照 |
+| `city_name` | `VARCHAR(64)` | 标准化城市名 |
+| `city_name_raw` | `VARCHAR(64)` | 原始城市名 |
+| `area_id` | `BIGINT UNSIGNED` | 地区 ID → `dim_area.id` |
+| `subtype_name` | `VARCHAR(32)` | 标准化车型细分类型 |
+| `level_raw` | `VARCHAR(64)` | 原始级别 |
+| `vehicle_subtype_id` | `BIGINT UNSIGNED` | 车型细分类型 ID → `dim_vehicle_subtype.id` |
+| `vehicle_type_id` | `BIGINT UNSIGNED` | 车型大类 ID → `dim_vehicle_type.id` |
+| `sales_volume` | `INT UNSIGNED` | 城市月销量 |
+| `price_min` | `DECIMAL(10,2)` | 价格下限 |
+| `price_max` | `DECIMAL(10,2)` | 价格上限 |
+| `rank_no` | `INT UNSIGNED` | 排名 |
+| `row_hash` | `CHAR(32)` | 幂等哈希 |
+
+### 4.3 `dwd_stock_daily`（已落地）
+
+| 字段名 | 类型 | 说明 |
+|--------|------|------|
+| `id` | `BIGINT UNSIGNED` | 主键 ID |
+| `trade_date` | `DATE` | 交易日 |
+| `stock_id` | `BIGINT UNSIGNED` | 股票 ID（强制非空） |
+| `stock_code` | `VARCHAR(32)` | 标准化股票代码 |
+| `stock_code_raw` | `VARCHAR(32)` | 原始股票代码 |
+| `stock_name` | `VARCHAR(128)` | 证券名称快照 |
+| `market` | `ENUM` | A / HK / US |
+| `exchange` | `VARCHAR(16)` | 交易所 |
+| `currency` | `VARCHAR(8)` | 币种 |
+| `open` | `DECIMAL(12,4)` | 开盘价 |
+| `high` | `DECIMAL(12,4)` | 最高价 |
+| `low` | `DECIMAL(12,4)` | 最低价 |
+| `close` | `DECIMAL(12,4)` | 收盘价 |
+| `volume` | `BIGINT UNSIGNED` | 成交量 |
+| `amount` | `DECIMAL(18,2)` | 成交额 |
+| `pct_change` | `DECIMAL(8,4)` | 涨跌幅（%） |
+| `is_valid_ohlc` | `TINYINT(1)` | OHLC 校验通过标志 |
+| `row_hash` | `CHAR(32)` | 幂等哈希 |
+
+### 4.4 `dwd_stock_finance`（已落地）
+
+| 字段名 | 类型 | 说明 |
+|--------|------|------|
+| `id` | `BIGINT UNSIGNED` | 主键 ID |
+| `stock_id` | `BIGINT UNSIGNED` | 股票 ID（强制非空） |
+| `stock_code` | `VARCHAR(32)` | 标准化股票代码 |
+| `stock_code_raw` | `VARCHAR(32)` | 原始股票代码 |
+| `stock_name` | `VARCHAR(128)` | 证券名称快照 |
+| `market` | `ENUM` | A / HK / US |
+| `report_date` | `DATE` | 报告期 |
+| `report_type` | `ENUM` | Q1/Q2/Q3/Q4/年报 |
+| `report_year` | `SMALLINT UNSIGNED` | 报告年份 |
+| `report_quarter` | `TINYINT UNSIGNED` | 报告季度 1-4 |
+| `eps` | `DECIMAL(12,4)` | 基本每股收益（元） |
+| `net_profit` | `DECIMAL(18,2)` | 净利润（元） |
+| `total_revenue` | `DECIMAL(18,2)` | 营业总收入（元） |
+| `main_revenue` | `DECIMAL(18,2)` | 主营业务收入（元） |
+| `total_profit` | `DECIMAL(18,2)` | 利润总额（元） |
+| `total_assets` | `DECIMAL(18,2)` | 资产总计（元） |
+| `total_liabilities` | `DECIMAL(18,2)` | 负债合计（元） |
+| `equity` | `DECIMAL(18,2)` | 所有者权益合计（元） |
+| `roe` | `DECIMAL(8,4)` | 净资产收益率（%，统一百分数） |
+| `gross_margin` | `DECIMAL(8,4)` | 销售毛利率（%，统一百分数） |
+| `debt_ratio` | `DECIMAL(8,4)` | 资产负债率（%，统一百分数） |
+| `is_ratio_normalized` | `TINYINT(1)` | 比率归一化标志 |
 | `row_hash` | `CHAR(32)` | 幂等哈希 |
 
 ## 五、DWS 汇总层
@@ -230,6 +311,23 @@
 ### 6.3 `dim_model_ads_zipper`（已落地）
 
 说明：ADS 拉链表，仅接收当前已存在于 `dim_model` 的车型，用于保存供应商 / 模式的历史版本。
+
+### 6.4 `dim_area`（已落地）
+
+说明：手工维护中国大陆行政区划（大区 / 省 / 地级市），承接 16888 city 源的城市自然键，用于后续 `dwd_sales_monthly_model_city` 关联。
+
+| 字段名 | 类型 | 说明 |
+|--------|------|------|
+| `id` | `BIGINT UNSIGNED` | 主键 ID |
+| `city_code` | `VARCHAR(8)` | 城市编码（GB/T 2260 六位） |
+| `city_name` | `VARCHAR(64)` | 地级行政区全称 |
+| `city_short_name` | `VARCHAR(32)` | 城市简称 |
+| `city_level` | `ENUM` | 地级市 / 直辖市 / 自治州 / 地区 / 盟 |
+| `province_code` | `VARCHAR(8)` | 省级编码 |
+| `province_name` | `VARCHAR(32)` | 省级全称 |
+| `province_type` | `ENUM` | 省 / 自治区 / 直辖市 |
+| `region_code` | `VARCHAR(8)` | 大区编码（EC/SC/NC/CC/SW/NW/NE） |
+| `region_name` | `ENUM` | 华东 / 华南 / 华北 / 华中 / 西南 / 西北 / 东北 |
 
 ## 七、当前未落地但已知规划
 

@@ -67,6 +67,7 @@
 - `dim_model`
 - `dim_date`
 - `dim_stock`
+- `dim_area`
 - `bridge_brand_oem`
 - `bridge_company_stock`
 
@@ -84,19 +85,27 @@
 
 当前已落地表：
 
-- `dwd_sales_monthly_model`
+- `dwd_sales_monthly_model`（`stat_month` 为 `CHAR(7)` `YYYY-MM`；含 `ads_id / ads_supplier_name` 冗余字段）
+- `dwd_sales_monthly_model_city`
+- `dwd_stock_daily`
+- `dwd_stock_finance`
 
 当前已落地脚本：
 
 - `pipelines/staging/clean_sales_dwd.py`
+- `pipelines/staging/clean_sales_city_dwd.py`
+- `pipelines/staging/clean_stock_daily_dwd.py`
+- `pipelines/staging/clean_stock_finance_dwd.py`
 
 职责：
 
 - 标准化原始文本
-- 补充维度 ID
-- 解析价格区间
+- `stat_month` 统一为 `CHAR(7) YYYY-MM`
+- 补充维度 ID（含 ads_id / area_id / vehicle_subtype_id / stock_id 等）
+- 适度反规范化冗余（如 `ads_supplier_name` / `stock_name` / `market`）
+- 解析价格区间、OHLC 校验、财务比率归一化
 - 过滤异常值
-- 形成可聚合的销量明细
+- 形成可聚合的销量 / 股价 / 财务明细
 
 ### 2.5 DWS 汇总层（已落地，但自动化未接全）
 
@@ -212,7 +221,11 @@ dim_model_ads_matched.csv
     -> 10_create_dim_model_ads_sync.sql
     -> 11_create_dim_model_ads_views.sql
     -> 12_alter_dim_model_ads_reference.sql
+    -> 13_create_ods_stock_finance.sql
+    -> 14_create_dim_area.sql
     -> 03_create_dwd_tables.sql
+    -> 15_alter_dwd_sales_monthly_model.sql
+    -> 16_create_dwd_tables_extend.sql
     -> 04_create_dws_tables.sql
     -> 02_create_powerbi_user.sql
 ```
@@ -220,6 +233,10 @@ dim_model_ads_matched.csv
 依赖说明：
 
 - `12_alter_dim_model_ads_reference.sql` 依赖 `05_create_dim_zipper_tables.sql`
+- `13_create_ods_stock_finance.sql` 建 `ods_stock_finance` 贴源表
+- `14_create_dim_area.sql` 建 `dim_area` 地区维度，为 `dwd_sales_monthly_model_city.area_id` 提供外键源
+- `15_alter_dwd_sales_monthly_model.sql` 依赖 `03_create_dwd_tables.sql`，把 `stat_month` 改为 `CHAR(7)` 并新增 `ads_id / ads_supplier_name`
+- `16_create_dwd_tables_extend.sql` 新建 `dwd_sales_monthly_model_city / dwd_stock_daily / dwd_stock_finance`，依赖 `dim_area / dim_vehicle_subtype / dim_stock / dim_model`
 - `04_create_dws_tables.sql` 不是初始化脚本当前默认链的一部分，但属于 DWS 运行前置条件
 - `02_create_powerbi_user.sql` 不影响主链入库，只影响下游 BI 读取
 - `06_alter_dim_model_add_brand_oem_ads_columns.sql` 属于存量兼容补丁，不是新库初始化主链必跑项
@@ -230,12 +247,12 @@ dim_model_ads_matched.csv
 |-------------|------|-----------------|
 | ODS 贴源 | `pipelines/ingest/` | `load_16888_style_to_ods.py`、`load_16888_city_to_ods.py` |
 | DIM / Bridge | `pipelines/dim/` | `seed_dim_date.py`、`seed_dim_company_stock.py`、`seed_dim_oem_brand.py`、`seed_dim_from_excel.py`、`build_sales_dimensions.py` |
-| DWD | `pipelines/staging/` | `clean_sales_dwd.py` |
+| DWD | `pipelines/staging/` | `clean_sales_dwd.py`、`clean_sales_city_dwd.py`、`clean_stock_daily_dwd.py`、`clean_stock_finance_dwd.py` |
 | DWS | `pipelines/serve/` | `agg_sales_monthly.py` |
 | 调度 | `scheduler/` | `runner.py`、`task_config.py`、`jobs/` |
-| DDL | `db/ddl/` | `00`、`01`、`02`、`03`、`04`、`05`、`07~12` |
-| 手工刷新 SQL | `db/manual/` | `refresh_dim_energy_vehicle.sql`、`refresh_dim_model_ads_manual.sql` |
-| 手工数据源 | `data/manual_dimensions/` | `dim_energy_vehicle.csv`、`dim_model_ads_matched.csv` |
+| DDL | `db/ddl/` | `00`、`01`、`02`、`03`、`04`、`05`、`07~16` |
+| 手工刷新 SQL | `db/manual/` | `refresh_dim_energy_vehicle.sql`、`refresh_dim_model_ads_manual.sql`、`refresh_dim_area.sql` |
+| 手工数据源 | `data/manual_dimensions/` | `dim_energy_vehicle.csv`、`dim_model_ads_matched.csv`、`dim_area.csv` |
 
 ## 六、当前不应误写为“已落地”的内容
 
