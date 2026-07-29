@@ -3,9 +3,10 @@
 清洗规则：
   1. 去重（按 row_hash 保留最新记录）
   2. 标准化车型名/厂商名（TRIM 去空格）
-  3. 价格区间拆分为 price_min / price_max
-  4. 关联 dim_model / dim_oem / dim_company 补充维度ID
-  5. 排除销量为 NULL 或 <=0 的异常记录
+  3. stat_month 由 DATE 转 CHAR(7) YYYY-MM
+  4. 价格区间拆分为 price_min / price_max
+  5. 关联 dim_model / dim_oem 补充维度ID，并冗余 ads_id / ads_supplier_name
+  6. 排除销量为 NULL 或 <=0 的异常记录
 
 用法:
     python pipelines.staging.clean_sales_dwd
@@ -28,10 +29,11 @@ INSERT INTO dwd_sales_monthly_model (
     stat_month, source,
     model_name, model_name_raw, model_id,
     manufacturer_name, oem_id, brand_id, company_id,
+    ads_id, ads_supplier_name,
     sales_volume, price_min, price_max, rank_no, row_hash
 )
 SELECT
-    ods.stat_month,
+    DATE_FORMAT(ods.stat_month, '%Y-%m')                             AS stat_month,      -- 统计月份 YYYY-MM
     ods.source,
     TRIM(ods.model_name_raw)                                         AS model_name,
     ods.model_name_raw                                               AS model_name_raw,
@@ -40,6 +42,8 @@ SELECT
     dm.oem_id                                                        AS oem_id,
     dm.brand_id                                                      AS brand_id,
     doem.company_id                                                  AS company_id,
+    dm.ads_id                                                        AS ads_id,          -- 智驾 ADS 拉链ID 冗余
+    dm.ads_supplier_name                                             AS ads_supplier_name,  -- 智驾供应商名称快照
     ods.sales_volume,
     -- 解析价格区间下限："9.98-17.98" → 9.98
     CAST(
