@@ -44,11 +44,13 @@ def load_stock_daily(
     proxy_url: str | None = None,
     dry_run: bool = False,
     preflight_only: bool = False,
+    business_key: str | None = None,
 ) -> bool:
     """采集股票日线数据到 ODS。
 
-    Returns:
-        成功返回 True，失败返回 False。
+    :param business_key: 业务周期键（交易日 YYYY-MM-DD），由调度器传入，
+        当前不参与业务逻辑，采集脚本按最新交易日处理。
+    :returns: 成功返回 True，失败返回 False。
     """
     try:
         logger.info("开始采集股票日线数据...")
@@ -72,11 +74,13 @@ def load_stock_finance(
     proxy_url: str | None = None,
     dry_run: bool = False,
     preflight_only: bool = False,
+    business_key: str | None = None,
 ) -> bool:
     """采集股票财务数据到 ODS。
 
-    Returns:
-        成功返回 True，失败返回 False。
+    :param business_key: 业务周期键（交易日 YYYY-MM-DD），由调度器传入，
+        当前不参与业务逻辑，采集脚本按 MAX(report_date) 增量拉取。
+    :returns: 成功返回 True，失败返回 False。
     """
     try:
         logger.info("开始采集股票财务数据...")

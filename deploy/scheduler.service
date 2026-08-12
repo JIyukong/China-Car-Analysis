@@ -1,0 +1,20 @@
+[Unit]
+Description=CarApp Scheduler (APScheduler)
+After=network.target mysql.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=carapp
+Group=carapp
+WorkingDirectory=/opt/carapp
+Environment=APP_ENV=prod
+EnvironmentFile=-/opt/carapp/.env
+ExecStart=/opt/carapp/.venv/bin/python -m scheduler.runner
+Restart=always
+RestartSec=10
+StandardOutput=append:/var/log/carapp/scheduler.out.log
+StandardError=append:/var/log/carapp/scheduler.err.log
+
+[Install]
+WantedBy=multi-user.target
