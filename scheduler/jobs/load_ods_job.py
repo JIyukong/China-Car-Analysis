@@ -9,11 +9,12 @@ from pipelines.ingest.sales.load_16888_city_to_ods import main as load_city
 logger = get_logger(__name__)
 
 
-def load_ods_after_crawl() -> bool:
+def load_ods_after_crawl(business_key: str | None = None) -> bool:
     """爬取完成后自动入库 style + city 数据到 ODS。
 
-    Returns:
-        成功返回 True。
+    :param business_key: 业务周期键（上月 YYYY-MM），由调度器传入；
+        ODS 入库脚本自身按月份处理，此处不直接使用。
+    :returns: 成功返回 True。
     """
     try:
         logger.info("开始加载 16888 style → ODS ...")

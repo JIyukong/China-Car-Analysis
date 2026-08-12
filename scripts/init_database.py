@@ -95,18 +95,32 @@ def main() -> None:
     parser.add_argument("--with-dwd", action="store_true", help="显式执行 DWD 清洗与生命周期更新")
     args = parser.parse_args()
 
-    # Step 1: DDL 建表
+    # Step 1: DDL 建表（严格按文件编号升序执行；02 为权限脚本，单独手工执行不在此列）
     if not args.skip_ddl:
-        run_sql_file("00_create_database.sql")
-        run_sql_file("01_create_tables.sql")
-        run_sql_file("05_create_dim_zipper_tables.sql")
-        run_sql_file("07_create_dim_energy_vehicle.sql")
-        run_sql_file("08_create_dim_energy_vehicle_triggers.sql")
-        run_sql_file("09_create_dim_model_ads_manual.sql")
-        run_sql_file("10_create_dim_model_ads_sync.sql")
-        run_sql_file("11_create_dim_model_ads_views.sql")
-        run_sql_file("12_alter_dim_model_ads_reference.sql")
-        run_sql_file("03_create_dwd_tables.sql")
+        ddl_files = [
+            "00_create_database.sql",
+            "01_create_tables.sql",
+            "03_create_dwd_tables.sql",
+            "04_create_dws_tables.sql",
+            "05_create_dim_zipper_tables.sql",
+            "06_alter_dim_model_add_brand_oem_ads_columns.sql",
+            "07_create_dim_energy_vehicle.sql",
+            "08_create_dim_energy_vehicle_triggers.sql",
+            "09_create_dim_model_ads_manual.sql",
+            "10_create_dim_model_ads_sync.sql",
+            "11_create_dim_model_ads_views.sql",
+            "12_alter_dim_model_ads_reference.sql",
+            "13_create_ods_stock_finance.sql",
+            "14_create_dim_area.sql",
+            "15_alter_dwd_sales_monthly_model.sql",
+            "16_create_dwd_tables_extend.sql",
+            "17_create_ods_index_daily.sql",
+            "18_create_ods_futures_daily.sql",
+            "19_create_scheduler_tables.sql",
+            "20_create_procedures_etl.sql",
+        ]
+        for ddl_file in ddl_files:
+            run_sql_file(ddl_file)
         logger.info("DDL 建表完成")
     else:
         logger.info("跳过 DDL 建表")
@@ -114,6 +128,8 @@ def main() -> None:
     # Step 2: 初始化维度表
     run_step("初始化 dim_date", "pipelines.dim.seed_dim_date")
     run_step("初始化 dim_company/dim_stock", "pipelines.dim.seed_dim_company_stock")
+    run_step("初始化 dim_index", "pipelines.dim.seed_dim_index")
+    run_step("初始化 dim_commodity", "pipelines.dim.seed_dim_commodity")
     run_step("初始化 dim_brand 种子", "pipelines.dim.seed_dim_oem_brand")
     run_step("从 Excel 导入 dim_oem/bridge", "pipelines.dim.seed_dim_from_excel")
 

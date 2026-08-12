@@ -13,7 +13,7 @@ python-dotenv>=1.0.0
 # 数据采集（M1/M2 预留，M0 一次性安装）
 # akshare: M2 股价采集依赖（当前已安装但采集脚本尚未实现）
 akshare>=1.11.0
-APScheduler>=3.10.0
+APScheduler>=3.10,<4.0
 
 # 汽车之家销量爬虫（独立于 AKShare 主链路）
 # 安装后需额外执行: playwright install chromium

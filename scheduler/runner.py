@@ -1,4 +1,4 @@
-"""APScheduler 调度器入口：注册定时任务并启动阻塞调度。
+"""APScheduler 调度器入口：注册任务、启动阻塞调度、启动恢复与心跳。
 
 用法:
     python -m scheduler.runner
@@ -6,76 +6,117 @@
 
 from __future__ import annotations
 
+import importlib
+import socket
+
+from apscheduler.events import (
+    EVENT_JOB_ERROR,
+    EVENT_JOB_MAX_INSTANCES,
+    EVENT_JOB_MISSED,
+)
+from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
 from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.triggers.cron import CronTrigger
 
+from base_infra.config import get_settings
 from base_infra.logging_config import get_logger
-from scheduler.jobs.crawl_16888_job import crawl_16888_monthly
-from scheduler.jobs.load_ods_job import load_ods_after_crawl
+from scheduler.alert import send_alert
+from scheduler.runtime import (
+    run_recovery,
+    scheduler_holder,
+    start_heartbeat_thread,
+    task as task_decorator,
+)
 from scheduler.task_config import TASK_CONFIG
 
 logger = get_logger(__name__)
 
+# APScheduler 3.x 中 misfire_grace_time=None 会被当作 0（立即过期），
+# 事件触发的依赖任务可能因调度器瞬时繁忙被误判 misfire，故给一个极大值。
+_MISFIRE_GRACE_SEC = 24 * 3600
+
+
+def _resolve_callable(dotted: str):
+    """按 ``"module:function"`` 动态导入业务 callable。"""
+    module_name, func_name = dotted.split(":", 1)
+    module = importlib.import_module(module_name)
+    return getattr(module, func_name)
+
+
+def _on_scheduler_event(event) -> None:
+    """APScheduler 级事件（misfire / max_instances / executor error）告警。
+
+    事件回调内绝不允许抛出异常，否则会污染 APScheduler 事件循环。
+    """
+    try:
+        name = {
+            EVENT_JOB_ERROR: "JOB_ERROR",
+            EVENT_JOB_MISSED: "JOB_MISSED",
+            EVENT_JOB_MAX_INSTANCES: "JOB_MAX_INSTANCES",
+        }.get(event.code, str(event.code))
+        msg = (
+            f"调度事件 {name}: job_id={getattr(event, 'job_id', '?')} "
+            f"executor={getattr(event, 'executor', '?')} "
+            f"exc={getattr(event, 'exception', '')}"
+        )
+        logger.warning(msg)
+        send_alert("WARNING", "scheduler", "-", msg)
+    except Exception:  # noqa: BLE001 - 监听器不得抛错
+        logger.exception("调度事件回调自身异常")
+
 
 def create_scheduler() -> BlockingScheduler:
-    """创建调度器并注册定时任务。
-
-    Returns:
-        配置好任务的 BlockingScheduler 实例。
-    """
-    scheduler = BlockingScheduler(timezone="Asia/Shanghai")
-
-    # 任务 1：每月 2 号 3 点爬取上月 16888 销量
-    cfg = TASK_CONFIG["crawl_16888_monthly"]
-    scheduler.add_job(
-        func=crawl_16888_monthly,
-        trigger=CronTrigger(**cfg["cron"]),
-        id="crawl_16888_monthly",
-        name="爬取上月16888销量数据",
-        misfire_grace_time=3600,          # 延迟容忍 1 小时
-        max_instances=1,                  # 不允许并发执行
-        coalesce=True,                    # 错过多次只执行一次
+    """创建 BlockingScheduler 并按 TASK_CONFIG 注册全部任务。"""
+    settings = get_settings()
+    scheduler = BlockingScheduler(
+        timezone="Asia/Shanghai",
+        jobstores={"default": SQLAlchemyJobStore(url=settings.database_url)},
+        job_defaults={
+            "misfire_grace_time": _MISFIRE_GRACE_SEC,
+            "coalesce": True,
+            "max_instances": 1,
+        },
     )
 
-    # 任务 2：爬取完成后 2 小时自动入库 ODS
-    cfg = TASK_CONFIG["load_ods_after_crawl"]
-    scheduler.add_job(
-        func=load_ods_after_crawl,
-        trigger=CronTrigger(**cfg["cron"]),
-        id="load_ods_after_crawl",
-        name="爬取后自动加载ODS",
-        misfire_grace_time=3600,
-        max_instances=1,
-        coalesce=True,
-    )
+    for task_id, cfg in TASK_CONFIG.items():
+        raw_func = _resolve_callable(cfg["callable"])
+        wrapped = task_decorator(task_id, cfg)(raw_func)
+        # TASK_REGISTRY 由装饰器自动写入；wrapped 即注册后的可调用对象
+        cron_cfg = cfg.get("cron")
+        if cron_cfg:
+            scheduler.add_job(
+                wrapped,
+                CronTrigger(**cron_cfg),
+                id=task_id,
+                name=task_id,
+                replace_existing=True,
+            )
+            logger.info("注册 cron 任务: %s → %s", task_id, cron_cfg)
+        else:
+            logger.info("注册事件触发任务: %s（无 cron，由上游触发）", task_id)
 
-    # 任务 3：ODS 入库后 1 小时执行 DWD 清洗
-    from pipelines.staging.clean_sales_dwd import run_clean_sales_dwd
-    cfg = TASK_CONFIG["run_dwd_clean"]
-    scheduler.add_job(
-        func=run_clean_sales_dwd,
-        trigger=CronTrigger(**cfg["cron"]),
-        id="run_dwd_clean",
-        name="DWD销量数据清洗",
-        misfire_grace_time=3600,
-        max_instances=1,
-        coalesce=True,
+    scheduler.add_listener(
+        _on_scheduler_event,
+        EVENT_JOB_ERROR | EVENT_JOB_MISSED | EVENT_JOB_MAX_INSTANCES,
     )
-
+    scheduler_holder.scheduler = scheduler
     return scheduler
 
 
 def main() -> None:
-    """调度器启动入口。                                   """
-    logger.info("调度器启动...")
-    sched = create_scheduler()
+    """调度器启动入口。"""
+    logger.info("调度器启动（host=%s）...", socket.gethostname())
+    scheduler = create_scheduler()
 
-    # 打印已注册任务
-    for job in sched.get_jobs():
-        logger.info("已注册任务: %s → %s", job.id, job.trigger)
+    for job in scheduler.get_jobs():
+        logger.info("已注册: %s → %s", job.id, job.trigger)
+
+    # 启动前 recovery + 心跳：清扫僵尸记录、补触发缺口、初始化心跳行
+    run_recovery(scheduler)
+    start_heartbeat_thread()
 
     try:
-        sched.start()
+        scheduler.start()
     except (KeyboardInterrupt, SystemExit):
         logger.info("调度器已停止")
 
