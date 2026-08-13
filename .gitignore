@@ -8,6 +8,7 @@ venv/
 env/
 .Python
 *.egg-info/
+.pytest_cache/
 
 # 环境配置（含密钥，禁止提交）
 .env
@@ -26,14 +27,6 @@ Thumbs.db
 
 # 日志
 *.log
-
-# 汽车之家爬虫数据（JSON/CSV 不入库，保留目录结构）
-scripts/crawl_autohome/data/*.json
-scripts/crawl_autohome/data/*.csv
-
-# 车主之家长三角上牌数据爬虫（JSON/CSV 不入库，保留目录结构）
-scripts/crawl_16888_city/data/*.json
-scripts/crawl_16888_city/data/*.csv
 
 # Trae 工作目录与计划文档
 .trae/
