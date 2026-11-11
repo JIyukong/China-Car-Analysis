@@ -143,3 +143,21 @@ def test_monthly_ods_job_upserts_only_target_csv(monkeypatch, tmp_path, chain, c
     assert row["model_name_raw"] == "示例车型"
     assert row["sales_volume"] == 1234
     assert row["source_file"] == str(target)
+
+
+@pytest.mark.parametrize("chain, column", [("style", "manufacturer"), ("city", "city")])
+@pytest.mark.parametrize("rows", ["", "2026-07,车型A,示例,1,100\n2026-06,车型B,示例,2,50\n"])
+def test_monthly_ods_replay_rejects_empty_or_mixed_month_csv(monkeypatch, tmp_path, chain, column, rows):
+    from scheduler.jobs import load_ods_job
+
+    loader = import_module(f"pipelines.ingest.sales.load_16888_{chain}_to_ods")
+    engine = Mock()
+    engine.begin.return_value = nullcontext(Mock())
+    monkeypatch.setattr(loader, "engine", engine)
+    monkeypatch.setattr(load_ods_job, f"{chain}_data_dir", lambda: tmp_path)
+    target = tmp_path / f"{chain}_2026-07.csv"
+    target.write_text(f"month,model_name,{column},rank,sales_volume\n{rows}", encoding="utf-8-sig")
+
+    job = getattr(load_ods_job, f"load_{chain}_ods")
+    assert job(business_key="2026-07") is False
+    engine.begin.assert_not_called()
