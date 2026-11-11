@@ -1,4 +1,4 @@
-"""数据质量校验脚本：检查 ODS/DIM/Bridge 各层数据完整性和一致性。
+"""数据质量校验脚本：检查 ODS/DIM/Bridge/DWD 各层数据完整性和一致性。
 
 用法:
     python scripts/data_quality_check.py
@@ -16,6 +16,10 @@ from pipelines.common.quality import (
     check_null_rate,
     check_row_count,
     check_unique,
+)
+from pipelines.dim.dimension_readiness import (
+    check_dimension_readiness,
+    generate_missing_dimension_csv,
 )
 
 logger = get_logger(__name__)
@@ -88,8 +92,22 @@ def check_dim_model_brand_alignment(conn) -> bool:
     return True
 
 
+def check_dwd_dimension_coverage(conn) -> bool:
+    """检查 DWD 层维度覆盖率是否达标。conn 仅用于签名一致，实际由 dimension_readiness 自行管理连接。"""
+    report = check_dimension_readiness()
+    if report.is_ready():
+        logger.info("DWD 维度覆盖率校验通过")
+        return True
+    logger.error(
+        "DWD 维度覆盖率未达标:\n%s\n%s",
+        report.to_human(),
+        generate_missing_dimension_csv(report),
+    )
+    return False
+
+
 def main() -> None:
-    """主校验流程：ODS → DIM → Bridge 各层逐项检查。      """
+    """主校验流程：ODS → DIM → Bridge → DWD 各层逐项检查。"""
     all_pass = True
 
     with engine.connect() as conn:
@@ -121,6 +139,9 @@ def main() -> None:
             lambda: check_current_bridge_end_date(conn),
             lambda: check_single_current_brand_per_oem(conn),
             lambda: check_dim_model_brand_alignment(conn),
+
+            # --- DWD 层校验 ---
+            lambda: check_dwd_dimension_coverage(conn),
         ]
 
         for check in checks:

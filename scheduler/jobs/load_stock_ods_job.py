@@ -10,8 +10,6 @@
 
 from __future__ import annotations
 
-from types import SimpleNamespace
-
 from base_infra.logging_config import get_logger
 from pipelines.ingest.stock.load_stock_daily_akshare import (
     STATS as daily_stats,
@@ -21,23 +19,9 @@ from pipelines.ingest.stock.load_stock_finance_akshare import (
     STATS as finance_stats,
     run_finance_ingest,
 )
-from pipelines.ingest.stock.network_runtime import build_runtime_config
+from scheduler.jobs.common import build_scheduler_config
 
 logger = get_logger(__name__)
-
-
-def _build_scheduler_config(proxy_url: str | None = None, preflight_only: bool = False):
-    return build_runtime_config(
-        SimpleNamespace(
-            proxy=proxy_url,
-            direct_domains=None,
-            timeout=15,
-            max_retries=3,
-            sleep_seconds=1.0,
-            preflight_only=preflight_only,
-            start_date="20170101",
-        )
-    )
 
 
 def load_stock_daily(
@@ -55,7 +39,7 @@ def load_stock_daily(
     try:
         logger.info("开始采集股票日线数据...")
         ok = run_daily_ingest(
-            _build_scheduler_config(proxy_url=proxy_url, preflight_only=preflight_only),
+            build_scheduler_config(proxy_url=proxy_url, preflight_only=preflight_only),
             dry_run=dry_run,
         )
         logger.info(
@@ -85,7 +69,7 @@ def load_stock_finance(
     try:
         logger.info("开始采集股票财务数据...")
         ok = run_finance_ingest(
-            _build_scheduler_config(proxy_url=proxy_url, preflight_only=preflight_only),
+            build_scheduler_config(proxy_url=proxy_url, preflight_only=preflight_only),
             dry_run=dry_run,
         )
         logger.info(

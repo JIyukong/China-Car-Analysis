@@ -49,7 +49,7 @@ class Settings(BaseSettings):
     def database_url(self) -> str:
         """拼接 SQLAlchemy 连接串。
 
-        :returns: mysql+pymysql://user:password@host:port/dbname?charset=utf8mb4&time_zone=+08:00
+        :returns: mysql+pymysql://user:password@host:port/dbname?charset=utf8mb4
         :raises ValueError: DB_PASSWORD 为空时抛出，提示用户配置
         """
         if not self.DB_PASSWORD:
@@ -57,7 +57,7 @@ class Settings(BaseSettings):
         return (
             f"mysql+pymysql://{self.DB_USER}:{self.DB_PASSWORD}"
             f"@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
-            f"?charset=utf8mb4&time_zone=%2B08:00"
+            f"?charset=utf8mb4"
         )
 
 

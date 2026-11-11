@@ -30,7 +30,9 @@
 - 手工 CSV：
   - `data/manual_dimensions/dim_energy_vehicle.csv`
   - `data/manual_dimensions/dim_model_ads_matched.csv`
-- AKShare 股价接口（目标来源，当前采集未落地）
+- AKShare 股价接口（A 股/H 股日线、A 股财务，已落地）
+- AKShare 同花顺行业指数接口（881125 汽车整车，已落地）
+- AKShare 新浪财经期货接口（碳酸锂/铜/铝主力连续，已落地）
 
 ### 2.2 ODS 贴源层（已落地）
 
@@ -47,11 +49,14 @@
 - `ods_sales_monthly_model`
 - `ods_sales_monthly_model_city`
 - `ods_stock_daily`
+- `ods_stock_finance`
+- `ods_index_daily`
+- `ods_futures_daily`
 
 说明：
 
-- `ods_stock_daily` 当前只有表结构，不代表采集链已落地
 - ODS 的职责是保留原始事实，不强行做业务判断
+- `ods_stock_daily` / `ods_stock_finance` / `ods_index_daily` / `ods_futures_daily` 均已有对应采集脚本并接入调度
 
 ### 2.3 DIM / Bridge 维度层（已落地）
 
@@ -107,7 +112,7 @@
 - 过滤异常值
 - 形成可聚合的销量 / 股价 / 财务明细
 
-### 2.5 DWS 汇总层（已落地，但自动化未接全）
+### 2.5 DWS 汇总层（已落地）
 
 代码目录：
 
@@ -125,14 +130,13 @@
 当前状态：
 
 - 脚本与 DDL 已存在
-- 默认初始化链未执行该脚本
-- 当前调度器也未自动执行该脚本
+- 已接入调度链路（`run_dws_agg` 任务，由 `run_dwd_clean` 下游触发）
 
 ### 2.6 ADS / BI 消费层（部分落地）
 
 当前状态：
 
-- Power BI 只读账号 DDL 已存在：`db/ddl/02_create_powerbi_user.sql`
+- Power BI 只读账号 DDL 已存在：`db/system/01_create_powerbi_user.sql`（权限脚本，需 DBA 手工执行）
 - 面向报表的最终应用资产尚未落地
 - 当前不应把任何 `.pbix` 或已发布报表写成现状
 
@@ -163,23 +167,42 @@
 - `scripts/init_database.py` 当前不会自动执行 `02_create_powerbi_user.sql`
 - 若要使用 DWS 或 Power BI 只读账号，需要先手工完成对应 SQL
 
-### 3.2 月度调度链路
+### 3.2 调度链路
+
+`runner.py` 遍历 `task_config.py` 注册全部任务，包含三条独立链路：
+
+**style 月链**（每月 12-15 号 03:00 探测）：
 
 ```text
-crawl_16888_monthly
-    -> load_ods_after_crawl
-    -> run_dwd_clean
+crawl_16888_style_monthly -> load_style_ods -> build_sales_dimensions
+    -> refresh_ads_zipper -> run_dwd_clean
+    -> update_lifecycle（并行）/ run_dws_agg（并行）
+```
+
+**city 月链**（每月 20-25 号 03:30 探测）：
+
+```text
+crawl_16888_city_monthly -> load_city_ods -> run_dwd_city_clean
+```
+
+**日链**（交易日守卫，mon-fri）：
+
+```text
+17:30  load_stock_daily / load_futures_daily
+17:45  load_index_daily
+18:30  load_stock_finance
 ```
 
 当前入口：
 
 - `scheduler/runner.py`
 
-当前断点：
+当前状态：
 
-- 不会自动执行 `build_sales_dimensions`
-- 不会自动执行 `agg_sales_monthly`
-- 不会自动执行股价采集
+- 所有任务均已在 `task_config.py` 注册并由 `runner.py` 自动加载
+- `build_sales_dimensions`、`agg_sales_monthly`（run_dws_agg）、城市 DWD 清洗均已接入调度
+- 股价/指数/期货/财务采集任务均已接入调度
+- 待验证项：生产环境连续运行稳定性
 
 ### 3.3 手工维度链路
 
@@ -207,39 +230,44 @@ dim_model_ads_matched.csv
     -> 回填 dim_model
 ```
 
+#### 维度缺失治理
+
+2026-07 测试期间新增 `pipelines/dim/dimension_readiness.py`：
+
+- `build_sales_dimensions` 生成 dim_model 后，新增车型默认 `energy_type='占位'`、`vehicle_type='占位'`、`ads_id=NULL`。
+- `run_dwd_clean` 后、`run_dwd_city_clean` 后、DWS 聚合前调用 `check_dimension_readiness()`。
+- 缺失率超过阈值（默认 5%）时抛出 `SkipTask`，调度器次日自动重试，同时日志输出可直接复制到手工 CSV 的补维清单。
+- 阈值内的少量缺失允许继续入库，但 `scripts/data_quality_check.py` 会标记为 FAIL，提醒人工修复。
+
 ## 四、DDL 执行顺序
 
-当前推荐的新库初始化顺序：
+SQL 已按数仓分层拆分到 `db/<layer>/` 目录，`scripts/init_database.py` 按以下目录顺序自动发现并执行：
 
 ```text
-00_create_database.sql
-    -> 01_create_tables.sql
-    -> 05_create_dim_zipper_tables.sql
-    -> 07_create_dim_energy_vehicle.sql
-    -> 08_create_dim_energy_vehicle_triggers.sql
-    -> 09_create_dim_model_ads_manual.sql
-    -> 10_create_dim_model_ads_sync.sql
-    -> 11_create_dim_model_ads_views.sql
-    -> 12_alter_dim_model_ads_reference.sql
-    -> 13_create_ods_stock_finance.sql
-    -> 14_create_dim_area.sql
-    -> 03_create_dwd_tables.sql
-    -> 15_alter_dwd_sales_monthly_model.sql
-    -> 16_create_dwd_tables_extend.sql
-    -> 04_create_dws_tables.sql
-    -> 02_create_powerbi_user.sql
+system → ods → dim → dwd → dws → ads → scheduler
+       → migrations（结构补丁）→ triggers → procedures → events
 ```
+
+各目录关键文件：
+
+- `db/system/`：`00_create_database.sql`（建库）、`01_create_powerbi_user.sql`（权限，需 DBA 手工执行）
+- `db/ods/`：`01_create_ods_sales_monthly.sql`、`02_create_ods_stock_daily.sql`、`03_create_ods_stock_finance.sql`、`04_create_ods_index_daily.sql`、`05_create_ods_futures_daily.sql`
+- `db/dim/`：`01_create_dim_core.sql`、`02_create_dim_bridge.sql`、`03_create_dim_zipper.sql`、`04_create_dim_energy_vehicle.sql`、`05_create_dim_model_ads_manual.sql`、`06_create_dim_area.sql`、`07_create_dim_index.sql`、`08_create_dim_commodity.sql`
+- `db/dwd/`：`01_create_dwd_sales_monthly_model.sql`、`02_create_dwd_extend.sql`
+- `db/dws/`：`01_create_dws_sales_monthly.sql`
+- `db/migrations/`：`001_alter_dim_model_add_brand_oem_ads_columns.sql`、`002_alter_dim_model_ads_reference.sql`、`003_alter_dwd_sales_monthly_model.sql`
+- `db/triggers/`：`01_create_dim_triggers.sql`
+- `db/procedures/`：`01_sp_etl_build_sales_dimensions.sql` ~ `07_sp_refresh_dim_model_ads_all.sql`
+- `db/events/`：`01_ev_refresh_dim_model_ads_all.sql`
+- `db/manual/`：`refresh_dim_energy_vehicle.sql`、`refresh_dim_model_ads_manual.sql`、`refresh_dim_area.sql`（手工执行）
 
 依赖说明：
 
-- `12_alter_dim_model_ads_reference.sql` 依赖 `05_create_dim_zipper_tables.sql`
-- `13_create_ods_stock_finance.sql` 建 `ods_stock_finance` 贴源表
-- `14_create_dim_area.sql` 建 `dim_area` 地区维度，为 `dwd_sales_monthly_model_city.area_id` 提供外键源
-- `15_alter_dwd_sales_monthly_model.sql` 依赖 `03_create_dwd_tables.sql`，把 `stat_month` 改为 `CHAR(7)` 并新增 `ads_id / ads_supplier_name`
-- `16_create_dwd_tables_extend.sql` 新建 `dwd_sales_monthly_model_city / dwd_stock_daily / dwd_stock_finance`，依赖 `dim_area / dim_vehicle_subtype / dim_stock / dim_model`
-- `04_create_dws_tables.sql` 不是初始化脚本当前默认链的一部分，但属于 DWS 运行前置条件
-- `02_create_powerbi_user.sql` 不影响主链入库，只影响下游 BI 读取
-- `06_alter_dim_model_add_brand_oem_ads_columns.sql` 属于存量兼容补丁，不是新库初始化主链必跑项
+- `migrations/002_alter_dim_model_ads_reference.sql` 依赖 `dim/03_create_dim_zipper.sql`
+- `dwd/02_create_dwd_extend.sql` 新建 `dwd_sales_monthly_model_city` / `dwd_stock_daily` / `dwd_stock_finance`，依赖 `dim_area` / `dim_stock` / `dim_model`
+- `dws/01_create_dws_sales_monthly.sql` 不是初始化脚本默认链的一部分（由 `init_database.py` 自动发现执行），但 DWS 聚合脚本运行前需要该表存在
+- `system/01_create_powerbi_user.sql` 不影响主链入库，只影响下游 BI 读取，需 DBA 手工执行
+- `migrations/001_alter_dim_model_add_brand_oem_ads_columns.sql` 属于存量兼容补丁，不是新库初始化主链必跑项
 
 ## 五、目录与职责映射
 
@@ -247,23 +275,22 @@ dim_model_ads_matched.csv
 |-------------|------|-----------------|
 | ODS 贴源 | `pipelines/ingest/` | `load_16888_style_to_ods.py`、`load_16888_city_to_ods.py` |
 | DIM / Bridge | `pipelines/dim/` | `seed_dim_date.py`、`seed_dim_company_stock.py`、`seed_dim_oem_brand.py`、`seed_dim_from_excel.py`、`build_sales_dimensions.py` |
+| 维度就绪检查 | `pipelines/dim/` | 通过 `dimension_readiness.py` 统一检测 energy_type、vehicle_type、ads、area、vehicle_subtype 缺失率 |
 | DWD | `pipelines/staging/` | `clean_sales_dwd.py`、`clean_sales_city_dwd.py`、`clean_stock_daily_dwd.py`、`clean_stock_finance_dwd.py` |
 | DWS | `pipelines/serve/` | `agg_sales_monthly.py` |
 | 调度 | `scheduler/` | `runner.py`、`task_config.py`、`jobs/` |
-| DDL | `db/ddl/` | `00`、`01`、`02`、`03`、`04`、`05`、`07~16` |
+| DDL（分层目录） | `db/system/`、`db/ods/`、`db/dim/`、`db/dwd/`、`db/dws/`、`db/ads/`、`db/scheduler/`、`db/migrations/`、`db/triggers/`、`db/procedures/`、`db/events/` | 按 system→ods→dim→dwd→dws→ads→scheduler→migrations→triggers→procedures→events 顺序自动发现执行（见 `scripts/init_database.py`） |
 | 手工刷新 SQL | `db/manual/` | `refresh_dim_energy_vehicle.sql`、`refresh_dim_model_ads_manual.sql`、`refresh_dim_area.sql` |
 | 手工数据源 | `data/manual_dimensions/` | `dim_energy_vehicle.csv`、`dim_model_ads_matched.csv`、`dim_area.csv` |
 
-## 六、当前不应误写为“已落地”的内容
+## 六、当前不应误写为"已落地"的内容
 
 以下内容在方向上存在，但当前不应写成现状：
 
-- AKShare 股价采集脚本
-- 自动化股价调度任务
-- 自动化 `build_sales_dimensions` 调度
-- 自动化 `agg_sales_monthly` 调度
 - Power BI `.pbix` 报表资产
 - Publish to Web 发布配置
+- 调度链路生产环境连续运行验证（代码已注册，但尚未在生产环境长期验证）
+- 数据质量校验自动化（脚本已存在，但未接入调度链路）
 
 ## 七、维护要求
 

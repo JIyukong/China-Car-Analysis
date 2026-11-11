@@ -9,31 +9,14 @@
 
 from __future__ import annotations
 
-from types import SimpleNamespace
-
 from base_infra.logging_config import get_logger
 from pipelines.ingest.index.load_ths_index_daily_akshare import (
     STATS as index_stats,
     run_index_ingest,
 )
-from pipelines.ingest.stock.network_runtime import build_runtime_config
+from scheduler.jobs.common import build_scheduler_config
 
 logger = get_logger(__name__)
-
-
-def _build_scheduler_config(proxy_url: str | None = None, preflight_only: bool = False):
-    """构造调度器默认运行时配置。"""
-    return build_runtime_config(
-        SimpleNamespace(
-            proxy=proxy_url,
-            direct_domains=None,
-            timeout=15,
-            max_retries=3,
-            sleep_seconds=1.0,
-            preflight_only=preflight_only,
-            start_date="20170101",
-        )
-    )
 
 
 def load_ths_index_daily(
@@ -58,7 +41,7 @@ def load_ths_index_daily(
     try:
         logger.info("开始采集同花顺行业指数日线数据...")
         ok = run_index_ingest(
-            _build_scheduler_config(
+            build_scheduler_config(
                 proxy_url=proxy_url,
                 preflight_only=preflight_only,
             ),

@@ -31,8 +31,10 @@ from scheduler.task_config import TASK_CONFIG
 
 logger = get_logger(__name__)
 
-# APScheduler 3.x 中 misfire_grace_time=None 会被当作 0（立即过期），
-# 事件触发的依赖任务可能因调度器瞬时繁忙被误判 misfire，故给一个极大值。
+# APScheduler 3.x 中事件触发的依赖任务通过 add_job 动态注册，
+# 给一个 24 小时的 misfire 宽限，避免调度器瞬时繁忙导致依赖任务被误判过期。
+# 注意：runtime.py 中动态 add_job 传 misfire_grace_time=None，在 3.x 语义是
+# "完全跳过 misfire 检查（永不过期）"，而非"当作 0 立即过期"。
 _MISFIRE_GRACE_SEC = 24 * 3600
 
 

@@ -1,31 +1,9 @@
 USE dw_auto_stock;
 
--- 说明：
--- 1. 执行前请确保 event_scheduler 已按需开启：SET GLOBAL event_scheduler = ON;
--- 2. 事件默认创建为 DISABLE，避免在本地/测试环境自动运行。
-
-DROP EVENT IF EXISTS ev_refresh_dim_model_ads_all;
-
-DROP PROCEDURE IF EXISTS sp_refresh_dim_model_ads_all;
+-- 存储过程：刷新 dim_model ADS 拉链表
+-- 依赖 sp_refresh_dim_model_ads_manual_match（见 05 号文件）
 DROP PROCEDURE IF EXISTS sp_refresh_dim_model_ads_zipper;
-DROP PROCEDURE IF EXISTS sp_refresh_dim_model_ads_manual_match;
-
 DELIMITER $$
-
-CREATE PROCEDURE sp_refresh_dim_model_ads_manual_match()
-BEGIN
-    UPDATE dim_model_ads_manual src
-    LEFT JOIN dim_model dm
-        ON dm.model_name = src.model_name
-    SET src.matched_model_id = dm.id,
-        src.is_in_dim_model = CASE WHEN dm.id IS NULL THEN 0 ELSE 1 END,
-        src.missing_in_dim_model_reason = CASE
-            WHEN dm.id IS NULL THEN 'DIM_MODEL_NOT_FOUND'
-            ELSE NULL
-        END,
-        src.match_checked_at = NOW();
-END$$
-
 CREATE PROCEDURE sp_refresh_dim_model_ads_zipper()
 BEGIN
     CALL sp_refresh_dim_model_ads_manual_match();
@@ -119,26 +97,4 @@ BEGIN
     WHERE src.is_in_dim_model = 1
       AND current_zip.id IS NULL;
 END$$
-
-CREATE PROCEDURE sp_refresh_dim_model_ads_all()
-BEGIN
-    CALL sp_refresh_dim_model_ads_manual_match();
-    CALL sp_refresh_dim_model_ads_zipper();
-
-    -- 将 dim_model 的 ADS 引用字段回填到当前有效拉链记录。
-    UPDATE dim_model dm
-    LEFT JOIN dim_model_ads_zipper current_zip
-        ON current_zip.model_id = dm.id
-       AND current_zip.is_current = 1
-    SET dm.ads_id = current_zip.id,
-        dm.ads_supplier_name = current_zip.ads_supplier;
-END$$
-
-CREATE EVENT ev_refresh_dim_model_ads_all
-    ON SCHEDULE EVERY 1 DAY
-    STARTS CURRENT_TIMESTAMP + INTERVAL 1 DAY
-    DISABLE
-    DO
-        CALL sp_refresh_dim_model_ads_all()$$
-
 DELIMITER ;

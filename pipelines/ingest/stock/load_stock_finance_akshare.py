@@ -12,6 +12,7 @@ from sqlalchemy import text
 
 from base_infra.db import engine
 from base_infra.logging_config import get_logger
+from pipelines.ingest.common.ingest_utils import make_stats, reset_stats, record_error_type, execute_insert
 from pipelines.ingest.stock.network_runtime import (
     RuntimeConfig,
     build_runtime_config,
@@ -30,75 +31,17 @@ FINANCE_PREFLIGHT_URL = (
 )
 
 # 数据采集结果统计
-STATS = {
-    "total_stocks": 0,
-    "success_count": 0,
-    "fail_count": 0,
-    "skip_count": 0,
-    "warning_count": 0,
-    "total_rows": 0,
-    "fail_details": [],
-    "error_types": {},
-    "preflight": None,
-}
+STATS = make_stats("total_stocks")
 
 
 def parse_args():
     """解析命令行参数。"""
-    parser = argparse.ArgumentParser(
-        description="使用 akshare 拉取股票财务数据到 ODS"
-    )
-    parser.add_argument(
-        "--dry-run",
-        action="store_true",
-        help="仅测试连接，不写入数据库",                          #
-    )
+    parser = build_common_parser("股票财务数据采集")
     parser.add_argument(
         "--stock",
         type=str,
         default=None,
         help="指定单个股票代码测试（如 002594.SZ）",               #
-    )
-    parser.add_argument(
-        "--proxy",
-        type=str,
-        default=None,
-        help="代理服务器地址（如 socks5://127.0.0.1:6789 或 http://127.0.0.1:7890）",
-    )
-    parser.add_argument(
-        "--direct-domains",
-        type=str,
-        default=None,
-        help="需要直连而不走代理的域名，逗号分隔",
-    )
-    parser.add_argument(
-        "--timeout",
-        type=int,
-        default=15,
-        help="HTTP 请求超时时间（秒）",
-    )
-    parser.add_argument(
-        "--max-retries",
-        type=int,
-        default=3,
-        help="单只股票最大重试次数",
-    )
-    parser.add_argument(
-        "--sleep-seconds",
-        type=float,
-        default=1.0,
-        help="股票之间与重试前的基础等待秒数",
-    )
-    parser.add_argument(
-        "--preflight-only",
-        action="store_true",
-        help="仅做网络预检，不执行采集",
-    )
-    parser.add_argument(
-        "--start-date",
-        type=str,
-        default="20170101",
-        help="保持与日线脚本一致的全量起始日期参数",
     )
     return parser.parse_args()
 
@@ -271,7 +214,7 @@ def insert_finance_data(rows):
     if not rows:
         return 0
 
-    sql = text("""
+    sql = """
         INSERT INTO ods_stock_finance
             (stock_id, stock_code_raw, stock_name_raw, market_raw, exchange_raw,
              source_symbol, report_date, report_type, eps, net_profit,
@@ -302,30 +245,8 @@ def insert_finance_data(rows):
             gross_margin = VALUES(gross_margin),
             debt_ratio = VALUES(debt_ratio),
             fetch_time = VALUES(fetch_time)
-    """)
-
-    with engine.begin() as conn:
-        conn.execute(sql, rows)
-
-    return len(rows)
-
-
-def reset_stats() -> None:
-    STATS.update({
-        "total_stocks": 0,
-        "success_count": 0,
-        "fail_count": 0,
-        "skip_count": 0,
-        "warning_count": 0,
-        "total_rows": 0,
-        "fail_details": [],
-        "error_types": {},
-        "preflight": None,
-    })
-
-
-def _record_error_type(error_type: str) -> None:
-    STATS["error_types"][error_type] = STATS["error_types"].get(error_type, 0) + 1
+    """
+    return execute_insert(rows, sql)
 
 
 def check_data_completeness(rows, is_full_load=False):
@@ -516,7 +437,7 @@ def print_summary():
 
 
 def run_finance_ingest(config: RuntimeConfig, dry_run=False, stock_code=None) -> bool:
-    reset_stats()
+    reset_stats(STATS, "total_stocks")
     setup_proxy(config)
 
     logger.info("开始采集股票财务数据...")
@@ -573,15 +494,15 @@ def run_finance_ingest(config: RuntimeConfig, dry_run=False, stock_code=None) ->
             STATS["warning_count"] += 1
             STATS["success_count"] += 1
             STATS["total_rows"] += result["rows_inserted"]
-            _record_error_type(result["error_type"] or "data_warning")
+            record_error_type(STATS, result["error_type"] or "data_warning")
             logger.warning("  -> 成功（有警告）: %s", result["error"])
         elif result["status"] == "skipped":
             STATS["skip_count"] += 1
-            _record_error_type(result["error_type"] or "skipped")
+            record_error_type(STATS, result["error_type"] or "skipped")
             logger.warning("  -> 跳过: %s", result["error"])
         else:
             STATS["fail_count"] += 1
-            _record_error_type(result["error_type"] or "unknown")
+            record_error_type(STATS, result["error_type"] or "unknown")
             STATS["fail_details"].append({
                 "stock_code": result["stock_code"],
                 "stock_name": result["stock_name"],

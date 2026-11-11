@@ -2,7 +2,7 @@
 
 > 当前口径：以仓库已落地代码为准，不把未来规划写成当前能力。
 > 当前主线：16888 自抓销量文件 -> 云 MySQL 数仓 -> Power BI 消费。
-> 当前真实状态：M0/M1 已完成，M2/M3 部分完成，M4-M6 未开始。
+> 当前真实状态：M0/M1/M2 已完成，M3 基本完成（调度链路已全量注册，待生产环境验证），M4-M6 未开始。
 
 ## 项目概览
 
@@ -16,11 +16,7 @@
 - 服务层：FastAPI 健康检查 + APScheduler 定时调度
 - 可视化目标：后续由 Power BI 读取云 MySQL
 
-当前需要特别注意的断点：
-
-- 调度链目前自动跑到 `DWD`，不会自动执行 `build_sales_dimensions`
-- `agg_sales_monthly.py` 已落地，但未接入初始化脚本或调度器
-- `ods_stock_daily` 表已建，AKShare 股价采集脚本尚未落地
+当前调度链路已全量注册（销量月链、城市月链、股价/指数/期货日链、财务日链），但仍需在生产环境连续运行验证稳定性。尚未落地的部分集中在 Power BI 报表资产（M4-M6）。
 
 ## 建议阅读顺序
 
@@ -44,7 +40,17 @@ CarApp/
 ├── scheduler/                     # APScheduler 定时任务
 ├── scripts/                       # 初始化脚本
 ├── db/
-│   ├── ddl/                       # 建库建表 / 触发器 / 存储过程
+│   ├── system/                    # 建库 / Power BI 只读账号
+│   ├── ods/                       # ODS 建表
+│   ├── dim/                       # 维度 / 桥接 / 拉链表建表
+│   ├── dwd/                       # DWD 建表
+│   ├── dws/                       # DWS 建表
+│   ├── ads/                       # ADS 视图
+│   ├── migrations/                # 结构补丁
+│   ├── triggers/                  # 触发器
+│   ├── procedures/                # 存储过程
+│   ├── events/                    # 事件
+│   ├── scheduler/                 # 调度器元数据表
 │   └── manual/                    # 手工维度刷新 SQL
 ├── data/manual_dimensions/        # 手工维护的 CSV 维度源
 ├── docs/                          # 辅助文档
@@ -71,10 +77,12 @@ CarApp/
 
 当前真实落地情况：
 
-- 已落地主表：`dim_*`、`bridge_*`、`ods_*`、`dwd_sales_monthly_model`
+- 已落地主表：`dim_*`、`bridge_*`、`ods_*`（含 `ods_stock_daily`、`ods_stock_finance`、`ods_index_daily`、`ods_futures_daily`）
+- 已落地 DWD 表：`dwd_sales_monthly_model`、`dwd_sales_monthly_model_city`、`dwd_stock_daily`、`dwd_stock_finance`
 - 已落地 DWS 表：`dws_sales_monthly_company`、`dws_sales_monthly_brand`
 - 已落地手工 ADS 支线表：`dim_model_ads_manual`、`dim_model_ads_zipper`
-- 未落地自动股价采集：仅 `ods_stock_daily` 表已存在
+- 已落地采集脚本：AKShare A 股/H 股日线、A 股财务、同花顺行业指数、商品期货主力连续
+- 已落地调度链路：销量 style 月链、销量 city 月链、股价/指数/期货日链、财务日链（均已在 `task_config.py` 注册）
 
 ## 系统主链
 
@@ -100,47 +108,37 @@ CarApp/
 
 ### 1. 新库初始化推荐顺序
 
-对于全新的云 MySQL 实例，建议先手工执行 SQL，再执行 Python 初始化脚本。
+SQL 已按数仓分层拆分到 `db/<layer>/` 目录，推荐直接用初始化脚本自动按序执行：
 
-```text
-00_create_database.sql
-    -> 01_create_tables.sql
-    -> 05_create_dim_zipper_tables.sql
-    -> 07_create_dim_energy_vehicle.sql
-    -> 08_create_dim_energy_vehicle_triggers.sql
-    -> 09_create_dim_model_ads_manual.sql
-    -> 10_create_dim_model_ads_sync.sql
-    -> 11_create_dim_model_ads_views.sql
-    -> 12_alter_dim_model_ads_reference.sql
-    -> 03_create_dwd_tables.sql
-    -> 04_create_dws_tables.sql           # 如需运行 DWS 聚合，建议一并执行
-    -> 02_create_powerbi_user.sql         # 仅在需要 Power BI 只读账号时执行
+```bash
+python scripts/init_database.py
 ```
 
-说明：
+脚本按以下目录顺序自动发现并执行（`system/01_create_powerbi_user.sql` 权限脚本需 DBA 手工执行）：
 
-- `12_alter_dim_model_ads_reference.sql` 依赖 `05_create_dim_zipper_tables.sql`
-- `04_create_dws_tables.sql` 当前未被初始化脚本自动执行，但 `agg_sales_monthly.py` 依赖它
-- `02_create_powerbi_user.sql` 不影响主链入库，只影响下游 BI 只读访问
-- `06_alter_dim_model_add_brand_oem_ads_columns.sql` 属于存量兼容补丁，不是新库初始化主链必跑项
+```text
+system → ods → dim → dwd → dws → ads → scheduler
+       → migrations（结构补丁）→ triggers → procedures → events
+```
+
+如需手工执行，按上述目录顺序、目录内按文件名编号依次执行即可。关键对象：
+- 维度核心表：`db/dim/01_create_dim_core.sql`
+- ADS 拉链表：`db/dim/03_create_dim_zipper.sql`
+- DWD/DWS：`db/dwd/`、`db/dws/`
+- ETL 存储过程：`db/procedures/`
+- Power BI 只读账号（按需手工执行）：`db/system/01_create_powerbi_user.sql`
 
 ### 2. 推荐执行命令
 
 ```bash
-mysql -h <host> -P 3306 -u root -p < db/ddl/00_create_database.sql
-mysql -h <host> -P 3306 -u root -p < db/ddl/01_create_tables.sql
-mysql -h <host> -P 3306 -u root -p < db/ddl/05_create_dim_zipper_tables.sql
-mysql -h <host> -P 3306 -u root -p < db/ddl/07_create_dim_energy_vehicle.sql
-mysql -h <host> -P 3306 -u root -p < db/ddl/08_create_dim_energy_vehicle_triggers.sql
-mysql -h <host> -P 3306 -u root -p < db/ddl/09_create_dim_model_ads_manual.sql
-mysql -h <host> -P 3306 -u root -p < db/ddl/10_create_dim_model_ads_sync.sql
-mysql -h <host> -P 3306 -u root -p < db/ddl/11_create_dim_model_ads_views.sql
-mysql -h <host> -P 3306 -u root -p < db/ddl/12_alter_dim_model_ads_reference.sql
-mysql -h <host> -P 3306 -u root -p < db/ddl/03_create_dwd_tables.sql
-mysql -h <host> -P 3306 -u root -p < db/ddl/04_create_dws_tables.sql
+# 一键初始化（DDL + 维度种子 + ODS + 车型维度构建）
+python scripts/init_database.py
 
-# 替换占位符后执行
-mysql -h <host> -P 3306 -u root -p < db/ddl/02_create_powerbi_user.sql
+# 表已存在时只跑种子/ODS
+python scripts/init_database.py --skip-ddl
+
+# 单个 SQL 文件执行
+python scripts/run_sql_file.py db/migrations/003_alter_dwd_sales_monthly_model.sql
 ```
 
 ## 首次初始化使用顺序
@@ -217,42 +215,40 @@ uvicorn backend.app.main:app --reload
 {"status": "ok", "database": "connected"}
 ```
 
-## 月度调度运行顺序
+## 调度运行顺序
 
-当前自动调度链路由 `scheduler/runner.py` 注册，真实顺序如下：
+当前自动调度链路由 `scheduler/runner.py` 遍历 `scheduler/task_config.py` 注册，包含三条独立链路：
+
+### style 月链（车型月销量，每月 12~15 号探测）
 
 ```text
-每月 2 号 03:00
-    -> crawl_16888_monthly
-       -> crawl_16888_style/crawl_all_with_retry.py
-       -> crawl_16888_city/crawl_2025_full_year.py
-
-每月 2 号 05:00
-    -> load_ods_after_crawl
-       -> load_16888_style_to_ods.main()
-       -> load_16888_city_to_ods.main()
-
-每月 2 号 06:00
-    -> run_dwd_clean
+每月 12-15 号 03:00
+    -> crawl_16888_style_monthly        # 窗口内每日探测，未发布则 SkipTask
+       -> load_style_ods                # ODS 入库
+          -> build_sales_dimensions     # dim_model 派生
+             -> refresh_ads_zipper      # ADS 拉链刷新
+                -> run_dwd_clean        # DWD 清洗
+                   -> update_lifecycle  # 生命周期更新（并行）
+                   -> run_dws_agg       # DWS 聚合（并行）
 ```
 
-启动方式：
+### city 月链（城市车型月销量，每月 20~25 号探测）
 
-```bash
-python -m scheduler.runner
+```text
+每月 20-25 号 03:30
+    -> crawl_16888_city_monthly         # 窗口内每日探测
+       -> load_city_ods                 # ODS 入库
+          -> run_dwd_city_clean         # DWD 城市清洗
 ```
 
-当前未自动接线的步骤：
+### 日链（交易日 17:30 起）
 
-- `pipelines/dim/build_sales_dimensions.py`
-- `pipelines/serve/agg_sales_monthly.py`
-- 任何股价采集任务
-
-这意味着：
-
-- 新抓取的 ODS 数据不会自动刷新 `dim_model`
-- DWS 聚合不会自动更新
-- 股价数据仍需后续实现
+```text
+mon-fri 17:30  -> load_stock_daily      # A 股/H 股日线采集（SSE 交易日守卫）
+mon-fri 17:30  -> load_futures_daily    # 商品期货主力连续采集（SSE 交易日守卫）
+mon-fri 17:45  -> load_index_daily      # 同花顺行业指数采集（SSE 交易日守卫）
+mon-fri 18:30  -> load_stock_finance    # A 股财务采集（SSE 交易日守卫）
+```
 
 ## 手工维度刷新顺序
 
@@ -312,9 +308,9 @@ dim_model_ads_matched.csv
 | 模块 | 当前状态 | 说明 |
 |------|----------|------|
 | M0 脚手架与数据库 | 已完成 | 基础包、主 DDL、健康检查已落地 |
-| M1 销量数据主链 | 已完成 | 16888 ODS、DIM 派生、DWD、部分 DWS 已实现 |
-| M2 股价采集 | 部分完成 | 表与维度映射已建，采集脚本缺失 |
-| M3 调度服务 | 部分完成 | 调度器框架已接销量主链，但未覆盖全链路 |
+| M1 销量数据主链 | 已完成 | 16888 ODS、DIM 派生、DWD、DWS 已实现 |
+| M2 股价采集 | 已完成 | A 股/H 股日线、A 股财务、同花顺指数、商品期货采集脚本均已落地 |
+| M3 调度服务 | 基本完成 | 调度链路已全量注册（销量月链、城市月链、日链、财务），待生产环境连续运行验证 |
 | M4 Power BI 看板 | 未开始 | 仅只读账号 DDL 已有 |
 | M5 Power BI 关联分析 | 未开始 | 未见报表文件 |
 | M6 Publish to Web | 未开始 | 未见发布资产 |

@@ -4,7 +4,7 @@
 自动跳过纯注释语句、空语句、CREATE 表已存在错误由 IF NOT EXISTS 自身兜住。
 
 用法:
-    python scripts/run_sql_file.py db/ddl/15_alter_dwd_sales_monthly_model.sql
+    python scripts/run_sql_file.py db/migrations/003_alter_dwd_sales_monthly_model.sql
 """
 
 from __future__ import annotations
