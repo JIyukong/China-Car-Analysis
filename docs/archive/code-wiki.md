@@ -1,6 +1,8 @@
 # CarApp 项目 Code Wiki
 
-> 本 Wiki 以仓库当前真实代码为准，描述项目架构、模块职责、关键类/函数、依赖关系及运行方式。
+> 历史快照，保留当时的决策和实现记录。当前入口见 [项目首页](../../README.md)。
+
+> 历史快照。当前运行入口、调度和数据库权限见 [调度和 ETL](../scheduler_guide.md)。
 > 生成日期：2026-08-12
 > 项目定位：中国乘用车投资分析平台 —— 以销量因子为主链、股价/指数/期货因子为补充的数据分析底座。
 
@@ -102,43 +104,43 @@ AKShare 新浪期货
 
 | 目录 | 职责 |
 |------|------|
-| [base_infra/](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/base_infra) | 基础设施：配置管理、数据库引擎、日志 |
-| [backend/](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/backend) | FastAPI 服务入口，当前仅提供健康检查 |
-| [pipelines/](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/pipelines) | ETL 主链：数据采集、维度构建、DWD 清洗、DWS 聚合 |
-| [scheduler/](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/scheduler) | APScheduler 调度器、任务编排、告警 |
-| [scripts/](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/scripts) | 初始化与运维脚本 |
-| [db/](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/db) | 数仓 DDL、存储过程、触发器、迁移脚本 |
-| [data/manual_dimensions/](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/data/manual_dimensions) | 手工维护的 CSV 维度源 |
-| [tests/](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/tests) | 单元测试与集成测试 |
-| [docs/](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/docs) | 项目文档（含本 Wiki） |
-| [deploy/](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/deploy) | 部署脚本（Windows NSSM 服务注册） |
+| [base_infra/](../../base_infra) | 基础设施：配置管理、数据库引擎、日志 |
+| [backend/](../../backend) | FastAPI 服务入口，当前仅提供健康检查 |
+| [pipelines/](../../pipelines) | ETL 主链：数据采集、维度构建、DWD 清洗、DWS 聚合 |
+| [scheduler/](../../scheduler) | APScheduler 调度器、任务编排、告警 |
+| [scripts/](../../scripts) | 初始化与运维脚本 |
+| [db/](../../db) | 数仓 DDL、存储过程、触发器、迁移脚本 |
+| [data/manual_dimensions/](../../data/manual_dimensions) | 手工维护的 CSV 维度源 |
+| [tests/](../../tests) | 单元测试与集成测试 |
+| [docs/](..) | 项目文档（含本 Wiki） |
+| [deploy/](../../deploy) | 部署脚本（Windows NSSM 服务注册） |
 
 ### 3.2 pipelines 子目录
 
 | 子目录 | 职责 |
 |--------|------|
-| [pipelines/common/](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/pipelines/common) | 公共工具：upsert、表存在检查、空值率 / 唯一性 / 行数校验 |
-| [pipelines/ingest/](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/pipelines/ingest) | 数据采集与 ODS 加载：销量爬虫、股价/指数/期货采集 |
-| [pipelines/dim/](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/pipelines/dim) | 维度种子、维度派生、手工维度刷新、生命周期更新 |
-| [pipelines/staging/](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/pipelines/staging) | DWD 明细层清洗 |
-| [pipelines/serve/](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/pipelines/serve) | DWS 聚合与下游服务 |
+| [pipelines/common/](../../pipelines/common) | 公共工具：upsert、表存在检查、空值率 / 唯一性 / 行数校验 |
+| [pipelines/ingest/](../../pipelines/ingest) | 数据采集与 ODS 加载：销量爬虫、股价/指数/期货采集 |
+| [pipelines/dim/](../../pipelines/dim) | 维度种子、维度派生、手工维度刷新、生命周期更新 |
+| [pipelines/staging/](../../pipelines/staging) | DWD 明细层清洗 |
+| [pipelines/serve/](../../pipelines/serve) | DWS 聚合与下游服务 |
 
 ### 3.3 db 子目录
 
 | 子目录 | 职责 |
 |--------|------|
-| [db/system/](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/db/system) | 建库、Power BI 只读账号 |
-| [db/ods/](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/db/ods) | ODS 贴源层建表 |
-| [db/dim/](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/db/dim) | 维度层与桥接层建表 |
-| [db/dwd/](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/db/dwd) | DWD 明细层建表 |
-| [db/dws/](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/db/dws) | DWS 汇总层建表 |
-| [db/ads/](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/db/ads) | 应用层视图 |
-| [db/scheduler/](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/db/scheduler) | 调度器元数据表 |
-| [db/migrations/](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/db/migrations) | 结构补丁 |
-| [db/triggers/](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/db/triggers) | 触发器 |
-| [db/procedures/](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/db/procedures) | ETL 存储过程 |
-| [db/events/](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/db/events) | 定时事件 |
-| [db/manual/](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/db/manual) | 手工维度刷新 SQL |
+| [db/system/](../../db/system) | 建库、Power BI 只读账号 |
+| [db/ods/](../../db/ods) | ODS 贴源层建表 |
+| [db/dim/](../../db/dim) | 维度层与桥接层建表 |
+| [db/dwd/](../../db/dwd) | DWD 明细层建表 |
+| [db/dws/](../../db/dws) | DWS 汇总层建表 |
+| [db/ads/](../../db/ads) | 应用层视图 |
+| [db/scheduler/](../../db/scheduler) | 调度器元数据表 |
+| [db/migrations/](../../db/migrations) | 结构补丁 |
+| [db/triggers/](../../db/triggers) | 触发器 |
+| [db/procedures/](../../db/procedures) | ETL 存储过程 |
+| [db/events/](../../db/events) | 定时事件 |
+| [db/manual/](../../db/manual) | 手工维度刷新 SQL |
 
 ---
 
@@ -146,7 +148,7 @@ AKShare 新浪期货
 
 ### 4.1 base_infra 基础设施
 
-#### [base_infra/config.py](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/base_infra/config.py)
+#### [base_infra/config.py](../../base_infra/config.py)
 
 | 名称 | 类型 | 说明 |
 |------|------|------|
@@ -154,7 +156,7 @@ AKShare 新浪期货
 | `Settings.database_url` | property | 将 DB_HOST/PORT/USER/PASSWORD/NAME 拼接为 `mysql+pymysql` 连接串 |
 | `get_settings()` | function | 使用 `@lru_cache` 返回配置单例 |
 
-#### [base_infra/db.py](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/base_infra/db.py)
+#### [base_infra/db.py](../../base_infra/db.py)
 
 | 名称 | 类型 | 说明 |
 |------|------|------|
@@ -162,7 +164,7 @@ AKShare 新浪期货
 | `SessionLocal` | object | 会话工厂，`autoflush=False`、`autocommit=False` |
 | `check_database_connection()` | function | 执行 `SELECT 1` 探针，供健康检查接口调用 |
 
-#### [base_infra/logging_config.py](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/base_infra/logging_config.py)
+#### [base_infra/logging_config.py](../../base_infra/logging_config.py)
 
 | 名称 | 类型 | 说明 |
 |------|------|------|
@@ -173,7 +175,7 @@ AKShare 新浪期货
 
 ### 4.2 backend 服务层
 
-#### [backend/app/main.py](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/backend/app/main.py)
+#### [backend/app/main.py](../../backend/app/main.py)
 
 | 名称 | 类型 | 说明 |
 |------|------|------|
@@ -183,13 +185,13 @@ AKShare 新浪期货
 
 ### 4.3 scheduler 调度层
 
-#### [scheduler/task_config.py](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/scheduler/task_config.py)
+#### [scheduler/task_config.py](../../scheduler/task_config.py)
 
 | 名称 | 类型 | 说明 |
 |------|------|------|
 | `TASK_CONFIG` | dict | 任务注册字典，定义 cron、超时、重试、下游依赖、交易日历、业务键 |
 
-#### [scheduler/runtime.py](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/scheduler/runtime.py)
+#### [scheduler/runtime.py](../../scheduler/runtime.py)
 
 | 名称 | 类型 | 说明 |
 |------|------|------|
@@ -203,7 +205,7 @@ AKShare 新浪期货
 | `run_recovery(scheduler)` | function | 启动前恢复：清理僵尸记录、补缺口 |
 | `start_heartbeat_thread()` | function | 心跳线程 |
 
-#### [scheduler/runner.py](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/scheduler/runner.py)
+#### [scheduler/runner.py](../../scheduler/runner.py)
 
 | 名称 | 类型 | 说明 |
 |------|------|------|
@@ -212,7 +214,7 @@ AKShare 新浪期货
 | `create_scheduler()` | function | 创建 `BlockingScheduler`，按 `TASK_CONFIG` 注册任务 |
 | `main()` | function | 调度器启动入口 |
 
-#### [scheduler/alert.py](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/scheduler/alert.py)
+#### [scheduler/alert.py](../../scheduler/alert.py)
 
 | 名称 | 类型 | 说明 |
 |------|------|------|
@@ -220,7 +222,7 @@ AKShare 新浪期货
 
 ### 4.4 pipelines 公共工具
 
-#### [pipelines/common/sql_utils.py](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/pipelines/common/sql_utils.py)
+#### [pipelines/common/sql_utils.py](../../pipelines/common/sql_utils.py)
 
 | 名称 | 说明 |
 |------|------|
@@ -229,7 +231,7 @@ AKShare 新浪期货
 | `get_row_count(...)` | 获取表行数 |
 | `safe_execute(...)` | 安全执行 SQL 并记录日志 |
 
-#### [pipelines/common/quality.py](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/pipelines/common/quality.py)
+#### [pipelines/common/quality.py](../../pipelines/common/quality.py)
 
 | 名称 | 说明 |
 |------|------|
@@ -241,49 +243,49 @@ AKShare 新浪期货
 
 | 文件 | 关键函数 | 说明 |
 |------|----------|------|
-| [pipelines/dim/seed_dim_date.py](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/pipelines/dim/seed_dim_date.py) | `main()` | 生成并写入 `dim_date` |
-| [pipelines/dim/seed_dim_company_stock.py](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/pipelines/dim/seed_dim_company_stock.py) | `upsert_dim_company()`、`upsert_dim_stock()`、`upsert_bridge()`、`main()` | 初始化公司、股票维度及桥接表 |
-| [pipelines/dim/seed_dim_oem_brand.py](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/pipelines/dim/seed_dim_oem_brand.py) | `upsert_dim_brand()`、`main()` | 初始化品牌维度 |
-| [pipelines/dim/seed_dim_from_excel.py](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/pipelines/dim/seed_dim_from_excel.py) | `main()` | 从 Excel 映射 OEM / 品牌 / 公司桥接 |
-| [pipelines/dim/build_sales_dimensions.py](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/pipelines/dim/build_sales_dimensions.py) | `run_build_sales_dimensions()`、`main()` | 从销量 ODS 派生 `dim_model` |
-| [pipelines/dim/update_lifecycle.py](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/pipelines/dim/update_lifecycle.py) | `run_update_lifecycle()`、`main()` | 更新 `dim_oem` / `dim_model` 活跃生命周期 |
-| [pipelines/dim/update_vehicle_type.py](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/pipelines/dim/update_vehicle_type.py) | `update_vehicle_type()`、`main()` | 更新车型大类 / 细分映射 |
-| [pipelines/dim/refresh_dim_energy_vehicle.py](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/pipelines/dim/refresh_dim_energy_vehicle.py) | `refresh_dim_energy_vehicle()`、`main()` | 从 CSV 刷新能源车型维度 |
-| [pipelines/dim/refresh_dim_model_ads.py](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/pipelines/dim/refresh_dim_model_ads.py) | `refresh_dim_model_ads()`、`main()` | 刷新 ADS 车型广告占比拉链 |
-| [pipelines/dim/refresh_dim_area.py](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/pipelines/dim/refresh_dim_area.py) | `refresh_dim_area()`、`main()` | 刷新 `dim_area` 地区维度 |
+| [pipelines/dim/seed_dim_date.py](../../pipelines/dim/seed_dim_date.py) | `main()` | 生成并写入 `dim_date` |
+| [pipelines/dim/seed_dim_company_stock.py](../../pipelines/dim/seed_dim_company_stock.py) | `upsert_dim_company()`、`upsert_dim_stock()`、`upsert_bridge()`、`main()` | 初始化公司、股票维度及桥接表 |
+| [pipelines/dim/seed_dim_oem_brand.py](../../pipelines/dim/seed_dim_oem_brand.py) | `upsert_dim_brand()`、`main()` | 初始化品牌维度 |
+| [pipelines/dim/seed_dim_from_excel.py](../../pipelines/dim/seed_dim_from_excel.py) | `main()` | 从 Excel 映射 OEM / 品牌 / 公司桥接 |
+| [pipelines/dim/build_sales_dimensions.py](../../pipelines/dim/build_sales_dimensions.py) | `run_build_sales_dimensions()`、`main()` | 从销量 ODS 派生 `dim_model` |
+| [pipelines/dim/update_lifecycle.py](../../pipelines/dim/update_lifecycle.py) | `run_update_lifecycle()`、`main()` | 更新 `dim_oem` / `dim_model` 活跃生命周期 |
+| `pipelines/dim/update_vehicle_type.py` | `update_vehicle_type()`、`main()` | 更新车型大类 / 细分映射 |
+| [pipelines/dim/refresh_dim_energy_vehicle.py](../../pipelines/dim/refresh_dim_energy_vehicle.py) | `refresh_dim_energy_vehicle()`、`main()` | 从 CSV 刷新能源车型维度 |
+| [pipelines/dim/refresh_dim_model_ads.py](../../pipelines/dim/refresh_dim_model_ads.py) | `refresh_dim_model_ads()`、`main()` | 刷新 ADS 车型广告占比拉链 |
+| [pipelines/dim/refresh_dim_area.py](../../pipelines/dim/refresh_dim_area.py) | `refresh_dim_area()`、`main()` | 刷新 `dim_area` 地区维度 |
 
 ### 4.6 ODS 采集关键入口
 
 | 文件 | 关键函数 | 说明 |
 |------|----------|------|
-| [pipelines/ingest/sales/load_16888_style_to_ods.py](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/pipelines/ingest/sales/load_16888_style_to_ods.py) | `discover_files()`、`read_rows()`、`build_row_hash()`、`upsert_rows()`、`main()` | 车型 CSV → `ods_sales_monthly_model` |
-| [pipelines/ingest/sales/load_16888_city_to_ods.py](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/pipelines/ingest/sales/load_16888_city_to_ods.py) | 同上 | 城市 CSV → `ods_sales_monthly_model_city` |
-| [pipelines/ingest/sales/crawl_16888_style/crawl_style.py](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/pipelines/ingest/sales/crawl_16888_style/crawl_style.py) | `crawl_one_month()`、`crawl()` | Playwright 车型销量爬虫 |
-| [pipelines/ingest/sales/crawl_16888_city/crawl_city.py](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/pipelines/ingest/sales/crawl_16888_city/crawl_city.py) | `crawl_one_month()`、`crawl()` | Playwright 城市上牌爬虫 |
-| [pipelines/ingest/stock/load_stock_daily_akshare.py](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/pipelines/ingest/stock/load_stock_daily_akshare.py) | `run_daily_ingest()`、`main()` | A 股 / H 股日线采集 |
-| [pipelines/ingest/stock/load_stock_finance_akshare.py](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/pipelines/ingest/stock/load_stock_finance_akshare.py) | `run_finance_ingest()`、`main()` | A 股财务数据采集 |
-| [pipelines/ingest/index/load_ths_index_daily_akshare.py](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/pipelines/ingest/index/load_ths_index_daily_akshare.py) | `run_index_ingest()`、`main()` | 同花顺 881125 指数日线 |
-| [pipelines/ingest/futures/load_futures_main_sina.py](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/pipelines/ingest/futures/load_futures_main_sina.py) | `run_futures_ingest()`、`main()` | LC0 / CU0 / AL0 期货主力连续日线 |
+| [pipelines/ingest/sales/load_16888_style_to_ods.py](../../pipelines/ingest/sales/load_16888_style_to_ods.py) | `discover_files()`、`read_rows()`、`build_row_hash()`、`upsert_rows()`、`main()` | 车型 CSV → `ods_sales_monthly_model` |
+| [pipelines/ingest/sales/load_16888_city_to_ods.py](../../pipelines/ingest/sales/load_16888_city_to_ods.py) | 同上 | 城市 CSV → `ods_sales_monthly_model_city` |
+| [pipelines/ingest/sales/crawl_16888_style/crawl_style.py](../../pipelines/ingest/sales/crawl_16888_style/crawl_style.py) | `crawl_one_month()`、`crawl()` | Playwright 车型销量爬虫 |
+| [pipelines/ingest/sales/crawl_16888_city/crawl_city.py](../../pipelines/ingest/sales/crawl_16888_city/crawl_city.py) | `crawl_one_month()`、`crawl()` | Playwright 城市上牌爬虫 |
+| [pipelines/ingest/stock/load_stock_daily_akshare.py](../../pipelines/ingest/stock/load_stock_daily_akshare.py) | `run_daily_ingest()`、`main()` | A 股 / H 股日线采集 |
+| [pipelines/ingest/stock/load_stock_finance_akshare.py](../../pipelines/ingest/stock/load_stock_finance_akshare.py) | `run_finance_ingest()`、`main()` | A 股财务数据采集 |
+| [pipelines/ingest/index/load_ths_index_daily_akshare.py](../../pipelines/ingest/index/load_ths_index_daily_akshare.py) | `run_index_ingest()`、`main()` | 同花顺 881125 指数日线 |
+| [pipelines/ingest/futures/load_futures_main_sina.py](../../pipelines/ingest/futures/load_futures_main_sina.py) | `run_futures_ingest()`、`main()` | LC0 / CU0 / AL0 期货主力连续日线 |
 
 ### 4.7 DWD / DWS 关键入口
 
 | 文件 | 关键函数 | 说明 |
 |------|----------|------|
-| [pipelines/staging/clean_sales_dwd.py](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/pipelines/staging/clean_sales_dwd.py) | `run_clean_sales_dwd()`、`main()` | `ods_sales_monthly_model` → `dwd_sales_monthly_model` |
-| [pipelines/staging/clean_sales_city_dwd.py](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/pipelines/staging/clean_sales_city_dwd.py) | `run_clean_sales_city_dwd()`、`main()` | 城市销量 ODS → DWD |
-| [pipelines/staging/clean_stock_daily_dwd.py](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/pipelines/staging/clean_stock_daily_dwd.py) | `run_clean_stock_daily_dwd()`、`main()` | 股票日线 ODS → DWD |
-| [pipelines/staging/clean_stock_finance_dwd.py](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/pipelines/staging/clean_stock_finance_dwd.py) | `run_clean_stock_finance_dwd()`、`main()` | 股票财务 ODS → DWD |
-| [pipelines/serve/agg_sales_monthly.py](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/pipelines/serve/agg_sales_monthly.py) | `run_agg_sales_monthly()`、`main()` | 公司 / 品牌粒度月度聚合 |
+| [pipelines/staging/clean_sales_dwd.py](../../pipelines/staging/clean_sales_dwd.py) | `run_clean_sales_dwd()`、`main()` | `ods_sales_monthly_model` → `dwd_sales_monthly_model` |
+| [pipelines/staging/clean_sales_city_dwd.py](../../pipelines/staging/clean_sales_city_dwd.py) | `run_clean_sales_city_dwd()`、`main()` | 城市销量 ODS → DWD |
+| [pipelines/staging/clean_stock_daily_dwd.py](../../pipelines/staging/clean_stock_daily_dwd.py) | `run_clean_stock_daily_dwd()`、`main()` | 股票日线 ODS → DWD |
+| [pipelines/staging/clean_stock_finance_dwd.py](../../pipelines/staging/clean_stock_finance_dwd.py) | `run_clean_stock_finance_dwd()`、`main()` | 股票财务 ODS → DWD |
+| [pipelines/serve/agg_sales_monthly.py](../../pipelines/serve/agg_sales_monthly.py) | `run_agg_sales_monthly()`、`main()` | 公司 / 品牌粒度月度聚合 |
 
 ### 4.8 初始化与运维脚本
 
 | 文件 | 关键函数 | 说明 |
 |------|----------|------|
-| [scripts/init_database.py](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/scripts/init_database.py) | `discover_sql_files()`、`run_sql_file()`、`run_step()`、`main()` | 一键初始化数仓 |
-| [scripts/run_sql_file.py](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/scripts/run_sql_file.py) | `main()` | 单 SQL 文件执行 |
-| [scripts/data_quality_check.py](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/scripts/data_quality_check.py) | — | 数据质量检查 |
-| [scripts/sync_trade_calendar.py](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/scripts/sync_trade_calendar.py) | — | 同步交易日历 |
-| [scripts/check_scheduler_heartbeat.py](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/scripts/check_scheduler_heartbeat.py) | — | 检查调度器心跳 |
+| [scripts/init_database.py](../../scripts/init_database.py) | `discover_sql_files()`、`run_sql_file()`、`run_step()`、`main()` | 一键初始化数仓 |
+| [scripts/run_sql_file.py](../../scripts/run_sql_file.py) | `main()` | 单 SQL 文件执行 |
+| [scripts/data_quality_check.py](../../scripts/data_quality_check.py) | — | 数据质量检查 |
+| [scripts/sync_trade_calendar.py](../../scripts/sync_trade_calendar.py) | — | 同步交易日历 |
+| [scripts/check_scheduler_heartbeat.py](../../scripts/check_scheduler_heartbeat.py) | — | 检查调度器心跳 |
 
 ---
 
@@ -451,7 +453,7 @@ dim_area.csv
 
 ### 8.1 Python 依赖
 
-见 [requirements.txt](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/requirements.txt) 与 [pyproject.toml](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/pyproject.toml)：
+见 [requirements.txt](../../requirements.txt) 与 [pyproject.toml](../../pyproject.toml)：
 
 | 依赖 | 用途 |
 |------|------|
@@ -528,7 +530,7 @@ dwd_sales_monthly_model
 
 ### 9.1 环境变量
 
-从 [base_infra/config.py](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/base_infra/config.py) 与 [`.env.example`](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/.env.example) 读取：
+从 [base_infra/config.py](../../base_infra/config.py) 与 [`.env.example`](../../.env.example) 读取：
 
 | 变量 | 必填 | 说明 |
 |------|------|------|
@@ -635,25 +637,25 @@ python scripts/run_sql_file.py db/migrations/003_alter_dwd_sales_monthly_model.s
 
 | 文件 | 说明 |
 |------|------|
-| [tests/test_huawei_ads_model_scraper.py](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/tests/test_huawei_ads_model_scraper.py) | 华为 ADS 车型爬虫测试 |
-| [tests/test_refresh_dim_energy_vehicle_command.py](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/tests/test_refresh_dim_energy_vehicle_command.py) | 新能源维度刷新命令测试 |
-| [tests/test_refresh_dim_model_ads_command.py](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/tests/test_refresh_dim_model_ads_command.py) | ADS 维度刷新命令测试 |
-| [tests/test_sales_dimension_rules.py](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/tests/test_sales_dimension_rules.py) | 销量维度规则测试 |
-| [tests/test_script_entrypoint_imports.py](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/tests/test_script_entrypoint_imports.py) | 脚本入口导入测试 |
-| [tests/test_stock_akshare_networking.py](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/tests/test_stock_akshare_networking.py) | AKShare 网络联通性测试 |
+| `tests/test_huawei_ads_model_scraper.py` | 华为 ADS 车型爬虫测试 |
+| `tests/test_refresh_dim_energy_vehicle_command.py` | 新能源维度刷新命令测试 |
+| `tests/test_refresh_dim_model_ads_command.py` | ADS 维度刷新命令测试 |
+| `tests/test_sales_dimension_rules.py` | 销量维度规则测试 |
+| `tests/test_script_entrypoint_imports.py` | 脚本入口导入测试 |
+| `tests/test_stock_akshare_networking.py` | AKShare 网络联通性测试 |
 
 ### 11.2 运维脚本
 
 | 文件 | 说明 |
 |------|------|
-| [scripts/check_innodb_trx.py](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/scripts/check_innodb_trx.py) | 检查 InnoDB 事务 |
-| [scripts/check_scheduler_heartbeat.py](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/scripts/check_scheduler_heartbeat.py) | 检查调度器心跳 |
-| [scripts/data_quality_check.py](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/scripts/data_quality_check.py) | 数据质量检查 |
-| [scripts/dry_run_scheduler.py](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/scripts/dry_run_scheduler.py) | 调度器空跑 |
-| [scripts/dwd_baseline_check.py](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/scripts/dwd_baseline_check.py) | DWD 基线检查 |
-| [scripts/sync_trade_calendar.py](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/scripts/sync_trade_calendar.py) | 同步交易日历 |
-| [scripts/verify_ods_futures_daily.py](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/scripts/verify_ods_futures_daily.py) | 验证期货 ODS |
-| [scripts/verify_ods_index_daily.py](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/scripts/verify_ods_index_daily.py) | 验证指数 ODS |
+| [scripts/check_innodb_trx.py](../../scripts/check_innodb_trx.py) | 检查 InnoDB 事务 |
+| [scripts/check_scheduler_heartbeat.py](../../scripts/check_scheduler_heartbeat.py) | 检查调度器心跳 |
+| [scripts/data_quality_check.py](../../scripts/data_quality_check.py) | 数据质量检查 |
+| [scripts/dry_run_scheduler.py](../../scripts/dry_run_scheduler.py) | 调度器空跑 |
+| [scripts/dwd_baseline_check.py](../../scripts/dwd_baseline_check.py) | DWD 基线检查 |
+| [scripts/sync_trade_calendar.py](../../scripts/sync_trade_calendar.py) | 同步交易日历 |
+| [scripts/verify_ods_futures_daily.py](../../scripts/verify_ods_futures_daily.py) | 验证期货 ODS |
+| [scripts/verify_ods_index_daily.py](../../scripts/verify_ods_index_daily.py) | 验证指数 ODS |
 
 ---
 
@@ -693,9 +695,9 @@ python scripts/run_sql_file.py db/migrations/003_alter_dwd_sales_monthly_model.s
 
 ## 13. 参考文档
 
-- [README.md](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/README.md)
-- [需求文档.md](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/需求文档.md)
-- [执行大纲.md](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/执行大纲.md)
-- [docs/warehouse-spec.md](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/docs/warehouse-spec.md)
-- [docs/data-dictionary.md](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/docs/data-dictionary.md)
-- [docs/metric-definition.md](file:///c:/Users/Administrator/Desktop/TraeProjects/MainProjects/CarApp/docs/metric-definition.md)
+- [README.md](../../README.md)
+- [需求文档.md](需求文档.md)
+- [执行大纲.md](执行大纲.md)
+- [docs/warehouse-spec.md](../warehouse-spec.md)
+- [docs/data-dictionary.md](../data-dictionary.md)
+- [docs/metric-definition.md](../metric-definition.md)

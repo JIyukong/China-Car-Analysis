@@ -6,11 +6,6 @@
 
 USE dw_auto_stock;
 
-SET FOREIGN_KEY_CHECKS = 0;
-DROP TABLE IF EXISTS bridge_brand_oem;
-DROP TABLE IF EXISTS bridge_company_stock;
-SET FOREIGN_KEY_CHECKS = 1;
-
 -- 1. 品牌-主机厂桥接表（多对多关联）
 CREATE TABLE IF NOT EXISTS bridge_brand_oem (
     id                   BIGINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键ID',

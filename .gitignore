@@ -12,6 +12,13 @@ env/
 
 # 环境配置（含密钥，禁止提交）
 .env
+.env.*
+!.env.example
+.envrc
+*.pem
+*.key
+*.p12
+*.pfx
 
 # IDE
 .idea/
@@ -27,6 +34,19 @@ Thumbs.db
 
 # 日志
 *.log
+/logs/
+
+# 本地业务数据、导出文件及运行报告
+/data/manual_dimensions/
+/汽车品牌主机厂信息表.xlsx
+/车型改款明细表.csv
+/车型销售窗口期表.csv
+/docs/daily_chain_report.html
+/docs/monthly_chain_report.html
+*.dump
+*.sql.gz
+*.sqlite
+*.sqlite3
 
 # Trae 工作目录与计划文档
 .trae/

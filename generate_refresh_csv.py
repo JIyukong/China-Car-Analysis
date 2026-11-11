@@ -1,9 +1,9 @@
 import csv
-import os
 from datetime import date
 from collections import defaultdict
+from pathlib import Path
 
-OUTPUT_DIR = r"c:\Users\Administrator\Desktop\TraeProjects\MainProjects\CarApp"
+OUTPUT_DIR = Path(__file__).resolve().parent
 
 RECORDS = [
     ("鸿蒙智行-问界", "问界M5", "2022-02-25", "首发"),
@@ -153,7 +153,7 @@ def write_table1():
             "类型": t,
         })
     rows.sort(key=lambda r: (r["品牌"], r["车型"], r["上市/改款日期"]))
-    path = os.path.join(OUTPUT_DIR, "车型改款明细表.csv")
+    path = OUTPUT_DIR / "车型改款明细表.csv"
     with open(path, "w", newline="", encoding="utf-8-sig") as f:
         w = csv.DictWriter(f, fieldnames=["品牌", "车型", "上市/改款日期", "上市/改款年月", "类型"])
         w.writeheader()
@@ -216,7 +216,7 @@ def build_window_rows():
                     window_rows.append((brand, model, nname, ym, "平销期"))
 
     window_rows.sort(key=lambda r: (r[0], r[1], r[3], r[2]))
-    path = os.path.join(OUTPUT_DIR, "车型销售窗口期表.csv")
+    path = OUTPUT_DIR / "车型销售窗口期表.csv"
     with open(path, "w", newline="", encoding="utf-8-sig") as f:
         w = csv.writer(f)
         w.writerow(["品牌", "车型", "狭义车型名", "年月", "窗口期"])

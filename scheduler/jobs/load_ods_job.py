@@ -50,7 +50,7 @@ def load_style_ods(business_key: str | None = None) -> bool:
     try:
         target = _target_csv(business_key, style_data_dir, "style")
         logger.info("开始加载 16888 style → ODS (file=%s)", target or "ALL")
-        load_style_main(target)
+        load_style_main(target, expected_month=business_key[:7] if business_key else None)
         logger.info("style ODS 入库完成")
         return True
     except SkipTask:
@@ -65,7 +65,7 @@ def load_city_ods(business_key: str | None = None) -> bool:
     try:
         target = _target_csv(business_key, city_data_dir, "city")
         logger.info("开始加载 16888 city → ODS (file=%s)", target or "ALL")
-        load_city_main(target)
+        load_city_main(target, expected_month=business_key[:7] if business_key else None)
         logger.info("city ODS 入库完成")
         return True
     except SkipTask:

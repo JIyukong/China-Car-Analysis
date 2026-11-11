@@ -1,23 +1,4 @@
-USE dw_auto_stock;
-
--- 使用说明：
--- 1. 先将 data/manual_dimensions/dim_model_ads_matched.csv 导入 stg_dim_model_ads_manual。
--- 2. 再执行本 SQL，完成主存储表刷新、dim_model 命中标记和 ADS 子维度拉链刷新。
-
--- 非法必填项检查：若有结果，请先修正 CSV 再继续。
-SELECT model_name, ads_proportion_raw, ads_supplier, ads_supplier_mode, listed_at_raw
-FROM stg_dim_model_ads_manual
-WHERE model_name IS NULL
-   OR TRIM(model_name) = ''
-   OR ads_proportion_raw IS NULL
-   OR TRIM(ads_proportion_raw) = ''
-   OR ads_supplier IS NULL
-   OR TRIM(ads_supplier) = ''
-   OR ads_supplier_mode IS NULL
-   OR TRIM(ads_supplier_mode) = ''
-   OR listed_at_raw IS NULL
-   OR TRIM(listed_at_raw) = '';
-
+-- 由 Python 刷新命令在创建会话临时表后执行，仅新增或更新匹配行。
 INSERT INTO dim_model_ads_manual (
     model_name,
     ads_proportion_raw,
@@ -100,7 +81,7 @@ SELECT
         ELSE 'unknown'
     END AS listed_at_granularity,
     COALESCE(NULLIF(TRIM(source_file), ''), 'data/manual_dimensions/dim_model_ads_matched.csv') AS source_file
-FROM stg_dim_model_ads_manual
+FROM tmp_manual_dim_model_ads_manual
 WHERE model_name IS NOT NULL
   AND TRIM(model_name) <> ''
 ON DUPLICATE KEY UPDATE
@@ -113,17 +94,4 @@ ON DUPLICATE KEY UPDATE
     listed_at_granularity = VALUES(listed_at_granularity),
     source_file = VALUES(source_file);
 
-DELETE manual_ads
-FROM dim_model_ads_manual manual_ads
-LEFT JOIN (
-    SELECT DISTINCT TRIM(model_name) AS model_name
-    FROM stg_dim_model_ads_manual
-    WHERE model_name IS NOT NULL
-      AND TRIM(model_name) <> ''
-) stg
-    ON stg.model_name = manual_ads.model_name
-WHERE stg.model_name IS NULL;
-
 CALL sp_refresh_dim_model_ads_all();
-
-TRUNCATE TABLE stg_dim_model_ads_manual;
