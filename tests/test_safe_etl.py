@@ -20,8 +20,10 @@ def offline_cli(*args):
     )
 
 
-@pytest.mark.parametrize("script", ["scripts/init_database.py", "scripts/run_sql_file.py"])
-def test_database_admin_commands_are_retired(script):
+@pytest.mark.parametrize(
+    "script", ["scripts/init_database.py", "scripts/run_sql_file.py", "scripts/check_scheduler_heartbeat.py"]
+)
+def test_legacy_commands_fail_after_retirement(script):
     result = offline_cli(script, "db/ods/01_create_ods_sales_monthly.sql")
     assert result.returncode == 2
     assert "已停用" in result.stderr
@@ -132,3 +134,32 @@ def test_operational_sources_contain_no_destructive_table_statements():
     )
     violations = [str(path.relative_to(ROOT)) for path in paths if destructive.search(path.read_text(encoding="utf-8"))]
     assert not violations
+
+
+@pytest.mark.parametrize("current_brand", [1, 9])
+def test_excel_refresh_preserves_existing_relationship_dates(current_brand):
+    from datetime import date
+
+    import pandas as pd
+
+    from pipelines.dim.seed_dim_from_excel import refresh_bridge_brand_oem
+
+    writes = []
+    current = SimpleNamespace(brand_id=current_brand, effective_start_date=date(2025, 3, 1))
+
+    class Connection:
+        def execute(self, sql, params):
+            if str(sql).lstrip().startswith("SELECT"):
+                assert params["oem_id"] == 2
+                return SimpleNamespace(one_or_none=lambda: current)
+            writes.append(params)
+
+    source = pd.DataFrame([{"品牌": "示例品牌", "主机厂名称": "示例厂商"}])
+    args = (Connection(), source, {"示例品牌": (1, "示例品牌")}, {"示例厂商": (2, "示例厂商", 3, "示例公司")})
+    if current_brand == 1:
+        assert refresh_bridge_brand_oem(*args) == 1
+        assert writes[0]["effective_start_date"] == "2025-03-01"
+    else:
+        with pytest.raises(ValueError, match="生效日期"):
+            refresh_bridge_brand_oem(*args)
+        assert not writes

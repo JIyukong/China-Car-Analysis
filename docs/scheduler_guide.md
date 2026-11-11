@@ -38,6 +38,8 @@ python -m scheduler.runner --chain daily --step load_index_daily
 
 按业务键新增或更新，保留未出现在 CSV 中的历史记录。刷新过程只清理当前连接创建的临时表。缺维阈值以 [dimension_readiness.py](../pipelines/dim/dimension_readiness.py) 为准。
 
+主机厂工作簿 `汽车品牌主机厂信息表.xlsx` 放在本地仓库根目录。使用 `python -m pipelines.dim.seed_dim_from_excel` 更新已有品牌关系时会保留其生效日期。工作簿没有品牌变更的生效日期，遇到品牌变更会停止导入，待确认日期后单独维护关系。
+
 ## MySQL 账号
 
 给 ETL 使用新建的专用 MySQL 账号，通过 `.env` 的 `DB_USER` 和 `DB_PASSWORD` 配置。由管理员在独立会话中创建和授予权限，管理员凭据放在项目及智能体可访问的环境之外。

@@ -130,18 +130,21 @@ def upsert_rows(rows: list[dict[str, object]]) -> int:
     return len(rows)
 
 
-def main(file_path: Path | None = None) -> None:
+def main(file_path: Path | None = None, *, expected_month: str | None = None) -> None:
     """脚本入口。
 
     :param file_path: 指定单个 CSV；None 时批量处理 data 目录全部 city_*.csv。
-        调度器按月调用时传目标月 CSV，避免每月重放全部历史文件。
+    :param expected_month: 指定目标月时，写入前检查 CSV 非空且每行属于该月。
     """
+    month_start = parse_month(expected_month) if expected_month is not None else None
     files = discover_files(file_path)
     logger.info("发现 %d 个 city CSV 文件待入库", len(files))
 
     total_rows = 0
     for csv_file in files:
         rows = list(read_rows(csv_file))
+        if month_start is not None and (not rows or any(row["stat_month"] != month_start for row in rows)):
+            raise ValueError(f"{csv_file.name} 没有数据或包含非目标月份的行（目标月 {expected_month}）")
         inserted = upsert_rows(rows)
         total_rows += inserted
         logger.info("已处理 %s，共 %d 行", csv_file.name, inserted)

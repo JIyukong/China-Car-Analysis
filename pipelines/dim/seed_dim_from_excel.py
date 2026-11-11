@@ -256,6 +256,15 @@ def refresh_bridge_brand_oem(
 ) -> int:
     """按业务键补充或更新关系，保留已有历史和未出现在 Excel 中的关系。"""
 
+    current_sql = text(
+        """
+        SELECT brand_id, effective_start_date
+        FROM bridge_brand_oem
+        WHERE oem_id = :oem_id AND is_current = 1
+          AND effective_end_date = :effective_end_date
+        FOR UPDATE
+        """
+    )
     sql = text(
         """
         INSERT INTO bridge_brand_oem (
@@ -308,6 +317,11 @@ def refresh_bridge_brand_oem(
 
         brand_id, normalized_brand = brand
         oem_id, normalized_oem, company_id, company_name = oem
+        current = conn.execute(
+            current_sql, {"oem_id": oem_id, "effective_end_date": CURRENT_EFFECTIVE_END_DATE}
+        ).one_or_none()
+        if current is not None and current.brand_id != brand_id:
+            raise ValueError(f"主机厂 {normalized_oem} 的品牌已变更，需确认生效日期后单独维护关系")
         payload = build_bridge_payload(
             brand_id=brand_id,
             brand_name=normalized_brand,
@@ -315,6 +329,7 @@ def refresh_bridge_brand_oem(
             oem_name=normalized_oem,
             company_id=company_id,
             company_name=company_name,
+            effective_start_date=str(current.effective_start_date) if current else CURRENT_EFFECTIVE_START_DATE,
         )
         conn.execute(sql, payload)
         count += 1
