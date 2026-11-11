@@ -1,7 +1,6 @@
 """刷新地区维度表 dim_area（大区/省/地级市）。
 
-从 data/manual_dimensions/dim_area.csv 装载至 stg_dim_area，
-再执行 db/manual/refresh_dim_area.sql 完成主表 UPSERT。
+校验 CSV 后通过会话临时表增量更新，保留已有记录。
 """
 from __future__ import annotations
 
@@ -13,11 +12,10 @@ from pathlib import Path
 from sqlalchemy import text
 
 from base_infra.db import engine
-
+from pipelines.dim.manual_refresh import upsert_dimension
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_CSV_PATH = PROJECT_ROOT / "data" / "manual_dimensions" / "dim_area.csv"
-DEFAULT_REFRESH_SQL_PATH = PROJECT_ROOT / "db" / "manual" / "refresh_dim_area.sql"
 
 # CSV 白名单校验取值，与 dim_area 表 ENUM 保持一致
 ALLOWED_REGION_NAMES = {"华东", "华南", "华北", "华中", "西南", "西北", "东北"}
@@ -70,12 +68,14 @@ def read_dim_area_csv(csv_path: Path) -> list[dict]:
             city_level = str(row.get("city_level", "")).strip()
             province_type = str(row.get("province_type", "")).strip()
             region_name = str(row.get("region_name", "")).strip()
+            required_values = ("city_name", "province_code", "region_code")
 
             # 白名单校验：任一维度不在允许集合内即视为非法
             if (
                 city_level not in ALLOWED_CITY_LEVELS
                 or province_type not in ALLOWED_PROVINCE_TYPES
                 or region_name not in ALLOWED_REGION_NAMES
+                or any(not (row.get(column) or "").strip() for column in required_values)
             ):
                 invalid_rows.append((city_code, city_level, province_type, region_name))
                 continue
@@ -102,43 +102,10 @@ def read_dim_area_csv(csv_path: Path) -> list[dict]:
         return rows
 
 
-def execute_sql_file(sql_path: Path) -> None:
-    """按分号拆分执行 SQL 文件，忽略注释与空行。"""
-    sql_content = sql_path.read_text(encoding="utf-8")
-    with engine.begin() as conn:
-        for statement in sql_content.split(";"):
-            lines = statement.split("\n")
-            sql_lines = [ln for ln in lines if not ln.strip().startswith("--")]
-            clean = "\n".join(sql_lines).strip()
-            if clean:
-                conn.execute(text(clean))
-
-
-def refresh_dim_area(
-    csv_path: Path = DEFAULT_CSV_PATH,
-    refresh_sql_path: Path = DEFAULT_REFRESH_SQL_PATH,
-) -> None:
-    """执行 dim_area 刷新主流程。"""
+def refresh_dim_area(csv_path: Path = DEFAULT_CSV_PATH) -> None:
     rows = read_dim_area_csv(csv_path)
     with engine.begin() as conn:
-        conn.execute(text("TRUNCATE TABLE stg_dim_area"))       # 清空暂存表
-        conn.execute(
-            text(
-                "INSERT INTO stg_dim_area ("
-                "city_code, city_name, city_short_name, city_level, "
-                "province_code, province_name, province_short_name, province_type, "
-                "region_code, region_name, source_file) "
-                "VALUES ("
-                ":city_code, :city_name, :city_short_name, :city_level, "
-                ":province_code, :province_name, :province_short_name, :province_type, "
-                ":region_code, :region_name, :source_file)"
-            ),
-            rows,
-        )
-
-    execute_sql_file(refresh_sql_path)                          # 执行 UPSERT+清理
-
-    with engine.begin() as conn:
+        upsert_dimension(conn, "dim_area", rows)
         total = conn.execute(text("SELECT COUNT(*) FROM dim_area")).scalar_one()
         region_cnt = conn.execute(
             text("SELECT COUNT(DISTINCT region_code) FROM dim_area"),
@@ -159,22 +126,13 @@ def build_parser() -> argparse.ArgumentParser:
         default=str(DEFAULT_CSV_PATH),
         help="手工维护 CSV 路径",
     )
-    parser.add_argument(
-        "--sql",
-        dest="sql_path",
-        default=str(DEFAULT_REFRESH_SQL_PATH),
-        help="刷新 SQL 脚本路径（默认 db/manual/refresh_dim_area.sql）",
-    )
     return parser
 
 
 def main() -> None:
     parser = build_parser()
     args = parser.parse_args()
-    refresh_dim_area(
-        csv_path=Path(args.csv_path),
-        refresh_sql_path=Path(args.sql_path),
-    )
+    refresh_dim_area(csv_path=Path(args.csv_path))
 
 
 if __name__ == "__main__":

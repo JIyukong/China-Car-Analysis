@@ -6,10 +6,6 @@
 
 USE dw_auto_stock;
 
-SET FOREIGN_KEY_CHECKS = 0;
-DROP TABLE IF EXISTS ods_stock_daily;
-SET FOREIGN_KEY_CHECKS = 1;
-
 -- 股价日线 贴源表
 CREATE TABLE IF NOT EXISTS ods_stock_daily (
     id                BIGINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键ID',

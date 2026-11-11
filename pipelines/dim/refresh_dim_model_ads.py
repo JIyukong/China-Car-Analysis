@@ -10,11 +10,10 @@ from pathlib import Path
 from sqlalchemy import text
 
 from base_infra.db import engine
-
+from pipelines.dim.manual_refresh import upsert_dimension
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_CSV_PATH = PROJECT_ROOT / "data" / "manual_dimensions" / "dim_model_ads_matched.csv"
-DEFAULT_REFRESH_SQL_PATH = PROJECT_ROOT / "db" / "manual" / "refresh_dim_model_ads_manual.sql"
 DEFAULT_SOURCE_FILE = "data/manual_dimensions/dim_model_ads_matched.csv"
 
 REQUIRED_COLUMNS = {"model_name", "ads_proportion", "ads_supplier", "ads_supplier_mode", "上市时间"}
@@ -151,52 +150,10 @@ def read_dim_model_ads_csv(csv_path: Path) -> list[dict]:
         return rows
 
 
-def execute_sql_file(sql_path: Path) -> None:
-    """执行刷新 SQL 文件。"""
-    sql_content = sql_path.read_text(encoding="utf-8")
-    with engine.begin() as conn:
-        for statement in sql_content.split(";"):
-            lines = statement.split("\n")
-            sql_lines = [line for line in lines if not line.strip().startswith("--")]
-            clean = "\n".join(sql_lines).strip()
-            if clean:
-                conn.execute(text(clean))
-
-
-def refresh_dim_model_ads(
-    csv_path: Path = DEFAULT_CSV_PATH,
-    refresh_sql_path: Path = DEFAULT_REFRESH_SQL_PATH,
-) -> None:
-    """装载 CSV 到暂存表，并执行 SQL 刷新。"""
+def refresh_dim_model_ads(csv_path: Path = DEFAULT_CSV_PATH) -> None:
     rows = read_dim_model_ads_csv(csv_path)
     with engine.begin() as conn:
-        conn.execute(text("TRUNCATE TABLE stg_dim_model_ads_manual"))
-        conn.execute(
-            text(
-                """
-                INSERT INTO stg_dim_model_ads_manual (
-                    model_name,
-                    ads_proportion_raw,
-                    ads_supplier,
-                    ads_supplier_mode,
-                    listed_at_raw,
-                    source_file
-                ) VALUES (
-                    :model_name,
-                    :ads_proportion_raw,
-                    :ads_supplier,
-                    :ads_supplier_mode,
-                    :listed_at_raw,
-                    :source_file
-                )
-                """
-            ),
-            rows,
-        )
-
-    execute_sql_file(refresh_sql_path)
-
-    with engine.begin() as conn:
+        upsert_dimension(conn, "dim_model_ads_manual", rows)
         manual_count = conn.execute(text("SELECT COUNT(*) FROM dim_model_ads_manual")).scalar_one()
         missing_count = conn.execute(
             text("SELECT COUNT(*) FROM dim_model_ads_manual WHERE is_in_dim_model = 0"),
@@ -220,19 +177,13 @@ def build_parser() -> argparse.ArgumentParser:
         default=str(DEFAULT_CSV_PATH),
         help="手工维护 CSV 路径",
     )
-    parser.add_argument(
-        "--sql",
-        dest="sql_path",
-        default=str(DEFAULT_REFRESH_SQL_PATH),
-        help="刷新 SQL 脚本路径（默认 db/manual/refresh_dim_model_ads_manual.sql）",
-    )
     return parser
 
 
 def main() -> None:
     parser = build_parser()
     args = parser.parse_args()
-    refresh_dim_model_ads(csv_path=Path(args.csv_path), refresh_sql_path=Path(args.sql_path))
+    refresh_dim_model_ads(csv_path=Path(args.csv_path))
 
 
 if __name__ == "__main__":

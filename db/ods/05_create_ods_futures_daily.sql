@@ -9,10 +9,6 @@
 
 USE dw_auto_stock;
 
-SET FOREIGN_KEY_CHECKS = 0;
-DROP TABLE IF EXISTS ods_futures_daily;
-SET FOREIGN_KEY_CHECKS = 1;
-
 CREATE TABLE IF NOT EXISTS ods_futures_daily (
     id                  BIGINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键ID',
     commodity_id        BIGINT UNSIGNED DEFAULT NULL            COMMENT '品种ID（可选映射，便于下游使用）',

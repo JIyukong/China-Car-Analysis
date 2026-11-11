@@ -1,134 +1,26 @@
-# 指标口径定义
+# 指标口径
 
-> 本文档定义所有业务指标的口径、计算公式、数据源和边界条件。
+## 销量和市场份额
 
----
+| 指标 | 粒度 | 计算口径 |
+| --- | --- | --- |
+| 月销量 `sales_volume` | 车型 × 月 | 取 16888 style 来源的销量（辆）。城市分析单独用 city 数据 |
+| 月度总销量 `total_sales` | 公司或品牌 × 月 | 按 `dwd_sales_monthly_model` 中的 `company_id` 或 `brand_id` 分组求和 |
+| 市占率 `market_share` | 公司或品牌 × 月 | 主体销量 ÷ 当月同一维度下可归属记录的销量之和 × 100，保留四位小数。公司和品牌分别使用各自的分母，份额受来源及维度覆盖限制 |
+| 同比 `yoy_growth` | 公司或品牌 × 月 | （本月销量 − 同一主体上年同月销量）÷ 上年同月销量 × 100 |
+| 环比 `mom_growth` | 公司或品牌 × 月 | （本月销量 − 同一主体上月销量）÷ 上月销量 × 100 |
 
-## 一、销量类指标
+同比和环比的业务口径要求基期有正销量，结果保留两位小数。当前 [汇总存储过程](../db/procedures/04_sp_etl_agg_sales_monthly.sql) 将比较月份向前平移后关联本月，实际会匹配后续月份。消费 DWS 的同比和环比字段前，需用样本复核或按上表口径重新计算。表字段与月份类型见 [数据字典](data-dictionary.md)。
 
-### 1. 月销量（sales_volume）
+## 行情与关联分析
 
-- **口径**：某车型在某自然月的全国上险/交强险数据量
-- **数据源**：`ods_sales_monthly_model`（16888 口径）
-- **粒度**：车型 × 月
-- **注意**：16888 数据为月初公布，可能存在后续修正
+以下是报表设计口径，报表交付进度见 [项目路线图](roadmap.md)。
 
-### 2. 上市公司月度总销量（total_sales）
+| 指标 | 粒度 | 计算口径 |
+| --- | --- | --- |
+| 月度涨跌幅 `monthly_return` | 股票 × 月 | （最后一个交易日收盘价 − 第一个交易日开盘价）÷ 第一个交易日开盘价 × 100 |
+| 成交量加权均价 `vwap` | 股票 × 统计窗口 | 同一股票和币种下，成交额之和 ÷ 成交量之和，先核对两者的单位 |
+| 销量与股价变化率之比 | 公司 × 月 | 销量同比变化率 ÷ 同期股价涨跌幅。分母接近零时记为缺失，计算前明确阈值 |
+| 销量领先性 | 公司 × 月 | 比较本月销量同比与下月股价涨跌幅的方向一致性 |
 
-- **口径**：某上市公司旗下所有车型在某月销量之和
-- **数据源**：`dwd_sales_monthly_model`（关联 `dim_model` → `dim_oem` → `dim_company`）
-- **粒度**：上市公司 × 月
-- **SQL 示例**：
-
-```sql
-SELECT
-    dsm.stat_month,
-    dc.company_name,
-    SUM(dsm.sales_volume) AS total_sales
-FROM dwd_sales_monthly_model dsm
-JOIN dim_model dm ON dm.id = dsm.model_id
-JOIN dim_oem doem ON doem.id = dm.oem_id
-JOIN dim_company dc ON dc.id = doem.company_id
-GROUP BY dsm.stat_month, dc.company_name
-```
-
----
-
-## 二、比率类指标
-
-### 3. 市占率（market_share）
-
-- **口径**：某主体销量 / 当月全市场总销量 × 100%
-- **粒度**：可按公司/品牌/车型分别计算
-- **SQL 示例**：
-
-```sql
-SELECT
-    curr.stat_month,
-    curr.company_name,
-    curr.monthly_sales,
-    ROUND(curr.monthly_sales / total.monthly_sales * 100, 4) AS market_share
-FROM (
-    SELECT stat_month, company_name, SUM(sales_volume) AS monthly_sales
-    FROM dwd_sales_monthly_model
-    GROUP BY stat_month, company_name
-) curr
-JOIN (
-    SELECT stat_month, SUM(sales_volume) AS monthly_sales
-    FROM dwd_sales_monthly_model
-    GROUP BY stat_month
-) total ON total.stat_month = curr.stat_month
-```
-
-### 4. 同比增长率（yoy_growth_rate）
-
-- **口径**：(本月销量 - 去年同月销量) / 去年同月销量 × 100%
-- **边界**：去年同月销量为 0 或 NULL 时，增长率记为 NULL
-- **SQL 示例**：
-
-```sql
-SELECT
-    curr.stat_month,
-    curr.monthly_sales,
-    prev.monthly_sales AS prev_year_sales,
-    CASE
-        WHEN prev.monthly_sales > 0
-        THEN ROUND((curr.monthly_sales - prev.monthly_sales) / prev.monthly_sales * 100, 2)
-        ELSE NULL
-    END AS yoy_growth_rate
-FROM monthly_agg curr
-LEFT JOIN monthly_agg prev
-    ON DATE_SUB(curr.stat_month, INTERVAL 12 MONTH) = prev.stat_month
-```
-
-### 5. 环比增长率（mom_growth_rate）
-
-- **口径**：(本月销量 - 上月销量) / 上月销量 × 100%
-- **边界**：上月销量为 0 或 NULL 时，增长率记为 NULL
-- **SQL 示例**：
-
-```sql
-SELECT
-    curr.stat_month,
-    curr.monthly_sales,
-    last_month.monthly_sales AS prev_month_sales,
-    CASE
-        WHEN last_month.monthly_sales > 0
-        THEN ROUND((curr.monthly_sales - last_month.monthly_sales) / last_month.monthly_sales * 100, 2)
-        ELSE NULL
-    END AS mom_growth_rate
-FROM monthly_agg curr
-LEFT JOIN monthly_agg last_month
-    ON DATE_SUB(curr.stat_month, INTERVAL 1 MONTH) = last_month.stat_month
-```
-
----
-
-## 三、股价类指标（M2 后启用）
-
-### 6. 月度涨跌幅（monthly_return）
-
-- **口径**：(月末收盘价 - 月初开盘价) / 月初开盘价 × 100%
-- **数据源**：`ods_stock_daily`
-- **粒度**：股票 × 月
-
-### 7. 成交量加权均价（vwap）
-
-- **口径**：SUM(成交额) / SUM(成交量)
-- **数据源**：`ods_stock_daily`
-- **粒度**：股票 × 日/周/月
-
----
-
-## 四、关联分析指标（M5 后启用）
-
-### 8. 销量-股价弹性系数
-
-- **口径**：销量同比变化率 / 股价同期涨跌幅
-- **用途**：衡量销量增长对股价的驱动程度
-- **边界**：股价涨跌幅接近 0 时结果无意义，记为 NULL
-
-### 9. 销量领先指标
-
-- **口径**：比较月度销量同比变化率与下月股价涨跌幅的方向一致性
-- **用途**：验证"销量先行、股价滞后"的投资逻辑
+分析按月对齐销量与行情。行情可取当月最后一个交易日收盘价或当月成交量加权均价。多市场上市公司优先按 `bridge_company_stock.primary_market` 选择市场。使用销量解释后续股价时，按销量实际发布时间确定可用窗口。

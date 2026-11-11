@@ -6,11 +6,6 @@
 
 USE dw_auto_stock;
 
-SET FOREIGN_KEY_CHECKS = 0;
-DROP TABLE IF EXISTS ods_sales_monthly_model_city;
-DROP TABLE IF EXISTS ods_sales_monthly_model;
-SET FOREIGN_KEY_CHECKS = 1;
-
 -- 1. 车型月销量 贴源表（16888 style）
 CREATE TABLE IF NOT EXISTS ods_sales_monthly_model (
     id                    BIGINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键ID',

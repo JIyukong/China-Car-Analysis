@@ -1,127 +1,111 @@
-"""APScheduler 调度器入口：注册任务、启动阻塞调度、启动恢复与心跳。
+"""定时启动或手动运行同一套 ETL。"""
 
-用法:
-    python -m scheduler.runner
-"""
+import argparse
+import subprocess
+import sys
+from pathlib import Path
 
-from __future__ import annotations
+from scheduler.runtime import business_period, chain_steps, run_chain
+from scheduler.task_config import CHAINS, DAILY_TIMES, MONTHLY_CRON
 
-import importlib
-import socket
-
-from apscheduler.events import (
-    EVENT_JOB_ERROR,
-    EVENT_JOB_MAX_INSTANCES,
-    EVENT_JOB_MISSED,
-)
-from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
-from apscheduler.schedulers.blocking import BlockingScheduler
-from apscheduler.triggers.cron import CronTrigger
-
-from base_infra.config import get_settings
-from base_infra.logging_config import get_logger
-from scheduler.alert import send_alert
-from scheduler.runtime import (
-    run_recovery,
-    scheduler_holder,
-    start_heartbeat_thread,
-    task as task_decorator,
-)
-from scheduler.task_config import TASK_CONFIG
-
-logger = get_logger(__name__)
-
-# APScheduler 3.x 中事件触发的依赖任务通过 add_job 动态注册，
-# 给一个 24 小时的 misfire 宽限，避免调度器瞬时繁忙导致依赖任务被误判过期。
-# 注意：runtime.py 中动态 add_job 传 misfire_grace_time=None，在 3.x 语义是
-# "完全跳过 misfire 检查（永不过期）"，而非"当作 0 立即过期"。
-_MISFIRE_GRACE_SEC = 24 * 3600
+ROOT = Path(__file__).resolve().parents[1]
+TIMEZONE = "Asia/Shanghai"
 
 
-def _resolve_callable(dotted: str):
-    """按 ``"module:function"`` 动态导入业务 callable。"""
-    module_name, func_name = dotted.split(":", 1)
-    module = importlib.import_module(module_name)
-    return getattr(module, func_name)
+def print_plan(chain: str | None = None, period: str | None = None, *, from_csv=False, step=None) -> None:
+    for name in (chain,) if chain else CHAINS:
+        steps = chain_steps(name, from_csv=from_csv, step=step)
+        label = f"{name} {period}" if period else name
+        print(f"{label}: {' -> '.join(steps)}")
+        if not chain:
+            cron = MONTHLY_CRON.get(name)
+            if cron:
+                print(f"  北京时间每月 {cron['day']} 日 {cron['hour']:02}:{cron['minute']:02}")
+            else:
+                for task, (hour, minute) in DAILY_TIMES.items():
+                    print(f"  北京时间工作日 {hour:02}:{minute:02} {task}")
 
 
-def _on_scheduler_event(event) -> None:
-    """APScheduler 级事件（misfire / max_instances / executor error）告警。
+def run_scheduled(chain: str, step: str | None = None) -> None:
+    from scheduler.alert import send_alert
 
-    事件回调内绝不允许抛出异常，否则会污染 APScheduler 事件循环。
-    """
+    period = business_period(chain, None)
+    args = [sys.executable, "-m", "scheduler.runner", "--chain", chain, "--period", period]
+    if step:
+        args.extend(["--step", step])
+    timeout_seconds = 7200 if chain == "daily" else 21600
     try:
-        name = {
-            EVENT_JOB_ERROR: "JOB_ERROR",
-            EVENT_JOB_MISSED: "JOB_MISSED",
-            EVENT_JOB_MAX_INSTANCES: "JOB_MAX_INSTANCES",
-        }.get(event.code, str(event.code))
-        msg = (
-            f"调度事件 {name}: job_id={getattr(event, 'job_id', '?')} "
-            f"executor={getattr(event, 'executor', '?')} "
-            f"exc={getattr(event, 'exception', '')}"
-        )
-        logger.warning(msg)
-        send_alert("WARNING", "scheduler", "-", msg)
-    except Exception:  # noqa: BLE001 - 监听器不得抛错
-        logger.exception("调度事件回调自身异常")
+        result = subprocess.run(args, cwd=ROOT, check=False, timeout=timeout_seconds)
+    except subprocess.TimeoutExpired:
+        send_alert("ERROR", step or chain, period, "ETL 执行超时，请查看日志")
+        raise
+    if result.returncode:
+        send_alert("ERROR", step or chain, period, f"ETL 执行失败，退出码 {result.returncode}，请查看日志")
 
 
-def create_scheduler() -> BlockingScheduler:
-    """创建 BlockingScheduler 并按 TASK_CONFIG 注册全部任务。"""
-    settings = get_settings()
+def create_scheduler():
+    from apscheduler.schedulers.blocking import BlockingScheduler
+
     scheduler = BlockingScheduler(
-        timezone="Asia/Shanghai",
-        jobstores={"default": SQLAlchemyJobStore(url=settings.database_url)},
-        job_defaults={
-            "misfire_grace_time": _MISFIRE_GRACE_SEC,
-            "coalesce": True,
-            "max_instances": 1,
-        },
+        timezone=TIMEZONE,
+        job_defaults={"coalesce": True, "max_instances": 1, "misfire_grace_time": 3600},
     )
-
-    for task_id, cfg in TASK_CONFIG.items():
-        raw_func = _resolve_callable(cfg["callable"])
-        wrapped = task_decorator(task_id, cfg)(raw_func)
-        # TASK_REGISTRY 由装饰器自动写入；wrapped 即注册后的可调用对象
-        cron_cfg = cfg.get("cron")
-        if cron_cfg:
-            scheduler.add_job(
-                wrapped,
-                CronTrigger(**cron_cfg),
-                id=task_id,
-                name=task_id,
-                replace_existing=True,
-            )
-            logger.info("注册 cron 任务: %s → %s", task_id, cron_cfg)
-        else:
-            logger.info("注册事件触发任务: %s（无 cron，由上游触发）", task_id)
-
-    scheduler.add_listener(
-        _on_scheduler_event,
-        EVENT_JOB_ERROR | EVENT_JOB_MISSED | EVENT_JOB_MAX_INSTANCES,
-    )
-    scheduler_holder.scheduler = scheduler
+    for chain, cron in MONTHLY_CRON.items():
+        scheduler.add_job(run_scheduled, "cron", args=(chain,), id=chain, **cron)
+    for step, (hour, minute) in DAILY_TIMES.items():
+        scheduler.add_job(
+            run_scheduled,
+            "cron",
+            args=("daily", step),
+            id=step,
+            day_of_week="mon-fri",
+            hour=hour,
+            minute=minute,
+        )
     return scheduler
 
 
-def main() -> None:
-    """调度器启动入口。"""
-    logger.info("调度器启动（host=%s）...", socket.gethostname())
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description="CarApp 采集与 ETL")
+    parser.add_argument("--chain", choices=CHAINS)
+    parser.add_argument("--period", help="月链 YYYY-MM，日链 YYYY-MM-DD")
+    parser.add_argument("--from-csv", action="store_true", help="用目标月的本地 CSV，跳过爬取")
+    parser.add_argument("--step", choices=DAILY_TIMES, help="只运行一项独立的日链任务")
+    parser.add_argument("--plan", action="store_true", help="离线预览步骤")
+    args = parser.parse_args(argv)
+
+    if not args.chain and (args.period or args.from_csv or args.step):
+        parser.error("--period、--from-csv、--step 需要 --chain")
+    try:
+        period = business_period(args.chain, args.period) if args.chain else None
+        if args.chain:
+            chain_steps(args.chain, from_csv=args.from_csv, step=args.step)
+    except ValueError as exc:
+        parser.error(str(exc))
+
+    if args.plan:
+        print_plan(args.chain, period, from_csv=args.from_csv, step=args.step)
+        return 0
+
+    from base_infra.logging_config import get_logger
+
+    logger = get_logger(__name__)
+    if args.chain:
+        try:
+            return 0 if run_chain(args.chain, period, from_csv=args.from_csv, step=args.step) else 1
+        except Exception:
+            logger.exception("ETL 启动失败")
+            return 1
+
     scheduler = create_scheduler()
-
     for job in scheduler.get_jobs():
-        logger.info("已注册: %s → %s", job.id, job.trigger)
-
-    # 启动前 recovery + 心跳：清扫僵尸记录、补触发缺口、初始化心跳行
-    run_recovery(scheduler)
-    start_heartbeat_thread()
-
+        logger.info("定时任务 %s: %s", job.id, job.trigger)
     try:
         scheduler.start()
     except (KeyboardInterrupt, SystemExit):
         logger.info("调度器已停止")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

@@ -5,9 +5,8 @@
     - 城市车型月销量（city）：每月 20~25 号发布上月数据
 
 因此拆成两条独立月链，cron 在各自窗口内每日探测，由 ODS 行数判断上月数据是否
-到位，未到位抛 :class:`scheduler.runtime.SkipTask`，次日继续探测，到位后由下游
-事件驱动。超时与强杀由 runtime.@task 装饰器在进程层兜底；本模块内部 Popen 另设
-一个安全上限，避免脚本卡死时长时间无输出。
+到位，未到位抛 :class:`scheduler.runtime.SkipTask`，次日继续探测。
+已到位则从 ODS 后面的步骤继续。爬虫子进程有独立的超时上限。
 """
 
 from __future__ import annotations
@@ -22,24 +21,16 @@ from pathlib import Path
 
 from sqlalchemy import text
 
-try:
-    from base_infra.config import get_settings
-    from base_infra.db import engine
-    from base_infra.logging_config import get_logger
-    from scheduler import alert
-    from scheduler.runtime import SkipTask
-except ImportError:
-    from base_infra.db import engine
-    from base_infra.logging_config import get_logger
-    from scheduler import alert
-    from scheduler.runtime import SkipTask
+from base_infra.config import get_settings
+from base_infra.db import engine
+from base_infra.logging_config import get_logger
+from scheduler import alert
+from scheduler.runtime import AlreadyLoaded, SkipTask
 
 logger = get_logger(__name__)
 
-# Popen 自身的安全上限（秒）。比 runtime 的 timeout_minutes(180) 略短，
-# 确保 Popen 先触发、能完整记录 tail stdout 并优雅 return False。
+# Popen 安全上限，超时后记录输出尾部并停止爬虫进程树。
 _POPEN_TIMEOUT_SEC = 170 * 60
-# 失败时回写到 scheduler_run_log.error_msg 的 stdout 尾部长度
 _TAIL_CHARS = 4000
 # 判定目标月数据"已到位"所需的最小行数（防止抓到半截页面误判）：
 # style 每月约 500+ 行，city 每月约 25000 行，阈值取预期的 ~80%
@@ -183,7 +174,7 @@ def _crawl_one(
 ) -> bool:
     """通用单源月度爬取：前置 ODS 去重 → 子进程抓取 → 后置 CSV 就绪校验。
 
-    - 前置：ODS 已有目标月足够行数 → 抛 SkipTask（窗口内后续每日不重抓）。
+    - 前置：ODS 已有目标月足够行数 → 从清洗步骤继续（窗口内后续每日不重抓）。
     - 后置：抓完后本地 CSV 仍无目标月数据 → 抛 SkipTask（站点尚未发布，次日再探）。
       入库由下游 load_*_ods 任务完成，故此处校验 CSV 而非 ODS。
     """
@@ -192,21 +183,18 @@ def _crawl_one(
 
     existing = _ods_rows_for_month(ods_table, month)
     if existing >= min_rows:
-        raise SkipTask(
+        raise AlreadyLoaded(
             f"{name} {month} 已在 ODS 存在 {existing} 行（≥{min_rows}），跳过抓取"
         )
 
     root = _project_root()
     script = root / script_rel
-    # 月链只抓最近一个月；headless 适合服务器/定时任务；加 --resume 以便
-    # 断点续传（已完成月份会跳过，未完成月份从断点页继续）。
-    args = ["--months", "latest", "--headless", "--resume"]
+    args = ["--target", month, "--headless", "--resume"]
 
     if not _run_script(name, script, args, root):
         return False
 
-    # 爬虫 latest 模式自动探测"站点最新有数据月份"，若目标月尚未发布，
-    # 抓到的是上上月，本地 CSV 不会出现目标月，据此判断未就绪。
+    # 目标月尚未发布时，CSV 不会达到入库所需行数。
     csv_path = root / data_dir_rel / f"{csv_prefix}_{month}.csv"
     new_rows = _csv_rows_for_month(csv_path, month)
     if new_rows < min_rows:
