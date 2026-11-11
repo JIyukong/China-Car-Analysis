@@ -1,0 +1,19 @@
+#!/bin/sh
+set -eu
+
+# Run against the Git index so unstaged fixes cannot mask a broken commit.
+python -X utf8 - <<'PY'
+import subprocess
+import sys
+from pathlib import Path
+from tempfile import TemporaryDirectory
+
+with TemporaryDirectory(prefix="carapp-smoke-") as directory:
+    prefix = Path(directory).as_posix() + "/"
+    subprocess.run(["git", "checkout-index", "--all", f"--prefix={prefix}"], check=True)
+    for args in [("-m", "scheduler.runner", "--plan"), ("-m", "pytest")]:
+        result = subprocess.run([sys.executable, "-X", "utf8", *args], cwd=directory)
+        if result.returncode:
+            print("CarApp smoke check failed. Fix and stage the changes before committing.", file=sys.stderr)
+            sys.exit(result.returncode)
+PY

@@ -7,10 +7,6 @@
 
 USE dw_auto_stock;
 
-SET FOREIGN_KEY_CHECKS = 0;
-DROP TABLE IF EXISTS ods_stock_finance;
-SET FOREIGN_KEY_CHECKS = 1;
-
 CREATE TABLE IF NOT EXISTS ods_stock_finance (
     id                  BIGINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键ID',
     stock_id            BIGINT UNSIGNED DEFAULT NULL            COMMENT '股票ID（可选映射，用于下游使用便利）',

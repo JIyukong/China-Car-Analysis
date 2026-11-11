@@ -1,11 +1,26 @@
 # 数据字典
 
-> 口径：以当前仓库真实 DDL 与已落地脚本为准。
-> 状态标记：`已落地` / `部分落地` / `规划中`。
+本页列出主要分析字段和事实表的唯一键。完整字段、约束及默认值以链接中的 DDL 和对应迁移为准。主题的数据流见 [数仓分层](warehouse-spec.md)。
+
+## 事实表与唯一键
+
+| 表 | 主要唯一键 | DDL |
+| --- | --- | --- |
+| `ods_sales_monthly_model` | 来源、月份、原始车型、原始厂商 | [销量 ODS](../db/ods/01_create_ods_sales_monthly.sql) |
+| `ods_sales_monthly_model_city` | 来源、月份、原始车型、原始城市 | [销量 ODS](../db/ods/01_create_ods_sales_monthly.sql) |
+| `ods_stock_daily` | 原始证券代码、交易日、来源 | [股票日线 ODS](../db/ods/02_create_ods_stock_daily.sql) |
+| `ods_stock_finance` | 原始证券代码、报告期、报告类型 | [股票财务 ODS](../db/ods/03_create_ods_stock_finance.sql) |
+| `ods_index_daily` | 原始指数代码、交易日、来源 | [指数 ODS](../db/ods/04_create_ods_index_daily.sql) |
+| `ods_futures_daily` | 原始商品代码、交易日、来源、合约类型 | [期货 ODS](../db/ods/05_create_ods_futures_daily.sql) |
+| `dwd_sales_monthly_model` | 月份、车型 ID | [车型销量 DWD](../db/dwd/01_create_dwd_sales_monthly_model.sql) |
+| `dwd_sales_monthly_model_city` | 行哈希 | [城市销量及股票 DWD](../db/dwd/02_create_dwd_extend.sql) |
+| `dwd_stock_daily` | 证券 ID、交易日 | [城市销量及股票 DWD](../db/dwd/02_create_dwd_extend.sql) |
+| `dwd_stock_finance` | 证券 ID、报告期、报告类型 | [城市销量及股票 DWD](../db/dwd/02_create_dwd_extend.sql) |
+| `dws_sales_monthly_company` / `dws_sales_monthly_brand` | 月份与公司 ID / 品牌 ID | [销量 DWS](../db/dws/01_create_dws_sales_monthly.sql) |
 
 ## 一、核心维度层
 
-### 1.1 `dim_company`（已落地）
+### 1.1 `dim_company`
 
 | 字段名 | 类型 | 说明 |
 |--------|------|------|
@@ -17,7 +32,7 @@
 | `aliases` | `JSON` | 名称别名集合 |
 | `is_listed` | `TINYINT(1)` | 是否上市 |
 
-### 1.2 `dim_oem`（已落地）
+### 1.2 `dim_oem`
 
 | 字段名 | 类型 | 说明 |
 |--------|------|------|
@@ -26,12 +41,12 @@
 | `oem_name` | `VARCHAR(128)` | 主机厂名称 |
 | `company_id` | `BIGINT UNSIGNED` | 关联上市公司 ID |
 | `company_name_snapshot` | `VARCHAR(64)` | 上市公司名称快照 |
-| `oem_type` | `ENUM` | 自主 / 合资 / 进口 / 其他 |
+| `aliases` | `JSON` | 主机厂别名数组 |
 | `first_seen_month` | `DATE` | 首次出现月份 |
 | `last_seen_month` | `DATE` | 最后出现月份 |
 | `is_active` | `TINYINT(1)` | 是否活跃 |
 
-### 1.3 `dim_brand`（已落地）
+### 1.3 `dim_brand`
 
 | 字段名 | 类型 | 说明 |
 |--------|------|------|
@@ -40,7 +55,7 @@
 | `brand_name` | `VARCHAR(128)` | 品牌名称 |
 | `is_joint_venture_brand` | `TINYINT(1)` | 是否合资品牌 |
 
-### 1.4 `dim_model`（已落地）
+### 1.4 `dim_model`
 
 | 字段名 | 类型 | 说明 |
 |--------|------|------|
@@ -53,13 +68,13 @@
 | `oem_name` | `VARCHAR(128)` | 主机厂名称快照 |
 | `ads_id` | `BIGINT UNSIGNED` | 当前有效 ADS 拉链记录 ID |
 | `ads_supplier_name` | `VARCHAR(128)` | 当前有效 ADS 供应商名称 |
-| `energy_type` | `ENUM` | 燃油 / 新能源 / 其他 |
-| `vehicle_type` | `ENUM` | 轿车 / SUV / MPV / 跑车 / 皮卡 / 微面 / 其他 |
+| `energy_type` | `ENUM` | 燃油 / 新能源 / 其他 / 占位 |
+| `vehicle_type` | `ENUM` | 轿车 / SUV / MPV / 其他 / 占位 |
 | `first_seen_month` | `DATE` | 首次出现月份 |
 | `last_seen_month` | `DATE` | 最后出现月份 |
 | `is_active` | `TINYINT(1)` | 是否活跃 |
 
-### 1.5 `dim_date`（已落地）
+### 1.5 `dim_date`
 
 | 字段名 | 类型 | 说明 |
 |--------|------|------|
@@ -73,7 +88,7 @@
 | `is_month_start` | `TINYINT(1)` | 是否月初 |
 | `is_month_end` | `TINYINT(1)` | 是否月末 |
 
-### 1.6 `dim_stock`（已落地）
+### 1.6 `dim_stock`
 
 | 字段名 | 类型 | 说明 |
 |--------|------|------|
@@ -87,7 +102,7 @@
 
 ## 二、桥接层
 
-### 2.1 `bridge_brand_oem`（已落地）
+### 2.1 `bridge_brand_oem`
 
 | 字段名 | 类型 | 说明 |
 |--------|------|------|
@@ -99,7 +114,7 @@
 | `effective_end_date` | `DATE` | 生效结束日期 |
 | `is_current` | `TINYINT(1)` | 是否当前有效 |
 
-### 2.2 `bridge_company_stock`（已落地）
+### 2.2 `bridge_company_stock`
 
 | 字段名 | 类型 | 说明 |
 |--------|------|------|
@@ -111,7 +126,7 @@
 
 ## 三、ODS 贴源层
 
-### 3.1 `ods_sales_monthly_model`（已落地）
+### 3.1 `ods_sales_monthly_model`
 
 | 字段名 | 类型 | 说明 |
 |--------|------|------|
@@ -128,7 +143,7 @@
 | `row_hash` | `CHAR(32)` | 幂等哈希 |
 | `fetch_time` | `DATETIME` | 入库时间 |
 
-### 3.2 `ods_sales_monthly_model_city`（已落地）
+### 3.2 `ods_sales_monthly_model_city`
 
 | 字段名 | 类型 | 说明 |
 |--------|------|------|
@@ -146,12 +161,15 @@
 | `row_hash` | `CHAR(32)` | 幂等哈希 |
 | `fetch_time` | `DATETIME` | 入库时间 |
 
-### 3.3 `ods_stock_daily`（部分落地）
+### 3.3 `ods_stock_daily`
 
 | 字段名 | 类型 | 说明 |
 |--------|------|------|
 | `id` | `BIGINT UNSIGNED` | 主键 ID |
-| `stock_id` | `BIGINT UNSIGNED` | 股票 ID |
+| `stock_id` | `BIGINT UNSIGNED` | 可选的证券 ID |
+| `stock_code_raw` | `VARCHAR(32)` | 原始证券代码 |
+| `market_raw` | `VARCHAR(8)` | 原始市场代码 |
+| `source_symbol` | `VARCHAR(32)` | 数据源请求使用的证券代码 |
 | `trade_date` | `DATE` | 交易日 |
 | `open` | `DECIMAL(12,4)` | 开盘价 |
 | `high` | `DECIMAL(12,4)` | 最高价 |
@@ -163,11 +181,11 @@
 | `source` | `ENUM` | 数据来源，默认 `akshare` |
 | `fetch_time` | `DATETIME` | 入库时间 |
 
-说明：当前只有表结构与目标口径，未发现实际采集入库脚本。
+采集实现见 [AKShare 股票日线加载器](../pipelines/ingest/stock/load_stock_daily_akshare.py)。
 
 ## 四、DWD 明细层
 
-### 4.1 `dwd_sales_monthly_model`（已落地）
+### 4.1 `dwd_sales_monthly_model`
 
 | 字段名 | 类型 | 说明 |
 |--------|------|------|
@@ -189,7 +207,7 @@
 | `rank_no` | `INT UNSIGNED` | 排名 |
 | `row_hash` | `CHAR(32)` | 幂等哈希 |
 
-### 4.2 `dwd_sales_monthly_model_city`（已落地）
+### 4.2 `dwd_sales_monthly_model_city`
 
 | 字段名 | 类型 | 说明 |
 |--------|------|------|
@@ -217,7 +235,7 @@
 | `rank_no` | `INT UNSIGNED` | 排名 |
 | `row_hash` | `CHAR(32)` | 幂等哈希 |
 
-### 4.3 `dwd_stock_daily`（已落地）
+### 4.3 `dwd_stock_daily`
 
 | 字段名 | 类型 | 说明 |
 |--------|------|------|
@@ -240,7 +258,7 @@
 | `is_valid_ohlc` | `TINYINT(1)` | OHLC 校验通过标志 |
 | `row_hash` | `CHAR(32)` | 幂等哈希 |
 
-### 4.4 `dwd_stock_finance`（已落地）
+### 4.4 `dwd_stock_finance`
 
 | 字段名 | 类型 | 说明 |
 |--------|------|------|
@@ -270,7 +288,7 @@
 
 ## 五、DWS 汇总层
 
-### 5.1 `dws_sales_monthly_company`（已落地）
+### 5.1 `dws_sales_monthly_company`
 
 | 字段名 | 类型 | 说明 |
 |--------|------|------|
@@ -283,7 +301,7 @@
 | `yoy_growth` | `DECIMAL(8,2)` | 同比增长率 |
 | `mom_growth` | `DECIMAL(8,2)` | 环比增长率 |
 
-### 5.2 `dws_sales_monthly_brand`（已落地）
+### 5.2 `dws_sales_monthly_brand`
 
 | 字段名 | 类型 | 说明 |
 |--------|------|------|
@@ -296,23 +314,21 @@
 | `yoy_growth` | `DECIMAL(8,2)` | 同比增长率 |
 | `mom_growth` | `DECIMAL(8,2)` | 环比增长率 |
 
-说明：当前未保留“已落地”的 `dws_sales_monthly_model` 或 `dws_sales_monthly_city` 表定义，因为仓库现状仅明确存在上述两张 DWS 表。
-
 ## 六、手工维度支线
 
-### 6.1 `dim_energy_vehicle`（已落地）
+### 6.1 `dim_energy_vehicle`
 
 说明：手工维护能源类型与车型类型权威映射，通过刷新脚本与触发器影响 `dim_model`。
 
-### 6.2 `dim_model_ads_manual`（已落地）
+### 6.2 `dim_model_ads_manual`
 
 说明：ADS 手工权威存储表，可包含尚未进入 `dim_model` 的车型记录。
 
-### 6.3 `dim_model_ads_zipper`（已落地）
+### 6.3 `dim_model_ads_zipper`
 
 说明：ADS 拉链表，仅接收当前已存在于 `dim_model` 的车型，用于保存供应商 / 模式的历史版本。
 
-### 6.4 `dim_area`（已落地）
+### 6.4 `dim_area`
 
 说明：手工维护中国大陆行政区划（大区 / 省 / 地级市），承接 16888 city 源的城市自然键，用于后续 `dwd_sales_monthly_model_city` 关联。
 
@@ -328,12 +344,3 @@
 | `province_type` | `ENUM` | 省 / 自治区 / 直辖市 |
 | `region_code` | `VARCHAR(8)` | 大区编码（EC/SC/NC/CC/SW/NW/NE） |
 | `region_name` | `ENUM` | 华东 / 华南 / 华北 / 华中 / 西南 / 西北 / 东北 |
-
-## 七、当前未落地但已知规划
-
-以下对象在项目方向中存在，但当前不应写成“已落地”：
-
-- AKShare 股价采集脚本
-- 以股价为输入的 DWD / DWS / ADS 应用表
-- Power BI 报表资产
-- Publish to Web 配置产物

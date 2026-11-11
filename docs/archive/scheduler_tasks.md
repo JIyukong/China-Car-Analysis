@@ -1,7 +1,11 @@
 # 调度任务清单与依赖关系
 
+> 历史快照，保留当时的决策和实现记录。当前入口见 [项目首页](../../README.md)。
+
+> 历史版任务配置。当前时间、任务顺序和补跑方法见 [调度和 ETL](../scheduler_guide.md)。
+
 本文档由调度器测试准备阶段生成，展示 14 个调度任务的属性、DAG 依赖与执行条件。
-任务定义源码：[scheduler/task_config.py](../scheduler/task_config.py)。
+任务定义源码：[scheduler/task_config.py](../../scheduler/task_config.py)。
 
 ## 一、月链 DAG（两条独立链，按数据发布窗口逐日探测）
 
@@ -67,7 +71,7 @@ crawl 任务按 `business_key = last_month`（YYYY-MM）执行三段判断：
    未达阈值说明站点仍发布上上月数据（目标月尚未发布），抛 `SkipTask`，
    次日窗口再探。
 
-阈值定义见 [crawl_16888_job.py](../scheduler/jobs/crawl_16888_job.py)
+阈值定义见 [crawl_16888_job.py](../../scheduler/jobs/crawl_16888_job.py)
 中 `_MIN_ROWS_STYLE = 400`、`_MIN_ROWS_CITY = 20000`（约为月均行数的 80%，
 防止抓到半截页面误判到位）。
 

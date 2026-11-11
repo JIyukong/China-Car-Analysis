@@ -9,14 +9,6 @@
 
 USE dw_auto_stock;
 
-SET FOREIGN_KEY_CHECKS = 0;
-DROP TABLE IF EXISTS dim_model;
-DROP TABLE IF EXISTS dim_oem;
-DROP TABLE IF EXISTS dim_brand;
-DROP TABLE IF EXISTS dim_stock;
-DROP TABLE IF EXISTS dim_company;
-SET FOREIGN_KEY_CHECKS = 1;
-
 -- 1. 上市公司维度表
 CREATE TABLE IF NOT EXISTS dim_company (
     id              BIGINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键ID',

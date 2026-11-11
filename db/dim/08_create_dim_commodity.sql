@@ -7,10 +7,6 @@
 
 USE dw_auto_stock;
 
-SET FOREIGN_KEY_CHECKS = 0;
-DROP TABLE IF EXISTS dim_commodity;
-SET FOREIGN_KEY_CHECKS = 1;
-
 CREATE TABLE IF NOT EXISTS dim_commodity (
     id              BIGINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键ID',
     commodity_code  VARCHAR(16)     NOT NULL                COMMENT '品种大写代码（如 LC/CU/AL）',

@@ -7,13 +7,12 @@
 --   旧版 sp_etl_clean_sales_dwd 对 dim_model 使用 LEFT JOIN，当 ODS 车型未
 --   命中维表时会以 model_id=NULL 落库。本迁移：
 --     1. 先尝试通过 dim_model 回填历史 NULL 数据；
---     2. 若仍有无法回填的行（说明维表确实缺失），直接删除脏数据，
---        待 sp_etl_build_sales_dimensions 补维后重跑清洗即可；
+--     2. 审查仍无法回填的行，先补齐映射，保留原始记录；
 --     3. 将相关列 MODIFY 为 NOT NULL；
 --     4. 添加外键约束。
 --
--- 执行顺序：先回填 → 再删残留脏数据 → 改列约束 → 加外键。
--- 本脚本幂等，可重复执行。
+-- 管理员分段执行：先回填，检查第二区段返回零行后，再执行结构变更。
+-- 使用严格 SQL 模式；执行前先确认有可恢复备份。此脚本不属于 ETL。
 -- ============================================================
 
 USE dw_auto_stock;
@@ -42,9 +41,9 @@ SET d.model_id   = dm.id,
 WHERE d.model_id IS NULL;
 
 -- ------------------------------------------------------------
--- 二、删除仍无法回填的脏数据（维表缺失，需先跑 sp_etl_build_sales_dimensions）
+-- 二、查找仍无法回填的记录。若有结果，在此停止并补齐映射。
 -- ------------------------------------------------------------
-DELETE FROM dwd_sales_monthly_model
+SELECT * FROM dwd_sales_monthly_model
  WHERE model_id IS NULL
     OR oem_id   IS NULL
     OR brand_id IS NULL

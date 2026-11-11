@@ -254,8 +254,7 @@ def refresh_bridge_brand_oem(
     brand_lookup: dict[str, tuple[int, str]],
     oem_lookup: dict[str, tuple[int, str, int, str]],
 ) -> int:
-    """使用 Excel 全量刷新当前有效桥接关系。"""
-    conn.execute(text("DELETE FROM bridge_brand_oem"))
+    """按业务键补充或更新关系，保留已有历史和未出现在 Excel 中的关系。"""
 
     sql = text(
         """
@@ -285,6 +284,12 @@ def refresh_bridge_brand_oem(
             :is_current,
             :source_note
         )
+        ON DUPLICATE KEY UPDATE
+            brand_name_snapshot = IF(is_current = 1, VALUES(brand_name_snapshot), brand_name_snapshot),
+            oem_name_snapshot = IF(is_current = 1, VALUES(oem_name_snapshot), oem_name_snapshot),
+            company_id = IF(is_current = 1, VALUES(company_id), company_id),
+            company_name_snapshot = IF(is_current = 1, VALUES(company_name_snapshot), company_name_snapshot),
+            source_note = IF(is_current = 1, VALUES(source_note), source_note)
         """
     )
 

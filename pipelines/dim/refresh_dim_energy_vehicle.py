@@ -8,11 +8,10 @@ from pathlib import Path
 from sqlalchemy import text
 
 from base_infra.db import engine
-
+from pipelines.dim.manual_refresh import upsert_dimension
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_CSV_PATH = PROJECT_ROOT / "data" / "manual_dimensions" / "dim_energy_vehicle.csv"
-DEFAULT_REFRESH_SQL_PATH = PROJECT_ROOT / "db" / "manual" / "refresh_dim_energy_vehicle.sql"
 
 
 ALLOWED_ENERGY_TYPES = {"燃油", "新能源", "其他", "占位"}
@@ -69,35 +68,10 @@ def read_dim_energy_vehicle_csv(csv_path: Path) -> list[dict]:
         return rows
 
 
-def execute_sql_file(sql_path: Path) -> None:
-    sql_content = sql_path.read_text(encoding="utf-8")
-    with engine.begin() as conn:
-        for statement in sql_content.split(";"):
-            lines = statement.split("\n")
-            sql_lines = [ln for ln in lines if not ln.strip().startswith("--")]
-            clean = "\n".join(sql_lines).strip()
-            if clean:
-                conn.execute(text(clean))
-
-
-def refresh_dim_energy_vehicle(
-    csv_path: Path = DEFAULT_CSV_PATH,
-    refresh_sql_path: Path = DEFAULT_REFRESH_SQL_PATH,
-) -> None:
+def refresh_dim_energy_vehicle(csv_path: Path = DEFAULT_CSV_PATH) -> None:
     rows = read_dim_energy_vehicle_csv(csv_path)
     with engine.begin() as conn:
-        conn.execute(text("TRUNCATE TABLE stg_dim_energy_vehicle"))
-        conn.execute(
-            text(
-                "INSERT INTO stg_dim_energy_vehicle (model_name, energy_type, vehicle_type, source_file) "
-                "VALUES (:model_name, :energy_type, :vehicle_type, :source_file)",
-            ),
-            rows,
-        )
-
-    execute_sql_file(refresh_sql_path)
-
-    with engine.begin() as conn:
+        upsert_dimension(conn, "dim_energy_vehicle", rows)
         dim_count = conn.execute(text("SELECT COUNT(*) FROM dim_energy_vehicle")).scalar_one()
         placeholder_count = conn.execute(
             text("SELECT COUNT(*) FROM dim_model WHERE energy_type='占位' OR vehicle_type='占位'"),
@@ -113,19 +87,13 @@ def build_parser() -> argparse.ArgumentParser:
         default=str(DEFAULT_CSV_PATH),
         help="手工维护 CSV 路径",
     )
-    parser.add_argument(
-        "--sql",
-        dest="sql_path",
-        default=str(DEFAULT_REFRESH_SQL_PATH),
-        help="刷新 SQL 脚本路径（默认 db/manual/refresh_dim_energy_vehicle.sql）",
-    )
     return parser
 
 
 def main() -> None:
     parser = build_parser()
     args = parser.parse_args()
-    refresh_dim_energy_vehicle(csv_path=Path(args.csv_path), refresh_sql_path=Path(args.sql_path))
+    refresh_dim_energy_vehicle(csv_path=Path(args.csv_path))
 
 
 if __name__ == "__main__":
