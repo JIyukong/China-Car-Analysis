@@ -10,8 +10,8 @@ PyMySQL>=1.1.0
 pydantic-settings>=2.1.0
 python-dotenv>=1.0.0
 
-# 数据采集（M1/M2 预留，M0 一次性安装）
-# akshare: M2 股价采集依赖（当前已安装但采集脚本尚未实现）
+# 数据采集
+# akshare: A 股/H 股日线、A 股财务、同花顺行业指数、商品期货主力连续采集
 akshare>=1.11.0
 APScheduler>=3.10,<4.0
 

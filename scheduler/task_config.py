@@ -11,25 +11,33 @@
     business_key_fn            业务周期键生成器："last_month" / "today"
     kind                       任务类型："subprocess" 表示入口本身就是 Popen 包装
 
+月链数据发布节奏（业务事实）：
+    - 车型月销量（style）：每月 12~15 号发布上月数据
+    - 城市车型月销量（city）：每月 20~25 号发布上月数据
+
+故拆为两条独立月链，cron 在各自窗口内每日探测：未发布由 crawl 任务抛
+SkipTask，次日再探；已发布则事件驱动整条链。
+
 runner.py 遍历此字典，动态 import callable 并用 @task 装饰后注册到调度器。
 """
 
 from __future__ import annotations
 
 TASK_CONFIG: dict[str, dict] = {
-    # ==================== 月链：每月 2 号 03:00 触发首任务，后续事件驱动 ====================
-    "crawl_16888_monthly": {
-        "callable": "scheduler.jobs.crawl_16888_job:crawl_16888_monthly",
-        "cron": {"day": 2, "hour": 3, "minute": 0},
+    # ==================== 月链·style（车型月销量，每月 12~15 号探测） ====================
+    # 根任务：窗口内每日 03:00 触发，未发布则 SkipTask，已发布则串行驱动下游
+    "crawl_16888_style_monthly": {
+        "callable": "scheduler.jobs.crawl_16888_job:crawl_16888_style_monthly",
+        "cron": {"day": "12-15", "hour": 3, "minute": 0},
         "timeout_minutes": 180,
         "retry_times": 3,
         "retry_interval_minutes": 30,
-        "downstream": ["load_ods_after_crawl"],
+        "downstream": ["load_style_ods"],
         "business_key_fn": "last_month",
         "kind": "subprocess",
     },
-    "load_ods_after_crawl": {
-        "callable": "scheduler.jobs.load_ods_job:load_ods_after_crawl",
+    "load_style_ods": {
+        "callable": "scheduler.jobs.load_ods_job:load_style_ods",
         "cron": None,
         "timeout_minutes": 60,
         "retry_times": 2,
@@ -73,6 +81,36 @@ TASK_CONFIG: dict[str, dict] = {
         "callable": "scheduler.jobs.etl_jobs:run_dws_agg",
         "cron": None,
         "timeout_minutes": 20,
+        "retry_times": 2,
+        "retry_interval_minutes": 10,
+        "downstream": [],
+    },
+
+    # ==================== 月链·city（城市车型月销量，每月 20~25 号探测） ====================
+    # 与 style 链独立：style 链产出 dim_model 后，city DWD 清洗关联才有意义，
+    # 但 city 数据发布晚 8 天，此时 style 链早已跑完，无需显式依赖。
+    "crawl_16888_city_monthly": {
+        "callable": "scheduler.jobs.crawl_16888_job:crawl_16888_city_monthly",
+        "cron": {"day": "20-25", "hour": 3, "minute": 30},
+        "timeout_minutes": 180,
+        "retry_times": 3,
+        "retry_interval_minutes": 30,
+        "downstream": ["load_city_ods"],
+        "business_key_fn": "last_month",
+        "kind": "subprocess",
+    },
+    "load_city_ods": {
+        "callable": "scheduler.jobs.load_ods_job:load_city_ods",
+        "cron": None,
+        "timeout_minutes": 60,
+        "retry_times": 2,
+        "retry_interval_minutes": 15,
+        "downstream": ["run_dwd_city_clean"],
+    },
+    "run_dwd_city_clean": {
+        "callable": "scheduler.jobs.etl_jobs:run_dwd_city_clean",
+        "cron": None,
+        "timeout_minutes": 30,
         "retry_times": 2,
         "retry_interval_minutes": 10,
         "downstream": [],

@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>CarApp 调度器任务看板</title>
+<style>
+  :root {
+    --bg: #0f172a; --panel: #1e293b; --panel2: #334155; --text: #e2e8f0;
+    --muted: #94a3b8; --cron: #2563eb; --event: #16a34a; --trade: #ea580c;
+    --leaf: #6b7280; --line: #475569; --warn: #f59e0b; --danger: #dc2626;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+         background: var(--bg); color: var(--text); padding: 24px; }
+  h1 { margin: 0 0 4px; font-size: 24px; }
+  .sub { color: var(--muted); margin-bottom: 24px; font-size: 13px; }
+  h2 { font-size: 17px; margin: 28px 0 12px; border-left: 4px solid var(--cron);
+       padding-left: 10px; }
+  .legend { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 16px; font-size: 13px; }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .dot { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+
+  /* DAG */
+  .dag { background: var(--panel); border: 1px solid var(--line); border-radius: 10px;
+         padding: 24px; overflow-x: auto; }
+  .chain-label { color: var(--muted); font-size: 12px; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; }
+  .flow { display: flex; align-items: center; flex-wrap: wrap; gap: 0; margin-bottom: 28px; }
+  .node { background: var(--panel2); border: 2px solid var(--line); border-radius: 8px;
+          padding: 10px 14px; min-width: 150px; cursor: pointer; transition: all .15s;
+          position: relative; font-size: 13px; }
+  .node:hover { border-color: #93c5fd; transform: translateY(-2px); }
+  .node .tid { font-weight: 600; font-size: 13px; }
+  .node .meta { color: var(--muted); font-size: 11px; margin-top: 3px; }
+  .node.cron { border-color: var(--cron); }
+  .node.cron .tid::before { content: "⏰ "; }
+  .node.event { border-color: var(--event); }
+  .node.event .tid::before { content: "🔗 "; }
+  .node.trade { border-color: var(--trade); }
+  .node.leaf { border-color: var(--leaf); }
+  .arrow { color: var(--muted); font-size: 22px; margin: 0 8px; font-weight: bold; }
+  .fork { display: flex; flex-direction: column; gap: 12px; }
+  .fork-row { display: flex; align-items: center; gap: 8px; }
+
+  /* cards */
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 8px;
+          padding: 12px 14px; font-size: 12.5px; border-left-width: 4px; }
+  .card.monthly { border-left-color: var(--event); }
+  .card.daily { border-left-color: var(--trade); }
+  .card .tid { font-weight: 700; font-size: 14px; margin-bottom: 6px; }
+  .card .row { display: flex; justify-content: space-between; gap: 8px; padding: 2px 0; }
+  .card .row .k { color: var(--muted); }
+  .badge { display: inline-block; padding: 1px 7px; border-radius: 10px; font-size: 10.5px;
+           background: var(--panel2); color: var(--text); }
+  .badge.cron { background: var(--cron); }
+  .badge.event { background: var(--event); }
+  .badge.trade { background: var(--trade); }
+
+  /* conditions */
+  .cond { background: var(--panel); border: 1px solid var(--line); border-radius: 8px;
+          padding: 14px 18px; margin-bottom: 10px; }
+  .cond h3 { margin: 0 0 6px; font-size: 14px; color: #93c5fd; }
+  .cond p { margin: 4px 0; font-size: 13px; color: var(--muted); }
+  .cond .targets { color: var(--text); font-family: monospace; font-size: 12px; }
+
+  /* timeline */
+  .timeline { position: relative; padding-left: 28px; }
+  .timeline::before { content: ""; position: absolute; left: 8px; top: 0; bottom: 0;
+                      width: 2px; background: var(--line); }
+  .tl-item { position: relative; margin-bottom: 14px; }
+  .tl-item::before { content: ""; position: absolute; left: -24px; top: 4px;
+                     width: 12px; height: 12px; border-radius: 50%; background: var(--cron);
+                     border: 2px solid var(--bg); }
+  .tl-item.trade::before { background: var(--trade); }
+  .tl-time { font-weight: 700; font-size: 14px; }
+  .tl-desc { color: var(--muted); font-size: 12.5px; }
+
+  /* tooltip */
+  #tooltip { position: fixed; display: none; background: #0f172a; border: 1px solid var(--cron);
+             border-radius: 6px; padding: 10px 12px; font-size: 12px; max-width: 340px;
+             z-index: 100; pointer-events: none; box-shadow: 0 4px 16px rgba(0,0,0,.5); }
+  #tooltip b { color: #93c5fd; }
+  .warn-box { background: rgba(245,158,11,.12); border: 1px solid var(--warn);
+              border-radius: 6px; padding: 8px 12px; font-size: 12.5px; margin-top: 8px; color: #fcd34d; }
+</style>
+</head>
+<body>
+
+<h1>CarApp 调度器任务看板</h1>
+<div class="sub">共 11 个任务 · 月链 7（cron 1 + 事件 6） · 日链 4（交易日 cron） ·
+任务定义：scheduler/task_config.py</div>
+
+<div class="legend">
+  <span><i class="dot" style="background:var(--cron)"></i>cron 触发</span>
+  <span><i class="dot" style="background:var(--event)"></i>事件触发（上游依赖）</span>
+  <span><i class="dot" style="background:var(--trade)"></i>交易日守卫</span>
+  <span><i class="dot" style="background:var(--leaf)"></i>DAG 终点</span>
+</div>
+
+<h2>月链 DAG</h2>
+<div class="dag">
+  <div class="chain-label">每月 2 号 03:00 启动 · 事件驱动 · 末尾扇出</div>
+  <div class="flow">
+    <div class="node cron" data-tip="crawl_16888_monthly|callable: crawl_16888_job:crawl_16888_monthly|cron: 每月2号 03:00|超时: 180分|重试: 3次 / 间隔30分|business_key: last_month|业务内部 Popen 爬虫脚本">
+      <div class="tid">crawl_16888_monthly</div>
+      <div class="meta">每月2号 03:00</div>
+    </div>
+    <div class="arrow">→</div>
+    <div class="node event" data-tip="load_ods_after_crawl|callable: load_ods_job:load_ods_after_crawl|事件触发（cron=None）|超时: 60分|重试: 2次 / 间隔15分|business_key 继承上游|写入 ODS 销量数据">
+      <div class="tid">load_ods_after_crawl</div>
+      <div class="meta">事件触发 · 60分</div>
+    </div>
+    <div class="arrow">→</div>
+    <div class="node event" data-tip="build_sales_dimensions|callable: etl_jobs:build_dimensions|事件触发|超时: 30分|重试: 2次 / 间隔10分|SP 预检: dim_brand 需有 OTHER；未命中 dim_oem 则 SIGNAL 45000">
+      <div class="tid">build_sales_dimensions</div>
+      <div class="meta">事件触发 · 30分</div>
+    </div>
+  </div>
+  <div class="flow">
+    <div class="arrow" style="visibility:hidden">→</div>
+    <div class="node event" data-tip="refresh_ads_zipper|callable: etl_jobs:refresh_ads|事件触发|超时: 15分|重试: 2次 / 间隔5分|刷新 ADS 智驾方案拉链表">
+      <div class="tid">refresh_ads_zipper</div>
+      <div class="meta">事件触发 · 15分</div>
+    </div>
+    <div class="arrow">→</div>
+    <div class="node event" data-tip="run_dwd_clean|callable: etl_jobs:run_dwd_clean|事件触发|超时: 30分|重试: 2次 / 间隔10分|SP 预检: 未匹配 dim_model>100 阻断，0<x≤100 发 note|扇出到两个并行下游">
+      <div class="tid">run_dwd_clean</div>
+      <div class="meta">事件触发 · 30分 · 扇出</div>
+    </div>
+    <div class="arrow">→</div>
+    <div class="fork">
+      <div class="fork-row">
+        <div class="node leaf" data-tip="update_lifecycle|callable: etl_jobs:update_lifecycle|事件触发|超时: 20分|重试: 2次 / 间隔10分|按 DWD 销量刷新 dim_oem/dim_model 首次/末次月与 is_active|DWD 无数据时返回 0 行不报错">
+          <div class="tid">update_lifecycle</div>
+          <div class="meta">终点 · 20分</div>
+        </div>
+      </div>
+      <div class="fork-row">
+        <div class="node leaf" data-tip="run_dws_agg|callable: etl_jobs:run_dws_agg|事件触发|超时: 20分|重试: 2次 / 间隔10分|DWD→DWS 公司/品牌两层月度聚合|幂等 UPSERT，计算市占率/同比/环比">
+          <div class="tid">run_dws_agg</div>
+          <div class="meta">终点 · 20分</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="warn-box">两个终点任务由 run_dwd_clean 成功后并行触发，完成顺序不确定。</div>
+</div>
+
+<h2>日链 DAG</h2>
+<div class="dag">
+  <div class="chain-label">交易日独立 cron · 互不依赖 · 全部带 SSE 交易日守卫</div>
+  <div class="flow">
+    <div class="node trade" data-tip="load_stock_daily|callable: load_stock_ods_job:load_stock_daily|cron: 周一至五 17:30|超时: 60分|重试: 2次 / 间隔10分|trade_calendar: SSE|business_key: today">
+      <div class="tid">load_stock_daily</div>
+      <div class="meta">17:30 · 60分</div>
+    </div>
+    <div class="arrow" style="color:var(--line)">∥</div>
+    <div class="node trade" data-tip="load_futures_daily|callable: load_futures_ods_job:load_futures_main_daily|cron: 周一至五 17:30|超时: 30分|重试: 2次 / 间隔10分|trade_calendar: SSE|⚠ 商品期货任务误用 A 股日历，应为 SHFE">
+      <div class="tid">load_futures_daily</div>
+      <div class="meta">17:30 · 30分</div>
+    </div>
+    <div class="arrow" style="color:var(--line)">∥</div>
+    <div class="node trade" data-tip="load_index_daily|callable: load_index_ods_job:load_ths_index_daily|cron: 周一至五 17:45|超时: 30分|重试: 2次 / 间隔10分|trade_calendar: SSE|business_key: today">
+      <div class="tid">load_index_daily</div>
+      <div class="meta">17:45 · 30分</div>
+    </div>
+    <div class="arrow" style="color:var(--line)">∥</div>
+    <div class="node trade" data-tip="load_stock_finance|callable: load_stock_ods_job:load_stock_finance|cron: 周一至五 18:30|超时: 90分|重试: 1次 / 间隔30分|trade_calendar: SSE|增量按 MAX(report_date) 拉取财报">
+      <div class="tid">load_stock_finance</div>
+      <div class="meta">18:30 · 90分</div>
+    </div>
+  </div>
+  <div class="warn-box">⚠ 隐患：load_futures_daily 使用 SSE（A股日历）而非 SHFE（期货日历），A股休市而商品开市时会被误跳过。</div>
+</div>
+
+<h2>任务总览（11）</h2>
+<div class="cards" id="cards"></div>
+
+<h2>执行条件与守卫</h2>
+<div class="cond">
+  <h3>① 交易日守卫（trade_calendar）</h3>
+  <p>执行前查询 dim_trade_calendar，非交易日写 status='skipped'，不告警不重试；表无记录则告警并按交易日处理。</p>
+  <p class="targets">命中：load_stock_daily, load_futures_daily, load_index_daily, load_stock_finance</p>
+</div>
+<div class="cond">
+  <h3>② 上游成功依赖（downstream）</h3>
+  <p>上游成功后由 _trigger_downstream 以 trigger_type='dependency' 触发，按 parent_run_id 幂等去重。</p>
+  <p class="targets">命中：月链全部 6 个事件触发任务（cron=None）</p>
+</div>
+<div class="cond">
+  <h3>③ 存储过程内预检</h3>
+  <p>build_sales_dimensions：dim_brand 须有 brand_code='OTHER'；未命中 dim_oem 则 SIGNAL 45000。</p>
+  <p>run_dwd_clean：未匹配 dim_model 行数 >100 阻断；0&lt;x≤100 发 01000 note 不回滚。</p>
+  <p>update_lifecycle：DWD 无数据直接返回 0 行。</p>
+</div>
+<div class="cond">
+  <h3>④ 启动恢复（run_recovery）</h3>
+  <p>runner 启动时清扫残留 running/retrying 为 killed，UPSERT 心跳，扫描近 24h success 但下游缺口自动补触发。</p>
+  <p class="targets">Dry-run 不调用此过程，避免副作用。</p>
+</div>
+<div class="cond">
+  <h3>⑤ 失败重试</h3>
+  <p>全部 11 个任务均配置 retry_times/retry_interval，通过 APScheduler date 触发器调度重试；耗尽后 status='failed' 并 ERROR 告警。</p>
+</div>
+
+<h2>执行时序</h2>
+<div class="timeline">
+  <div class="tl-item trade"><div class="tl-time">交易日 17:30</div>
+    <div class="tl-desc">load_stock_daily（股票日线）与 load_futures_daily（期货主力）并行启动</div></div>
+  <div class="tl-item trade"><div class="tl-time">交易日 17:45</div>
+    <div class="tl-desc">load_index_daily（同花顺行业指数，首期 881125 汽车整车）</div></div>
+  <div class="tl-item trade"><div class="tl-time">交易日 18:30</div>
+    <div class="tl-desc">load_stock_finance（股票财报增量）</div></div>
+  <div class="tl-item"><div class="tl-time">每月 2 号 03:00</div>
+    <div class="tl-desc">crawl_16888_monthly 启动月链：爬取 → ODS → DIM → ADS拉链 → DWD → (生命周期 ∥ DWS聚合)</div></div>
+</div>
+
+<div id="tooltip"></div>
+
+<script>
+const TASKS = [
+  {id:"crawl_16888_monthly",chain:"月",type:"cron",cron:"每月2号 03:00",to:180,retry:"3次/30分",bk:"last_month",ds:["load_ods_after_crawl"],cal:"scheduler.jobs.crawl_16888_job:crawl_16888_monthly"},
+  {id:"load_ods_after_crawl",chain:"月",type:"event",cron:"事件触发",to:60,retry:"2次/15分",bk:"继承上游",ds:["build_sales_dimensions"],cal:"scheduler.jobs.load_ods_job:load_ods_after_crawl"},
+  {id:"build_sales_dimensions",chain:"月",type:"event",cron:"事件触发",to:30,retry:"2次/10分",bk:"继承上游",ds:["refresh_ads_zipper"],cal:"scheduler.jobs.etl_jobs:build_dimensions"},
+  {id:"refresh_ads_zipper",chain:"月",type:"event",cron:"事件触发",to:15,retry:"2次/5分",bk:"继承上游",ds:["run_dwd_clean"],cal:"scheduler.jobs.etl_jobs:refresh_ads"},
+  {id:"run_dwd_clean",chain:"月",type:"event",cron:"事件触发",to:30,retry:"2次/10分",bk:"继承上游",ds:["update_lifecycle","run_dws_agg"],cal:"scheduler.jobs.etl_jobs:run_dwd_clean"},
+  {id:"update_lifecycle",chain:"月",type:"leaf",cron:"事件触发",to:20,retry:"2次/10分",bk:"继承上游",ds:[],cal:"scheduler.jobs.etl_jobs:update_lifecycle"},
+  {id:"run_dws_agg",chain:"月",type:"leaf",cron:"事件触发",to:20,retry:"2次/10分",bk:"继承上游",ds:[],cal:"scheduler.jobs.etl_jobs:run_dws_agg"},
+  {id:"load_stock_daily",chain:"日",type:"trade",cron:"周一至五 17:30",to:60,retry:"2次/10分",bk:"today",ds:[],cal:"scheduler.jobs.load_stock_ods_job:load_stock_daily"},
+  {id:"load_futures_daily",chain:"日",type:"trade",cron:"周一至五 17:30",to:30,retry:"2次/10分",bk:"today",ds:[],cal:"scheduler.jobs.load_futures_ods_job:load_futures_main_daily"},
+  {id:"load_index_daily",chain:"日",type:"trade",cron:"周一至五 17:45",to:30,retry:"2次/10分",bk:"today",ds:[],cal:"scheduler.jobs.load_index_ods_job:load_ths_index_daily"},
+  {id:"load_stock_finance",chain:"日",type:"trade",cron:"周一至五 18:30",to:90,retry:"1次/30分",bk:"today",ds:[],cal:"scheduler.jobs.load_stock_ods_job:load_stock_finance"},
+];
+const typeLabel = {cron:["cron","cron"],event:["事件","event"],trade:["交易日","trade"],leaf:["终点","event"]};
+const cards = document.getElementById("cards");
+TASKS.forEach(t => {
+  const [lbl, cls] = typeLabel[t.type];
+  const dsTxt = t.ds.length ? t.ds.join(", ") : "（无）";
+  cards.insertAdjacentHTML("beforeend", `
+    <div class="card ${t.chain==='月'?'monthly':'daily'}">
+      <div class="tid">${t.id} <span class="badge ${cls}">${lbl}</span></div>
+      <div class="row"><span class="k">cron</span><span>${t.cron}</span></div>
+      <div class="row"><span class="k">超时</span><span>${t.to} 分</span></div>
+      <div class="row"><span class="k">重试</span><span>${t.retry}</span></div>
+      <div class="row"><span class="k">business_key</span><span>${t.bk}</span></div>
+      <div class="row"><span class="k">下游</span><span>${dsTxt}</span></div>
+    </div>`);
+});
+
+// tooltip
+const tip = document.getElementById("tooltip");
+document.querySelectorAll(".node[data-tip]").forEach(n => {
+  n.addEventListener("mousemove", e => {
+    const parts = n.dataset.tip.split("|");
+    tip.innerHTML = `<b>${parts[0]}</b><br>` + parts.slice(1).map(p => p.replace(/: /, ': <span style="color:#cbd5e1">')).join('<br>') + "</span>";
+    tip.style.display = "block";
+    tip.style.left = (e.clientX + 14) + "px";
+    tip.style.top = (e.clientY + 14) + "px";
+  });
+  n.addEventListener("mouseleave", () => tip.style.display = "none");
+});
+</script>
+</body>
+</html>

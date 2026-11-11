@@ -126,10 +126,13 @@ def upsert_rows(rows: list[dict[str, object]]) -> int:
     return len(rows)
 
 
-def main() -> None:
-    """脚本入口。"""
-    args = parse_args()
-    files = discover_files(args.file)
+def main(file_path: Path | None = None) -> None:
+    """脚本入口。
+
+    :param file_path: 指定单个 CSV；None 时批量处理 data 目录全部 style_*.csv。
+        调度器按月调用时传目标月 CSV，避免每月重放全部历史文件。
+    """
+    files = discover_files(file_path)
     logger.info("发现 %d 个 style CSV 文件待入库", len(files))
 
     total_rows = 0
@@ -143,4 +146,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    main(parse_args().file)

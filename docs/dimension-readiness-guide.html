@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>手工维度缺失治理 · 流程与操作手册</title>
+<style>
+  :root {
+    --bg: #0f172a; --panel: #1e293b; --panel2: #334155; --text: #e2e8f0;
+    --muted: #94a3b8; --blue: #2563eb; --green: #16a34a; --orange: #ea580c;
+    --gray: #6b7280; --line: #475569; --warn: #f59e0b; --danger: #dc2626;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+         background: var(--bg); color: var(--text); padding: 28px; line-height: 1.6; }
+  h1 { margin: 0 0 4px; font-size: 24px; }
+  .sub { color: var(--muted); margin-bottom: 24px; font-size: 13px; }
+  h2 { font-size: 18px; margin: 32px 0 14px; border-left: 4px solid var(--blue);
+       padding-left: 10px; }
+  h3 { font-size: 15px; margin: 18px 0 8px; color: #93c5fd; }
+  p, li { font-size: 14px; }
+  code { background: #0b1220; border: 1px solid var(--line); border-radius: 4px;
+         padding: 1px 6px; font-family: Consolas, monospace; font-size: 12.5px; color: #fca5a5; }
+  pre { background: #0b1220; border: 1px solid var(--line); border-radius: 8px;
+        padding: 14px 16px; overflow-x: auto; font-family: Consolas, monospace;
+        font-size: 12.5px; color: #cbd5e1; }
+  a { color: #60a5fa; }
+
+  .dag { background: var(--panel); border: 1px solid var(--line); border-radius: 10px;
+         padding: 22px; overflow-x: auto; margin-bottom: 16px; }
+  .flow { display: flex; align-items: center; flex-wrap: wrap; gap: 0; }
+  .node { background: var(--panel2); border: 2px solid var(--line); border-radius: 8px;
+          padding: 9px 13px; min-width: 130px; font-size: 12.5px; }
+  .node .tid { font-weight: 600; }
+  .node .meta { color: var(--muted); font-size: 11px; margin-top: 2px; }
+  .node.gate { border-color: var(--warn); background: #3a2f12; }
+  .node.gate .tid::before { content: "🚧 "; }
+  .node.cron { border-color: var(--blue); }
+  .node.cron .tid::before { content: "⏰ "; }
+  .node.ok { border-color: var(--green); }
+  .arrow { color: var(--muted); font-size: 20px; margin: 0 7px; font-weight: bold; }
+  .fork { display: flex; flex-direction: column; gap: 10px; }
+  .chain-label { color: var(--muted); font-size: 12px; margin: 18px 0 10px;
+                 text-transform: uppercase; letter-spacing: 1px; }
+  .branch-label { font-size: 11px; color: var(--muted); margin-left: 4px; }
+
+  table { width: 100%; border-collapse: collapse; background: var(--panel);
+          border: 1px solid var(--line); border-radius: 8px; overflow: hidden; font-size: 13px; }
+  th, td { padding: 9px 12px; text-align: left; border-bottom: 1px solid var(--line); }
+  th { background: var(--panel2); color: #cbd5e1; font-weight: 600; }
+  tr:last-child td { border-bottom: none; }
+  .tag { display: inline-block; padding: 1px 8px; border-radius: 10px; font-size: 11px; }
+  .tag.req { background: var(--danger); color: #fff; }
+  .tag.opt { background: var(--gray); color: #fff; }
+
+  .callout { border-radius: 8px; padding: 12px 16px; margin: 12px 0; font-size: 13.5px; }
+  .callout.warn { background: #3a2f12; border: 1px solid var(--warn); }
+  .callout.danger { background: #3a1414; border: 1px solid var(--danger); }
+  .callout.ok { background: #112a1a; border: 1px solid var(--green); }
+  .callout.info { background: #14223a; border: 1px solid var(--blue); }
+  .callout b { display: block; margin-bottom: 4px; }
+
+  .steps { counter-reset: step; }
+  .step { position: relative; background: var(--panel); border: 1px solid var(--line);
+          border-radius: 8px; padding: 14px 18px 14px 56px; margin-bottom: 12px; }
+  .step::before { counter-increment: step; content: counter(step);
+                  position: absolute; left: 16px; top: 14px; width: 28px; height: 28px;
+                  border-radius: 50%; background: var(--blue); color: #fff;
+                  display: flex; align-items: center; justify-content: center; font-weight: 700; }
+  .step h3 { margin: 0 0 6px; color: var(--text); }
+  .step p { margin: 4px 0; color: var(--muted); }
+</style>
+</head>
+<body>
+
+<h1>手工维度缺失治理 · 流程与操作手册</h1>
+<div class="sub">dim_energy_vehicle.csv / dim_model_ads_matched.csv 缺失时的自动发现、告警、阻断与补维恢复</div>
+
+<!-- ============ 1. 机制概述 ============ -->
+<h2>一、机制一句话说明</h2>
+<p>调度链路跑到 DWD 清洗 / DWS 聚合前，会自动统计 5 项维度的缺失率。
+   一旦超过阈值，系统会<strong>立刻给飞书/钉钉发一条带补维清单的告警</strong>，
+   同时<strong>暂停后续链路</strong>（记 skipped，不产生脏数据）。
+   你照清单补完两个 CSV，<strong>无需手动重跑</strong>——次日 cron 会自动重探并恢复。</p>
+
+<div class="callout danger">
+  <b>必填项零容忍</b>
+  <code>energy_type</code>（能源类型）是必填项，缺 <b>1 个</b>就告警并阻断；
+  其余项（vehicle_type / ads / area / vehicle_subtype）默认阈值 5%。
+</div>
+
+<!-- ============ 2. 流程图 ============ -->
+<h2>二、调度流程图</h2>
+
+<div class="dag">
+  <div class="chain-label">月链 · style（车型月销量，每月 12~15 号每日 03:00 探测上月数据）</div>
+  <div class="flow">
+    <div class="node cron"><div class="tid">crawl_style</div><div class="meta">每日03:00探测</div></div>
+    <div class="arrow">→</div>
+    <div class="node"><div class="tid">load_style_ods</div></div>
+    <div class="arrow">→</div>
+    <div class="node"><div class="tid">build_dimensions</div><div class="meta">新车型置“占位”</div></div>
+    <div class="arrow">→</div>
+    <div class="node"><div class="tid">refresh_ads</div><div class="meta">回填ads</div></div>
+    <div class="arrow">→</div>
+    <div class="node gate"><div class="tid">run_dwd_clean</div><div class="meta">★门控1 查5项</div></div>
+    <div class="arrow">→</div>
+    <div class="fork">
+      <div class="node ok"><div class="tid">update_lifecycle</div></div>
+      <div class="node gate"><div class="tid">run_dws_agg</div><div class="meta">★门控3 兜底</div></div>
+    </div>
+  </div>
+
+  <div class="chain-label">月链 · city（城市车型月销量，每月 20~25 号每日 03:30 探测）</div>
+  <div class="flow">
+    <div class="node cron"><div class="tid">crawl_city</div><div class="meta">每日03:30探测</div></div>
+    <div class="arrow">→</div>
+    <div class="node"><div class="tid">load_city_ods</div></div>
+    <div class="arrow">→</div>
+    <div class="node gate"><div class="tid">run_dwd_city_clean</div><div class="meta">★门控2 查area/车型</div></div>
+  </div>
+</div>
+
+<h3>门控命中时发生什么</h3>
+<div class="flow">
+  <div class="node gate"><div class="tid">门控检查</div><div class="meta">缺失率超阈值</div></div>
+  <div class="arrow">→</div>
+  <div class="node" style="border-color:var(--warn)"><div class="tid">写日志+补维清单</div></div>
+  <div class="arrow">→</div>
+  <div class="node" style="border-color:var(--danger)"><div class="tid">飞书/钉钉告警</div><div class="meta">★即时推送</div></div>
+  <div class="arrow">→</div>
+  <div class="node" style="border-color:var(--gray)"><div class="tid">抛 SkipTask</div><div class="meta">链路暂停,等次日</div></div>
+</div>
+
+<!-- ============ 3. 检查项与对应表 ============ -->
+<h2>三、检查项与对应手工表</h2>
+<table>
+  <thead>
+    <tr><th>检查项</th><th>缺失判定</th><th>对应手工 CSV</th><th>阈值</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>energy_type 能源类型</td>
+      <td><code>= '占位'</code></td>
+      <td><code>dim_energy_vehicle.csv</code></td>
+      <td><span class="tag req">0（缺1即报）</span></td>
+    </tr>
+    <tr>
+      <td>vehicle_type 车型</td>
+      <td><code>= '占位'</code></td>
+      <td><code>dim_energy_vehicle.csv</code></td>
+      <td><span class="tag opt">5%</span></td>
+    </tr>
+    <tr>
+      <td>ads 智驾</td>
+      <td><code>ads_id IS NULL</code></td>
+      <td><code>dim_model_ads_matched.csv</code></td>
+      <td><span class="tag opt">5%</span></td>
+    </tr>
+    <tr>
+      <td>area 地区</td>
+      <td><code>area_id IS NULL</code></td>
+      <td><code>dim_area.csv</code>（20年不变）</td>
+      <td><span class="tag opt">5%</span></td>
+    </tr>
+    <tr>
+      <td>vehicle_subtype 级别</td>
+      <td><code>vehicle_subtype_id IS NULL</code></td>
+      <td>级别字典</td>
+      <td><span class="tag opt">5%</span></td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- ============ 4. 首次配置 ============ -->
+<h2>四、首次配置：打开飞书/钉钉告警（只需做一次）</h2>
+
+<div class="steps">
+  <div class="step">
+    <h3>在群里添加机器人</h3>
+    <p><b>飞书：</b>群设置 → 群机器人 → 添加 → 自定义机器人，复制 Webhook 地址。</p>
+    <p><b>钉钉：</b>群设置 → 智能群助手 → 添加机器人 → 自定义，安全设置勾选
+       “自定义关键词”并填 <code>CarApp</code>（告警正文含此词，免加签），复制 Webhook。</p>
+  </div>
+  <div class="step">
+    <h3>填写项目 .env</h3>
+    <p>在项目根目录 <code>.env</code> 追加（飞书）：</p>
+<pre>ALERT_WEBHOOK_URL=https://open.feishu.cn/open-apis/bot/v2/hook/xxxx
+ALERT_WEBHOOK_TYPE=feishu</pre>
+    <p>钉钉则把 TYPE 改成 <code>wecom</code>（钉钉文本格式与企业微信一致，无需改代码）：</p>
+<pre>ALERT_WEBHOOK_URL=https://oapi.dingtalk.com/robot/send?access_token=xxxx
+ALERT_WEBHOOK_TYPE=wecom</pre>
+  </div>
+  <div class="step">
+    <h3>重启调度器</h3>
+    <p>配置在进程启动时读取，重启调度服务后生效。未配置 URL 时只写日志、不推送。</p>
+  </div>
+</div>
+
+<div class="callout info">
+  <b>防刷屏</b>
+  同一条维度告警按“任务+月份”去重，10 分钟内只推一次；补完维次日重跑通过后会再推一条“已恢复成功”。
+</div>
+
+<!-- ============ 5. 收到告警怎么操作 ============ -->
+<h2>五、收到告警后的操作步骤</h2>
+
+<div class="steps">
+  <div class="step">
+    <h3>看告警正文，确认缺哪项、缺哪些车型</h3>
+    <p>告警里直接带了“维度就绪报告”和“待补维清单”，长这样：</p>
+<pre>维度就绪报告 (目标月模型数: 320)
+  energy_type 占位: 1 (99.69%)
+  ads 缺失: 1 (99.69%)
+状态: 未就绪
+
+# dim_energy_vehicle.csv 待补（model_name,energy_type,vehicle_type）
+阿维塔06T,,
+# dim_model_ads_matched.csv 待补
+阿维塔06T,,,,</pre>
+  </div>
+
+  <div class="step">
+    <h3>打开对应 CSV 补行</h3>
+    <p>能源/车型缺 → 编辑
+       <code>data/manual_dimensions/dim_energy_vehicle.csv</code>，填
+       <code>model_name,energy_type,vehicle_type</code>。</p>
+    <p>ads 缺 → 编辑
+       <code>data/manual_dimensions/dim_model_ads_matched.csv</code>，填
+       <code>model_name,ads_proportion,ads_supplier,ads_supplier_mode,上市时间</code>。</p>
+    <p>把清单里的空行补全真实值即可，<strong>注意 model_name 要和清单完全一致</strong>（含空格）。</p>
+  </div>
+
+  <div class="step">
+    <h3>保存 CSV，剩下的交给调度器</h3>
+    <p>不用手动重跑、不用重启。第二天 cron 窗口（style 12~15号 03:00 / city 20~25号 03:30）
+       会自动重跑 <code>build_dimensions → refresh_ads → run_dwd_clean</code>，
+       重新加载你补的 CSV。</p>
+  </div>
+
+  <div class="step">
+    <h3>确认恢复</h3>
+    <p>重跑通过后，你会收到第二条“任务已恢复成功”的通知，DWD/DWS 继续往下生成。完成。</p>
+  </div>
+</div>
+
+<div class="callout warn">
+  <b>想当天就验证，不等次日？</b>
+  可手动触发（确保已连库）：
+<pre>python -c "from scheduler.jobs.etl_jobs import run_dwd_clean; run_dwd_clean('2026-07')"</pre>
+  把 <code>2026-07</code> 换成目标月。补完 CSV 后执行即可立即重跑该门控点。
+</div>
+
+<!-- ============ 6. 端到端时间线 ============ -->
+<h2>六、端到端时间线示例</h2>
+<div class="dag">
+  <div class="flow" style="flex-direction:column; align-items:flex-start; gap:10px;">
+    <div class="node" style="border-color:var(--blue)"><b>每月12号 03:00</b> — style 链启动，跑到 run_dwd_clean 发现 ads 缺 12% &gt; 5%</div>
+    <div class="arrow" style="transform:rotate(90deg); margin-left:30px;">↓</div>
+    <div class="node" style="border-color:var(--danger)"><b>03:00 即刻</b> — 日志写入补维清单 + 飞书/钉钉响铃，链路 paused（skipped）</div>
+    <div class="arrow" style="transform:rotate(90deg); margin-left:30px;">↓</div>
+    <div class="node"><b>你看到通知</b> — 把缺的车型加进两个 CSV 并保存</div>
+    <div class="arrow" style="transform:rotate(90deg); margin-left:30px;">↓</div>
+    <div class="node" style="border-color:var(--green)"><b>次日13号 03:00</b> — cron 重探，CSV 已加载，门控通过 → lifecycle + dws_agg 继续，收到“恢复成功”</div>
+  </div>
+</div>
+
+<!-- ============ 7. 关键文件 ============ -->
+<h2>七、关键文件</h2>
+<table>
+  <thead><tr><th>文件</th><th>作用</th></tr></thead>
+  <tbody>
+    <tr><td><code>pipelines/dim/dimension_readiness.py</code></td><td>跑 SQL 统计 5 项缺失率、生成补维清单、判定 is_ready()</td></tr>
+    <tr><td><code>scheduler/jobs/etl_jobs.py</code></td><td>三个门控点，缺失时调 alert.send_alert 后抛 SkipTask</td></tr>
+    <tr><td><code>scheduler/alert.py</code></td><td>飞书/企业微信(钉钉)推送、10分钟去重、失败不阻塞主流程</td></tr>
+    <tr><td><code>scheduler/task_config.py</code></td><td>月链 cron 时间、下游依赖编排</td></tr>
+    <tr><td><code>data/manual_dimensions/dim_energy_vehicle.csv</code></td><td>能源/车型手工维度（必填）</td></tr>
+    <tr><td><code>data/manual_dimensions/dim_model_ads_matched.csv</code></td><td>ads 智驾手工维度</td></tr>
+  </tbody>
+</table>
+
+</body>
+</html>

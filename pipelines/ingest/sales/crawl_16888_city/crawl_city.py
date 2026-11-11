@@ -119,6 +119,13 @@ PAGE_SLEEP_MAX = 2.0                                # 翻页间最大延迟
 MONTH_SLEEP_MIN = 2.0                               # 月份间最小延迟
 MONTH_SLEEP_MAX = 5.0                               # 月份间最大延迟
 
+# 风控检测与冷却: 提取到 0 条数据时判定为疑似风控，长休眠后重试
+# 对齐 style 爬虫；city 每月约 500 页，被风控概率更高，必须有重试保护
+RISK_CONTROL_EMPTY_THRESHOLD = 0                    # 单页提取条数 <= 此值视为疑似风控
+RISK_CONTROL_COOLDOWN_MIN_MINUTES = 3              # 风控冷却最小分钟数
+RISK_CONTROL_COOLDOWN_MAX_MINUTES = 6              # 风控冷却最大分钟数
+RISK_CONTROL_MAX_RETRIES_PER_PAGE = 3              # 单页风控重试上限
+
 # 页面加载超时（毫秒）
 PAGE_TIMEOUT_MS = 30_000
 
@@ -398,6 +405,20 @@ def _progress_path() -> Path:
     return _data_dir() / "progress.json"
 
 
+def _is_month_locally_complete(month_id: str) -> bool:
+    """检查本地是否已有该月份的完整数据（CSV + JSON 双文件均存在）。
+
+    用于断点续传的双校验: 即使 progress.json 被覆盖丢失，只要本地
+    CSV + JSON 文件都在，就视为已完成，避免重复抓取。对齐 style 爬虫。
+
+    :param month_id: 月份 ID，如 "2024-01"
+    :returns: 完整返回 True
+    """
+    csv_path = _data_dir() / f"city_{month_id}.csv"
+    json_path = _data_dir() / f"city_{month_id}.json"
+    return csv_path.exists() and json_path.exists()
+
+
 def load_progress() -> dict[str, Any]:
     """读取断点续传进度文件。
 
@@ -502,6 +523,11 @@ def crawl_one_month(
     total_count = get_total_count(page)
     if total_count:
         print(f"  → 页面显示共 {total_count} 条数据。")
+    else:
+        # 空数据月（站点已列月份但未发布数据）：不写 CSV/JSON、不标记 completed，
+        # 交由调用方决定是否稍后重试。对齐 style 爬虫的保护逻辑。
+        print(f"  → [WARN] {month_id} 未读取到总数据量，可能数据未发布，跳过本月。")
+        return []
 
     # 断点续传: 检查是否有已抓进度
     in_progress = progress.get("months_in_progress", {}).get(month_id)
@@ -526,11 +552,15 @@ def crawl_one_month(
         start_page = 1                                              # 从第 1 页开始
 
     page_num = start_page
-    pages_crawled_this_run = 0
 
     while True:
-        # 提取当前页数据
-        records = extract_table_rows(page)
+        # 提取当前页数据（带风控检测与重试）
+        records = _extract_with_risk_control(page, month_id, page_num)
+        if records is None:
+            # 风控重试耗尽，返回已抓数据（断点续传可后续补全）
+            print(f"  → [WARN] {month_id} 第 {page_num} 页风控重试耗尽，本月暂停，已抓 {len(all_records)} 条。")
+            return all_records
+
         if records:
             append_month_csv(month_id, records)                    # 实时追加 CSV          # 断点安全
             all_records.extend(records)
@@ -550,7 +580,6 @@ def crawl_one_month(
 
         # 点击下一页
         click_next_page(page)
-        pages_crawled_this_run += 1
 
         # 翻页间反爬延迟
         sleep_s = random.uniform(PAGE_SLEEP_MIN, PAGE_SLEEP_MAX)
@@ -558,6 +587,41 @@ def crawl_one_month(
         page_num += 1
 
     return all_records
+
+
+def _extract_with_risk_control(
+    page: Page, month_id: str, page_num: int,
+) -> list[dict[str, Any]] | None:
+    """提取当前页数据，带风控检测与重试。
+
+    当提取到 0 条数据时，判定为疑似被风控（headless 被识别后页面返回空表格），
+    触发长休眠冷却后重新加载该页重试。对齐 style 爬虫的同名机制。
+
+    :param page:     Playwright 页面对象
+    :param month_id: 月份 ID（用于 URL 重载）
+    :param page_num: 当前页码（用于 URL 重载）
+    :returns: 记录列表；重试耗尽仍失败返回 None（调用方应暂停该月）
+    """
+    for attempt in range(1, RISK_CONTROL_MAX_RETRIES_PER_PAGE + 1):
+        records = extract_table_rows(page)
+        if len(records) > RISK_CONTROL_EMPTY_THRESHOLD:
+            return records                                          # 正常获取数据
+
+        # 疑似风控: 提取到 0 条数据
+        if attempt < RISK_CONTROL_MAX_RETRIES_PER_PAGE:
+            cooldown_min = random.uniform(
+                RISK_CONTROL_COOLDOWN_MIN_MINUTES,
+                RISK_CONTROL_COOLDOWN_MAX_MINUTES,
+            )
+            print(f"  → [风控疑似] {month_id} 第 {page_num} 页提取 0 条，"
+                  f"冷却 {cooldown_min:.1f} 分钟后重试 ({attempt}/{RISK_CONTROL_MAX_RETRIES_PER_PAGE}) ...")
+            time.sleep(cooldown_min * 60)
+            # 重新加载该页
+            _goto_page_directly(page, month_id, page_num)
+        else:
+            print(f"  → [风控疑似] {month_id} 第 {page_num} 页重试 {attempt} 次仍为空。")
+            return None                                             # 重试耗尽
+    return None
 
 
 def _goto_page_directly(page: Page, month_id: str, page_num: int) -> None:
@@ -570,6 +634,34 @@ def _goto_page_directly(page: Page, month_id: str, page_num: int) -> None:
     url = PAGE_URL_TEMPLATE.format(month=month_id, page=page_num)
     _navigate_with_retry(page, url)
     print(f"  → 直接跳转到第 {page_num} 页: {url}")
+
+
+def _find_latest_available_month(page: Page, all_months: list[str]) -> str:
+    """从最新月份往前探测，找到第一个有数据的月份。
+
+    系统当前月可能是未来月份（站点已列月份但尚未发布数据），需往前回溯直到
+    找到有数据的月份。判据：``共N条数据`` 文本存在且 N > 0。
+    对齐 style 爬虫的同名机制（city 原先直接取 all_months[0]，会抓到空月）。
+
+    :param page:       Playwright 页面对象
+    :param all_months: 倒序排列的全部月份列表（最新在前）
+    :returns: 最新有数据的月份 ID
+    :raises RuntimeError: 全部月份都无数据时
+    """
+    print("[探测] 查找最新有数据的月份 ...")
+    for month_id in all_months[:6]:                                # 最多探测最近 6 个月 # 避免过度请求
+        url = PAGE_URL_TEMPLATE.format(month=month_id, page=1)
+        try:
+            page.goto(url, wait_until="domcontentloaded")
+            count = get_total_count(page)
+            if count and count > 0:
+                print(f"[OK] 最新有数据的月份: {month_id}（共 {count} 条）")
+                return month_id
+            print(f"  → {month_id} 无数据（count={count}），继续往前探测 ...")
+        except PlaywrightTimeoutError:
+            print(f"  → {month_id} 访问超时，继续往前探测 ...")
+        time.sleep(0.5)                                            # 探测间轻量延迟
+    raise RuntimeError("最近 6 个月份均无数据，请检查站点是否可用。")
 
 
 def crawl(
@@ -624,7 +716,8 @@ def crawl(
                 if invalid:
                     print(f"[WARN] 以下月份不在可选范围内，已忽略: {sorted(invalid)}")
             elif months_mode == "latest":
-                target_months = all_months[:1]                       # 仅最近一月
+                # latest 模式: 自动探测最新有数据的月份                  # 系统当前月可能是未来月，无数据
+                target_months = [_find_latest_available_month(page, all_months)]
             else:
                 target_months = all_months
             if limit is not None:
@@ -633,10 +726,19 @@ def crawl(
 
             # 4. 逐月抓取
             for idx, month_id in enumerate(target_months):
-                # 断点续传: 跳过已完成月份
-                if resume and month_id in progress.get("completed_months", []):
-                    print(f"\n[3/5] ({idx + 1}/{len(target_months)}) {month_id} 已完成，跳过。")
-                    continue
+                # 断点续传: 跳过已完成月份（双校验: progress.json + 本地文件）
+                # 双校验原因: progress.json 可能因单月测试运行被覆盖丢失历史进度，
+                #             本地 CSV+JSON 文件存在则视为已完成，避免重复抓取
+                if resume:
+                    in_progress_list = month_id in progress.get("completed_months", [])
+                    local_done = _is_month_locally_complete(month_id)
+                    if in_progress_list or local_done:
+                        print(f"\n[3/5] ({idx + 1}/{len(target_months)}) {month_id} 已完成，跳过。")
+                        # 修复 progress.json 缺失: 本地有数据但 progress 没记录时补录
+                        if not in_progress_list and local_done:
+                            progress.setdefault("completed_months", []).append(month_id)
+                            save_progress(progress)
+                        continue
 
                 print(f"\n[3/5] ({idx + 1}/{len(target_months)}) 抓取月份: {month_id}")
 
@@ -646,8 +748,21 @@ def crawl(
                     browser, context, page = launch_browser(pw, headless, ua_index=idx)
                     page.goto(CITY_URL, wait_until="domcontentloaded")  # DOM 就绪即可  # 避免 networkidle 卡死
 
-                # 抓取单月数据
-                records = crawl_one_month(page, month_id, progress)
+                # 抓取单月数据（捕获异常，单月失败不中断整体流程）
+                try:
+                    records = crawl_one_month(page, month_id, progress)
+                except (PlaywrightTimeoutError, Exception) as exc:
+                    print(f"  → [ERROR] {month_id} 抓取异常: {exc}")
+                    print(f"  → {month_id} 跳过，后续月份继续，可 --resume 补全。")
+                    months_summary.append({"month": month_id, "record_count": 0})
+                    continue
+
+                if not records:
+                    # 空数据月（未发布或风控重试耗尽）：不写 JSON、不标记 completed，
+                    # 次日 --resume 会重新抓取。对齐 style 爬虫保护逻辑。
+                    print(f"  → {month_id} 无数据，跳过 JSON 写入，不标记完成。")
+                    months_summary.append({"month": month_id, "record_count": 0})
+                    continue
 
                 # 写月份 JSON
                 json_path = save_month_json(

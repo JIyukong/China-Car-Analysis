@@ -22,6 +22,7 @@ engine = create_engine(
     settings.database_url,
     pool_pre_ping=True,
     pool_recycle=3600,
+    connect_args={"init_command": "SET time_zone = '+08:00'"},
 )
 
 # 会话工厂：关闭 autoflush 防止意外的隐式刷写，关闭 autocommit 强制显式提交

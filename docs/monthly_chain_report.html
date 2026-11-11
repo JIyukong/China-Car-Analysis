@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>车型月销量数据链执行报告 — 2026-07</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
+         background:#0f1320; color:#e4e7ee; padding:28px; }
+  h1 { margin:0 0 6px; font-size:24px; }
+  .sub { color:#9aa3b2; font-size:13px; margin-bottom:22px; }
+  .cards { display:flex; gap:14px; flex-wrap:wrap; margin-bottom:24px; }
+  .card { background:#1a2030; border:1px solid #2a3142; border-radius:10px;
+           padding:16px 20px; min-width:130px; }
+  .card .v { font-size:26px; font-weight:700; }
+  .card .l { color:#9aa3b2; font-size:12px; margin-top:4px; }
+  .ok { color:#2ecc71; } .fail-c { color:#e74c3c; } .skip-c { color:#f39c12; }
+  .panel { background:#1a2030; border:1px solid #2a3142; border-radius:10px;
+            padding:20px; margin-bottom:22px; }
+  .panel h2 { margin:0 0 16px; font-size:17px; }
+  .dag { display:flex; align-items:center; flex-wrap:wrap; gap:8px; }
+  .dag-node { border:2px solid #2a3142; border-radius:8px; padding:10px 14px;
+               min-width:150px; background:#111624; }
+  .dag-dot { width:10px; height:10px; border-radius:50%; display:inline-block; margin-right:6px; }
+  .dag-name { font-weight:600; font-size:13px; display:inline-block; }
+  .dag-status { font-size:12px; margin-top:4px; }
+  .dag-arrow { color:#5a6478; font-size:14px; }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  th,td { text-align:left; padding:10px 12px; border-bottom:1px solid #2a3142; vertical-align:top; }
+  th { color:#9aa3b2; font-weight:600; font-size:12px; text-transform:uppercase; }
+  td.num { text-align:right; font-variant-numeric: tabular-nums; }
+  .muted { color:#7b8496; font-size:12px; }
+  .msg { color:#c8cdd8; word-break:break-all; }
+  .badge { display:inline-block; padding:3px 10px; border-radius:20px; color:#fff; font-size:12px; }
+  code { background:#111624; padding:2px 6px; border-radius:4px; font-size:12px; color:#9ecbff; }
+  .err-block { background:#111624; border:1px solid #2a3142; border-radius:6px;
+                padding:10px 14px; margin-bottom:10px; }
+  .err-block summary { cursor:pointer; font-size:13px; }
+  pre { background:#0b0e17; color:#e0b4b4; padding:12px; border-radius:6px;
+         overflow-x:auto; font-size:12px; white-space:pre-wrap; }
+  footer { margin-top:24px; color:#6b7488; font-size:12px; }
+</style>
+</head>
+<body>
+  <h1>🚗 车型月销量数据链执行报告</h1>
+  <div class="sub">business_key: <code>2026-07</code> ｜ 执行时间: 2026-08-13 11:18:43 → 2026-08-13 11:18:45 ｜
+    主机: JiYoun ｜ Python: 3.13.9</div>
+
+  <div class="cards">
+    <div class="card"><div class="v">6</div><div class="l">任务总数</div></div>
+    <div class="card"><div class="v ok">6</div><div class="l">成功</div></div>
+    <div class="card"><div class="v fail-c">0</div><div class="l">失败</div></div>
+    <div class="card"><div class="v skip-c">0</div><div class="l">跳过</div></div>
+    <div class="card"><div class="v">1.96s</div><div class="l">总耗时</div></div>
+    <div class="card"><div class="v">3162</div><div class="l">累计影响行数</div></div>
+  </div>
+
+  <div class="panel">
+    <h2>📊 DAG 执行状态</h2>
+    <div class="dag"><div class="dag-node" style="border-color:#2ecc71"><div class="dag-dot" style="background:#2ecc71"></div><div class="dag-name">load_style_ods</div><div class="dag-status" style="color:#2ecc71">成功</div></div><div class="dag-arrow">▶</div><div class="dag-node" style="border-color:#2ecc71"><div class="dag-dot" style="background:#2ecc71"></div><div class="dag-name">build_sales_dimensions</div><div class="dag-status" style="color:#2ecc71">成功</div></div><div class="dag-arrow">▶</div><div class="dag-node" style="border-color:#2ecc71"><div class="dag-dot" style="background:#2ecc71"></div><div class="dag-name">refresh_ads_zipper</div><div class="dag-status" style="color:#2ecc71">成功</div></div><div class="dag-arrow">▶</div><div class="dag-node" style="border-color:#2ecc71"><div class="dag-dot" style="background:#2ecc71"></div><div class="dag-name">run_dwd_clean</div><div class="dag-status" style="color:#2ecc71">成功</div></div><div class="dag-arrow">▶</div><div class="dag-node" style="border-color:#2ecc71"><div class="dag-dot" style="background:#2ecc71"></div><div class="dag-name">update_lifecycle</div><div class="dag-status" style="color:#2ecc71">成功</div></div><div class="dag-arrow">▶</div><div class="dag-node" style="border-color:#2ecc71"><div class="dag-dot" style="background:#2ecc71"></div><div class="dag-name">run_dws_agg</div><div class="dag-status" style="color:#2ecc71">成功</div></div></div>
+    <p class="muted" style="margin-top:14px">说明：本次为一次性体检执行，任务间采用"失败后继续"策略（与生产 fail-fast 不同），便于查看所有节点真实状态。</p>
+  </div>
+
+  <div class="panel">
+    <h2>📋 任务明细</h2>
+    <table>
+      <thead><tr><th>任务</th><th>状态</th><th>开始 / 结束</th><th>耗时(s)</th><th>影响行数</th><th>信息</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><code>load_style_ods</code><br><span class="muted">① ODS 入库（16888 style CSV → MySQL）</span></td>
+          <td><span class="badge" style="background:#2ecc71">成功</span></td>
+          <td>2026-08-13 11:18:43<br><span class="muted">→ 2026-08-13 11:18:43</span></td>
+          <td class="num">0.39</td>
+          <td class="num">607</td>
+          <td class="msg">affected_rows=607</td>
+        </tr>
+        <tr>
+          <td><code>build_sales_dimensions</code><br><span class="muted">② 拉链维度构建（dim_model SCD2 + 维度派生）</span></td>
+          <td><span class="badge" style="background:#2ecc71">成功</span></td>
+          <td>2026-08-13 11:18:43<br><span class="muted">→ 2026-08-13 11:18:44</span></td>
+          <td class="num">0.12</td>
+          <td class="num">651</td>
+          <td class="msg">affected_rows=651</td>
+        </tr>
+        <tr>
+          <td><code>refresh_ads_zipper</code><br><span class="muted">③ ADS 拉链刷新（sp_refresh_dim_model_ads_all）</span></td>
+          <td><span class="badge" style="background:#2ecc71">成功</span></td>
+          <td>2026-08-13 11:18:44<br><span class="muted">→ 2026-08-13 11:18:44</span></td>
+          <td class="num">0.08</td>
+          <td class="num">0</td>
+          <td class="msg">affected_rows=0</td>
+        </tr>
+        <tr>
+          <td><code>run_dwd_clean</code><br><span class="muted">④ DWD 清洗（车型/销量/价格/能源/级别）</span></td>
+          <td><span class="badge" style="background:#2ecc71">成功</span></td>
+          <td>2026-08-13 11:18:44<br><span class="muted">→ 2026-08-13 11:18:44</span></td>
+          <td class="num">0.06</td>
+          <td class="num">0</td>
+          <td class="msg">affected_rows=0</td>
+        </tr>
+        <tr>
+          <td><code>update_lifecycle</code><br><span class="muted">⑤ 更新车型生命周期（在售/停售）</span></td>
+          <td><span class="badge" style="background:#2ecc71">成功</span></td>
+          <td>2026-08-13 11:18:44<br><span class="muted">→ 2026-08-13 11:18:44</span></td>
+          <td class="num">0.55</td>
+          <td class="num">1803</td>
+          <td class="msg">affected_rows=1803</td>
+        </tr>
+        <tr>
+          <td><code>run_dws_agg</code><br><span class="muted">⑥ DWS 月度聚合（车系/厂商/品牌/级别/能源/价格带/城市）</span></td>
+          <td><span class="badge" style="background:#2ecc71">成功</span></td>
+          <td>2026-08-13 11:18:44<br><span class="muted">→ 2026-08-13 11:18:45</span></td>
+          <td class="num">0.76</td>
+          <td class="num">101</td>
+          <td class="msg">affected_rows=101</td>
+        </tr></tbody>
+    </table>
+  </div>
+
+  <div class="panel">
+    <h2>🐛 错误详情</h2>
+    <p class="muted">无失败任务。</p>
+  </div>
+
+  <footer>
+    生成脚本: <code>scripts/run_monthly_chain_once.py</code> ｜
+    数据来源: 车主之家 16888 ｜ 执行策略: 直接调用业务函数，绕过 APScheduler
+  </footer>
+</body>
+</html>

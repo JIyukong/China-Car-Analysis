@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>日链执行报告 — 2026-08-13</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
+         background:#0f1320; color:#e4e7ee; padding:28px; }
+  h1 { margin:0 0 6px; font-size:24px; }
+  .sub { color:#9aa3b2; font-size:13px; margin-bottom:22px; }
+  .cards { display:flex; gap:14px; flex-wrap:wrap; margin-bottom:24px; }
+  .card { background:#1a2030; border:1px solid #2a3142; border-radius:10px;
+           padding:16px 20px; min-width:130px; }
+  .card .v { font-size:26px; font-weight:700; }
+  .card .l { color:#9aa3b2; font-size:12px; margin-top:4px; }
+  .ok { color:#2ecc71; } .fail-c { color:#e74c3c; } .skip-c { color:#f39c12; }
+  .panel { background:#1a2030; border:1px solid #2a3142; border-radius:10px;
+            padding:20px; margin-bottom:22px; }
+  .panel h2 { margin:0 0 16px; font-size:17px; }
+  .dag { display:flex; align-items:center; flex-wrap:wrap; gap:8px; }
+  .dag-node { border:2px solid #2a3142; border-radius:8px; padding:10px 14px;
+               min-width:150px; background:#111624; }
+  .dag-dot { width:10px; height:10px; border-radius:50%; display:inline-block; margin-right:6px; }
+  .dag-name { font-weight:600; font-size:13px; display:inline-block; }
+  .dag-status { font-size:12px; margin-top:4px; }
+  .dag-arrow { color:#5a6478; font-size:14px; }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  th,td { text-align:left; padding:10px 12px; border-bottom:1px solid #2a3142; vertical-align:top; }
+  th { color:#9aa3b2; font-weight:600; font-size:12px; text-transform:uppercase; }
+  td.num { text-align:right; font-variant-numeric: tabular-nums; }
+  .muted { color:#7b8496; font-size:12px; }
+  .msg { color:#c8cdd8; word-break:break-all; }
+  .badge { display:inline-block; padding:3px 10px; border-radius:20px; color:#fff; font-size:12px; }
+  code { background:#111624; padding:2px 6px; border-radius:4px; font-size:12px; color:#9ecbff; }
+  .err-block { background:#111624; border:1px solid #2a3142; border-radius:6px;
+                padding:10px 14px; margin-bottom:10px; }
+  .err-block summary { cursor:pointer; font-size:13px; }
+  pre { background:#0b0e17; color:#e0b4b4; padding:12px; border-radius:6px;
+         overflow-x:auto; font-size:12px; white-space:pre-wrap; }
+  footer { margin-top:24px; color:#6b7488; font-size:12px; }
+</style>
+</head>
+<body>
+  <h1>📈 日链执行报告</h1>
+  <div class="sub">business_key: <code>2026-08-13</code> ｜
+    <span class="badge" style="background:#2ecc71">交易日</span>
+    <span class="muted">交易日</span><br>
+    执行时间: 2026-08-13 11:24:26 → 2026-08-13 11:26:43 ｜
+    主机: JiYoun ｜ Python: 3.13.9</div>
+
+  <div class="cards">
+    <div class="card"><div class="v">4</div><div class="l">任务总数</div></div>
+    <div class="card"><div class="v ok">4</div><div class="l">成功</div></div>
+    <div class="card"><div class="v fail-c">0</div><div class="l">失败</div></div>
+    <div class="card"><div class="v skip-c">0</div><div class="l">跳过</div></div>
+    <div class="card"><div class="v">137.27s</div><div class="l">总耗时</div></div>
+    <div class="card"><div class="v">1164</div><div class="l">累计写入行数</div></div>
+    <div class="card"><div class="v ok">39</div><div class="l">累计采集成功</div></div>
+    <div class="card"><div class="v fail-c">0</div><div class="l">累计采集失败</div></div>
+  </div>
+
+  <div class="panel">
+    <h2>📊 DAG 执行状态</h2>
+    <div class="dag"><div class="dag-node" style="border-color:#2ecc71"><div class="dag-dot" style="background:#2ecc71"></div><div class="dag-name">load_stock_daily</div><div class="dag-status" style="color:#2ecc71">成功</div></div><div class="dag-arrow">▶</div><div class="dag-node" style="border-color:#2ecc71"><div class="dag-dot" style="background:#2ecc71"></div><div class="dag-name">load_futures_daily</div><div class="dag-status" style="color:#2ecc71">成功</div></div><div class="dag-arrow">▶</div><div class="dag-node" style="border-color:#2ecc71"><div class="dag-dot" style="background:#2ecc71"></div><div class="dag-name">load_index_daily</div><div class="dag-status" style="color:#2ecc71">成功</div></div><div class="dag-arrow">▶</div><div class="dag-node" style="border-color:#2ecc71"><div class="dag-dot" style="background:#2ecc71"></div><div class="dag-name">load_stock_finance</div><div class="dag-status" style="color:#2ecc71">成功</div></div></div>
+    <p class="muted" style="margin-top:14px">说明：生产环境中股票/期货/指数日线为并行调度（17:30），财务数据 18:30 单独调度；本报告为一次性体检，串行执行并采用"失败后继续"策略。</p>
+  </div>
+
+  <div class="panel">
+    <h2>📋 任务明细</h2>
+    <table>
+      <thead><tr><th>任务</th><th>状态</th><th>开始 / 结束</th><th>耗时(s)</th><th>采集统计</th><th>信息</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><code>load_stock_daily</code><br><span class="muted">① 股票日线采集（akshare → ods_stock_daily）</span></td>
+          <td><span class="badge" style="background:#2ecc71">成功</span></td>
+          <td>2026-08-13 11:24:26<br><span class="muted">→ 2026-08-13 11:25:15</span></td>
+          <td class="num">49.4</td>
+          <td>成功 <b>25</b> ｜ 失败 <b>0</b> ｜ 跳过 3<br><span class='muted'>股票数=28 ｜ 写入 236 行</span></td>
+          <td class="msg">股票数=28, 成功=25, 失败=0, 跳过=3, 写入行数=236</td>
+        </tr>
+        <tr>
+          <td><code>load_futures_daily</code><br><span class="muted">② 商品期货主力连续日线（新浪 → ods_futures_daily）</span></td>
+          <td><span class="badge" style="background:#2ecc71">成功</span></td>
+          <td>2026-08-13 11:25:15<br><span class="muted">→ 2026-08-13 11:25:22</span></td>
+          <td class="num">6.81</td>
+          <td>成功 <b>3</b> ｜ 失败 <b>0</b><br><span class='muted'>品种数=3 ｜ 写入 3 行</span></td>
+          <td class="msg">品种数=3, 成功=3, 失败=0, 跳过=0, 写入行数=3</td>
+        </tr>
+        <tr>
+          <td><code>load_index_daily</code><br><span class="muted">③ 同花顺行业指数日线（akshare → ods_index_daily）</span></td>
+          <td><span class="badge" style="background:#2ecc71">成功</span></td>
+          <td>2026-08-13 11:25:22<br><span class="muted">→ 2026-08-13 11:25:26</span></td>
+          <td class="num">4.04</td>
+          <td>成功 <b>1</b> ｜ 失败 <b>0</b><br><span class='muted'>指数数=1 ｜ 写入 1 行</span></td>
+          <td class="msg">指数数=1, 成功=1, 失败=0, 跳过=0, 写入行数=1</td>
+        </tr>
+        <tr>
+          <td><code>load_stock_finance</code><br><span class="muted">④ 股票财务数据采集（akshare → ods_stock_finance）</span></td>
+          <td><span class="badge" style="background:#2ecc71">成功</span></td>
+          <td>2026-08-13 11:25:26<br><span class="muted">→ 2026-08-13 11:26:43</span></td>
+          <td class="num">77.02</td>
+          <td>成功 <b>10</b> ｜ 失败 <b>0</b> ｜ 跳过 18<br><span class='muted'>股票数=28 ｜ 写入 924 行</span></td>
+          <td class="msg">股票数=28, 成功=10, 失败=0, 跳过=18, 写入行数=924</td>
+        </tr></tbody>
+    </table>
+  </div>
+
+  <div class="panel">
+    <h2>🐛 错误详情</h2>
+    <p class="muted">无失败任务。</p>
+  </div>
+
+  <footer>
+    生成脚本: <code>scripts/run_daily_chain_once.py</code> ｜
+    数据源: akshare / 新浪财经 ｜ 执行策略: 直接调用业务函数，绕过 APScheduler
+  </footer>
+</body>
+</html>

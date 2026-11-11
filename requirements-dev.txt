@@ -1,0 +1,12 @@
+# ========== 开发与测试依赖 ==========
+# 安装方式: pip install -r requirements-dev.txt
+
+# Lint & Format
+ruff>=0.5.0
+
+# Type Check
+mypy>=1.10.0
+
+# Test
+pytest>=8.0.0
+pytest-cov>=5.0.0

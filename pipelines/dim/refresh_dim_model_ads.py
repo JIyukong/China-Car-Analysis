@@ -55,6 +55,17 @@ def normalize_listed_at(value: str) -> dict[str, object]:
         parsed = datetime.strptime(raw.title(), EN_MONTH_FORMAT).date().replace(day=1)
         return {"listed_at_raw": raw, "listed_at_date": parsed, "listed_at_granularity": "month"}
 
+    # 兼容 YY-Mon 格式（如 21-Jun -> 2021-06-01）
+    yy_mon_match = re.fullmatch(r"(\d{2})-([A-Za-z]{3})", raw)
+    if yy_mon_match:
+        year_num = 2000 + int(yy_mon_match.group(1))
+        month_num = int(datetime.strptime(yy_mon_match.group(2).title(), "%b").month)
+        return {
+            "listed_at_raw": raw,
+            "listed_at_date": date(year_num, month_num, 1),
+            "listed_at_granularity": "month",
+        }
+
     month_match = re.fullmatch(r"(\d{4})年(\d{1,2})月", raw)
     if month_match:
         year_num = int(month_match.group(1))

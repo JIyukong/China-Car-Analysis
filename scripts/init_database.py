@@ -1,5 +1,9 @@
 """一键初始化数仓：DDL → 维度种子 → ODS 入库 → 车型维度构建。
 
+DDL 按数仓分层目录自动发现并排序执行：
+    system → ods → dim → dwd → dws → ads → scheduler
+    → migrations（结构补丁）→ triggers → procedures → events。
+
 用法:
     python scripts/init_database.py              # 默认初始化到 DIM
     python scripts/init_database.py --skip-ddl   # 跳过建表（表已存在）
@@ -19,6 +23,27 @@ from base_infra.logging_config import get_logger
 logger = get_logger(__name__)
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
+DB_DIR = PROJECT_ROOT / "db"
+
+# DDL 目录执行顺序：建库 → 建表（按数仓分层）→ 结构补丁 → 编程对象。
+# migrations 必须在 procedures/events 之前，确保 SP 创建时表结构已达最终态。
+_DDL_DIR_ORDER = [
+    "system",
+    "ods",
+    "dim",
+    "dwd",
+    "dws",
+    "ads",
+    "scheduler",
+    "migrations",
+    "triggers",
+    "procedures",
+    "events",
+]
+
+# 自动初始化时跳过的 SQL 文件（相对 DB_DIR 的正斜杠路径）。
+# powerbi_user.sql 为权限脚本，需 DBA 手工执行。
+_DDL_SKIP = {"system/01_create_powerbi_user.sql"}
 
 
 def split_sql_statements(sql_content: str) -> list[str]:
@@ -52,6 +77,25 @@ def split_sql_statements(sql_content: str) -> list[str]:
     return [statement for statement in statements if statement]
 
 
+def discover_sql_files(db_dir: Path = DB_DIR) -> list[Path]:
+    """按分层目录顺序发现所有待执行的 SQL 文件。
+
+    目录内按文件名排序（两位前缀保证顺序），_DDL_SKIP 中的文件排除。
+    """
+    files: list[Path] = []
+    for dirname in _DDL_DIR_ORDER:
+        dir_path = db_dir / dirname
+        if not dir_path.is_dir():
+            continue
+        for sql_file in sorted(dir_path.glob("*.sql")):
+            rel = sql_file.relative_to(db_dir).as_posix()
+            if rel in _DDL_SKIP:
+                logger.info("跳过手工权限脚本: %s", rel)
+                continue
+            files.append(sql_file)
+    return files
+
+
 def run_step(description: str, module: str) -> None:
     """执行一个 Python 模块步骤。
 
@@ -69,17 +113,16 @@ def run_step(description: str, module: str) -> None:
         sys.exit(result.returncode)
 
 
-def run_sql_file(sql_file: str) -> None:
-    """通过 SQLAlchemy 执行 SQL 文件。
+def run_sql_file(sql_path: Path) -> None:
+    """通过 SQLAlchemy 执行指定 SQL 文件。
 
     Args:
-        sql_file: SQL 文件名（相对于 db/ddl/）。
+        sql_path: SQL 文件绝对路径。
     """
     from base_infra.db import engine
     from sqlalchemy import text
 
-    sql_path = PROJECT_ROOT / "db" / "ddl" / sql_file
-    logger.info("执行 SQL: %s", sql_path.name)
+    logger.info("执行 SQL: %s", sql_path.relative_to(DB_DIR).as_posix())
     sql_content = sql_path.read_text(encoding="utf-8")
     with engine.begin() as conn:
         for statement in split_sql_statements(sql_content):
@@ -87,7 +130,7 @@ def run_sql_file(sql_file: str) -> None:
 
 
 def main() -> None:
-    """脚本入口。                                       """
+    """脚本入口。"""
     parser = argparse.ArgumentParser(description="一键初始化数仓")
     parser.add_argument("--skip-ddl", action="store_true", help="跳过 DDL 建表")
     parser.add_argument("--skip-ods", action="store_true", help="跳过 ODS 入库")
@@ -95,32 +138,12 @@ def main() -> None:
     parser.add_argument("--with-dwd", action="store_true", help="显式执行 DWD 清洗与生命周期更新")
     args = parser.parse_args()
 
-    # Step 1: DDL 建表（严格按文件编号升序执行；02 为权限脚本，单独手工执行不在此列）
+    # Step 1: DDL 建表（按分层目录自动发现排序；powerbi_user 权限脚本手工执行）
     if not args.skip_ddl:
-        ddl_files = [
-            "00_create_database.sql",
-            "01_create_tables.sql",
-            "03_create_dwd_tables.sql",
-            "04_create_dws_tables.sql",
-            "05_create_dim_zipper_tables.sql",
-            "06_alter_dim_model_add_brand_oem_ads_columns.sql",
-            "07_create_dim_energy_vehicle.sql",
-            "08_create_dim_energy_vehicle_triggers.sql",
-            "09_create_dim_model_ads_manual.sql",
-            "10_create_dim_model_ads_sync.sql",
-            "11_create_dim_model_ads_views.sql",
-            "12_alter_dim_model_ads_reference.sql",
-            "13_create_ods_stock_finance.sql",
-            "14_create_dim_area.sql",
-            "15_alter_dwd_sales_monthly_model.sql",
-            "16_create_dwd_tables_extend.sql",
-            "17_create_ods_index_daily.sql",
-            "18_create_ods_futures_daily.sql",
-            "19_create_scheduler_tables.sql",
-            "20_create_procedures_etl.sql",
-        ]
-        for ddl_file in ddl_files:
-            run_sql_file(ddl_file)
+        sql_files = discover_sql_files()
+        logger.info("发现 %d 个 DDL 文件（按分层顺序）", len(sql_files))
+        for sql_file in sql_files:
+            run_sql_file(sql_file)
         logger.info("DDL 建表完成")
     else:
         logger.info("跳过 DDL 建表")
