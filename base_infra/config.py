@@ -41,6 +41,14 @@ class Settings(BaseSettings):
     PROJECT_ROOT: str = str(Path(__file__).resolve().parents[1])     # 项目根目录（scheduler 等模块定位日志/脚本用）
     ALERT_WEBHOOK_URL: str = ""                                      # 调度器告警机器人 Webhook（飞书/企业微信，留空则不告警）
     ALERT_WEBHOOK_TYPE: str = "feishu"                               # 告警机器人类型：feishu / wecom
+    FEISHU_APP_ID: str = ""
+    FEISHU_APP_SECRET: str = ""
+    FEISHU_CLI_PATH: str = ""
+    FEISHU_ALERT_CHAT_ID: str = ""
+    FEISHU_BASE_TOKEN: str = ""
+    FEISHU_TABLE_ID: str = ""
+    FEISHU_TABLE_URL: str = ""
+    ETL_STOCK_DWD_ENABLED: bool = False
 
     # 模型配置：从 .env 文件读取，字段大小写敏感
     model_config = SettingsConfigDict(env_file=".env", case_sensitive=True)

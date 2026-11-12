@@ -18,7 +18,7 @@
 字段说明（对应用户要求的 5 个字段 + 月份）:
     - 排名（rank，整数，如 1）
     - 车型（model_name，如"星愿"）
-    - 销量（sales_volume，整数，如 38751）
+    - 销量原文（sales_volume，如 "38751"）
     - 厂商（manufacturer，如"吉利汽车"）
     - 售价（price_range，如"6.48 - 9.48"，单位万元）
 
@@ -66,18 +66,23 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
+if not __package__:
+    # 保留直接运行入口，同时避免本目录的 selectors.py 遮蔽标准库。
+    sys.path[0] = str(Path(__file__).resolve().parents[4])
+    __package__ = "pipelines.ingest.sales.crawl_16888_style"
+
 from playwright.sync_api import (
     Browser,
     BrowserContext,
     Page,
     Playwright,
-    TimeoutError as PlaywrightTimeoutError,
     sync_playwright,
 )
+from playwright.sync_api import (
+    TimeoutError as PlaywrightTimeoutError,
+)
 
-# 处理包内导入：确保 selectors 可作为包内模块导入                            兼容直接运行与作为模块导入
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-from selectors import (  # noqa: E402  (sys.path 已处理)
+from .selectors import (
     MIN_YEAR,
     NEXT_PAGE_BUTTON,
     PAGE_URL_TEMPLATE,
@@ -86,7 +91,6 @@ from selectors import (  # noqa: E402  (sys.path 已处理)
     TABLE_ROW_SELECTOR,
     TOTAL_COUNT_TEXT_REGEX,
 )
-
 
 # ============================================================================
 # 常量配置
@@ -355,12 +359,12 @@ def get_total_count(page: Page) -> int | None:
 # 提取当前页全部数据行的 JS 代码                                      # 直接读 td 文本，无需正则
 # 与 city 页面差异: 排名/销量为纯文本（无 strong/em 标签）
 _EXTRACT_ROWS_JS = """() => {
-    const rows = document.querySelectorAll('table tbody tr');
+    const rows = document.querySelectorAll('table.xl-table-a tbody tr');
     const out = [];
     for (const tr of rows) {
-        // 跳过表头行（th）和不完整行
+        // 跳过表头和站点明确的空结果标记，其他行保留原始字段供核查。
         const tds = tr.querySelectorAll('td');
-        if (tds.length < 5) continue;                              // 表头行无 td，自动跳过
+        if (!tds.length || tr.querySelector('.table-nodata')) continue;
         // 安全读取 helper：取元素 innerText 并 trim，元素不存在返回空串
         const txt = (el) => el ? ((el.innerText || '').trim()) : '';
         const num = (el) => {
@@ -370,10 +374,10 @@ _EXTRACT_ROWS_JS = """() => {
         };
         out.push({
             rank:          num(tds[0]),                           // td.xl-td-t1 排名
-            model_name:    txt(tds[1].querySelector('a')),         // td.xl-td-t2 车型
-            sales_volume:  num(tds[2]),                            // td.xl-td-t3 销量
-            manufacturer:  txt(tds[3].querySelector('a')),         // 厂商
-            price_range:   txt(tds[4].querySelector('a')),         // td.xl-td-t5 售价
+            model_name:    txt(tds[1]?.querySelector('a')),        // td.xl-td-t2 车型
+            sales_volume:  txt(tds[2]),                            // td.xl-td-t3 销量原文
+            manufacturer:  txt(tds[3]?.querySelector('a')),        // 厂商
+            price_range:   txt(tds[4]?.querySelector('a')),        // td.xl-td-t5 售价
         });
     }
     return out;
@@ -546,9 +550,8 @@ def crawl_one_month(
             with csv_path.open("r", encoding="utf-8-sig") as f:
                 reader = csv.DictReader(f)
                 for row in reader:
-                    # 类型转换: rank/sales_volume 转回 int
+                    # 排名转回 int，销量保留原文。
                     row["rank"] = int(row["rank"]) if row.get("rank") else 0
-                    row["sales_volume"] = int(row["sales_volume"]) if row.get("sales_volume") else 0
                     all_records.append(row)
         print(f"  → 断点续传：已读入 {len(all_records)} 条历史记录，从第 {start_page} 页继续。")
         # 跳转到断点页（避免重复点击下一页多次）

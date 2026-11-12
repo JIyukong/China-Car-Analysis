@@ -214,6 +214,6 @@ def clean_sales_dwd(month: str | None = None) -> int:
 
 
 if __name__ == "__main__":
-    month_arg = sys.argv[1] if len(sys.argv) > 1 else None
-    inserted = clean_sales_dwd(month_arg)
-    print(f"DWD清洗完成，插入 {inserted} 行")
+    from scheduler.monthly_publish import resume_month_cli
+
+    raise SystemExit(resume_month_cli('style'))

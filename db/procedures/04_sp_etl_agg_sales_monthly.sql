@@ -80,18 +80,18 @@ BEGIN
              GROUP BY STR_TO_DATE(CONCAT(stat_month, '-01'), '%Y-%m-%d')
         ) total ON total.stat_month = curr.stat_month
         LEFT JOIN (
-            SELECT DATE_SUB(STR_TO_DATE(CONCAT(stat_month, '-01'), '%Y-%m-%d'), INTERVAL 12 MONTH) AS stat_month,
+            SELECT DATE_ADD(STR_TO_DATE(CONCAT(stat_month, '-01'), '%Y-%m-%d'), INTERVAL 12 MONTH) AS stat_month,
                    company_id, SUM(sales_volume) AS monthly_sales
               FROM dwd_sales_monthly_model
              WHERE company_id IS NOT NULL
-             GROUP BY DATE_SUB(STR_TO_DATE(CONCAT(stat_month, '-01'), '%Y-%m-%d'), INTERVAL 12 MONTH), company_id
+             GROUP BY DATE_ADD(STR_TO_DATE(CONCAT(stat_month, '-01'), '%Y-%m-%d'), INTERVAL 12 MONTH), company_id
         ) prev ON prev.stat_month = curr.stat_month AND prev.company_id = curr.company_id
         LEFT JOIN (
-            SELECT DATE_SUB(STR_TO_DATE(CONCAT(stat_month, '-01'), '%Y-%m-%d'), INTERVAL 1 MONTH) AS stat_month,
+            SELECT DATE_ADD(STR_TO_DATE(CONCAT(stat_month, '-01'), '%Y-%m-%d'), INTERVAL 1 MONTH) AS stat_month,
                    company_id, SUM(sales_volume) AS monthly_sales
               FROM dwd_sales_monthly_model
              WHERE company_id IS NOT NULL
-             GROUP BY DATE_SUB(STR_TO_DATE(CONCAT(stat_month, '-01'), '%Y-%m-%d'), INTERVAL 1 MONTH), company_id
+             GROUP BY DATE_ADD(STR_TO_DATE(CONCAT(stat_month, '-01'), '%Y-%m-%d'), INTERVAL 1 MONTH), company_id
         ) last_month ON last_month.stat_month = curr.stat_month
                     AND last_month.company_id = curr.company_id
         WHERE (p_month IS NULL OR curr.stat_month = p_month)
@@ -140,18 +140,18 @@ BEGIN
              GROUP BY STR_TO_DATE(CONCAT(stat_month, '-01'), '%Y-%m-%d')
         ) total ON total.stat_month = curr.stat_month
         LEFT JOIN (
-            SELECT DATE_SUB(STR_TO_DATE(CONCAT(stat_month, '-01'), '%Y-%m-%d'), INTERVAL 12 MONTH) AS stat_month,
+            SELECT DATE_ADD(STR_TO_DATE(CONCAT(stat_month, '-01'), '%Y-%m-%d'), INTERVAL 12 MONTH) AS stat_month,
                    brand_id, SUM(sales_volume) AS monthly_sales
               FROM dwd_sales_monthly_model
              WHERE brand_id IS NOT NULL
-             GROUP BY DATE_SUB(STR_TO_DATE(CONCAT(stat_month, '-01'), '%Y-%m-%d'), INTERVAL 12 MONTH), brand_id
+             GROUP BY DATE_ADD(STR_TO_DATE(CONCAT(stat_month, '-01'), '%Y-%m-%d'), INTERVAL 12 MONTH), brand_id
         ) prev ON prev.stat_month = curr.stat_month AND prev.brand_id = curr.brand_id
         LEFT JOIN (
-            SELECT DATE_SUB(STR_TO_DATE(CONCAT(stat_month, '-01'), '%Y-%m-%d'), INTERVAL 1 MONTH) AS stat_month,
+            SELECT DATE_ADD(STR_TO_DATE(CONCAT(stat_month, '-01'), '%Y-%m-%d'), INTERVAL 1 MONTH) AS stat_month,
                    brand_id, SUM(sales_volume) AS monthly_sales
               FROM dwd_sales_monthly_model
              WHERE brand_id IS NOT NULL
-             GROUP BY DATE_SUB(STR_TO_DATE(CONCAT(stat_month, '-01'), '%Y-%m-%d'), INTERVAL 1 MONTH), brand_id
+             GROUP BY DATE_ADD(STR_TO_DATE(CONCAT(stat_month, '-01'), '%Y-%m-%d'), INTERVAL 1 MONTH), brand_id
         ) last_month ON last_month.stat_month = curr.stat_month
                     AND last_month.brand_id = curr.brand_id
         WHERE (p_month IS NULL OR curr.stat_month = p_month)

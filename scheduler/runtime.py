@@ -1,14 +1,10 @@
-"""ETL 按声明顺序运行。此模块可离线导入和预览。"""
+"""调度入口共用的业务日期和任务参数，可离线导入。"""
 
-import logging
 from dataclasses import dataclass
 from datetime import date, datetime, timedelta
-from importlib import import_module
 from zoneinfo import ZoneInfo
 
-from scheduler.task_config import CHAINS, STEPS
-
-logger = logging.getLogger(__name__)
+from scheduler.task_config import CHAINS
 
 
 @dataclass
@@ -56,59 +52,15 @@ def chain_steps(chain: str, *, from_csv: bool = False, step: str | None = None) 
     return steps
 
 
-def is_trade_day(day: date) -> bool:
-    from sqlalchemy import text
-
-    from base_infra.db import engine
-
-    with engine.connect() as conn:
-        row = conn.execute(
-            text("SELECT is_open FROM dim_trade_calendar WHERE trade_date = :day AND market = 'SSE'"),
-            {"day": day},
-        ).first()
-    if row is None:
-        logger.warning("交易日历缺少 %s，按工作日判断", day)
-        return day.weekday() < 5
-    return bool(row[0])
-
-
 def run_chain(chain: str, period: str, *, from_csv: bool = False, step: str | None = None) -> bool:
+    """兼容调用统一入口的旧代码。"""
+    from scheduler.runner import main
+
     period = business_period(chain, period)
-    steps = chain_steps(chain, from_csv=from_csv, step=step)
-    if chain == "daily" and not is_trade_day(date.fromisoformat(period)):
-        logger.info("%s 非交易日，跳过日链", period)
-        return True
-
-    success = True
-    skip_ods = False
-    for task in steps:
-        if skip_ods:
-            skip_ods = False
-            continue
-
-        module, name = STEPS[task].split(":")
-        logger.info("开始 %s %s", task, period)
-        try:
-            execute = getattr(import_module(f"scheduler.jobs.{module}"), name)
-            result = execute(business_key=period)
-            if isinstance(result, TaskResult):
-                if not result.success:
-                    raise RuntimeError(result.message or result.error_type or task)
-                logger.info("完成 %s %s %s", task, period, result.message)
-            elif result is False:
-                raise RuntimeError(f"{task} 返回失败")
-            else:
-                logger.info("完成 %s %s", task, period)
-        except AlreadyLoaded as exc:
-            logger.info("%s", exc)
-            skip_ods = True
-        except SkipTask as exc:
-            logger.info("跳过 %s %s: %s", task, period, exc)
-            if chain != "daily":
-                return not from_csv
-        except Exception:
-            logger.exception("失败 %s %s", task, period)
-            success = False
-            if chain != "daily":
-                break
-    return success
+    chain_steps(chain, from_csv=from_csv, step=step)
+    args = ["--chain", chain, "--period", period]
+    if from_csv:
+        args.append("--from-csv")
+    if step:
+        args.extend(["--step", step])
+    return main(args) == 0

@@ -15,7 +15,7 @@
      （不执行 INSERT，不丢数据，等待人工补维后重跑）
 
 用法:
-    python -m pipelines.staging.clean_sales_city_dwd
+    python -m pipelines.staging.clean_sales_city_dwd YYYY-MM
 """
 
 from __future__ import annotations
@@ -259,13 +259,12 @@ def run_clean_sales_city_dwd(target_month: date | None = None) -> int:
         return result.rowcount
 
 
-def main() -> None:
-    """脚本入口。"""
-    logger.info("开始执行 DWD 城市销量清洗...")
-    count = run_clean_sales_city_dwd()
-    logger.info("DWD 城市销量清洗完成，新增 %d 条记录", count)
-    print(f"DWD 城市销量清洗完成，新增 {count} 条记录。")
+def main() -> int:
+    """通过统一调度入口恢复已验证的城市销量批次。"""
+    from scheduler.monthly_publish import resume_month_cli
+
+    return resume_month_cli('city')
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

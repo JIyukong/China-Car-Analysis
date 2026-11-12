@@ -5,16 +5,20 @@
 
 from __future__ import annotations
 
+import logging
 import os
 import random
 import time
+from collections.abc import Iterable
 from contextlib import contextmanager
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from datetime import date
 from types import SimpleNamespace
-from typing import Iterable
 from urllib.parse import urlparse
 
 import requests
+
+logger = logging.getLogger(__name__)
 
 
 DEFAULT_DIRECT_DOMAINS = (
@@ -34,6 +38,14 @@ DEFAULT_PREFLIGHT_URL = (
 
 
 @dataclass(slots=True)
+class DailyFetch:
+    """Requested dates committed per code, and hard failures for attempted codes."""
+
+    observed: dict[str, frozenset[date]] = field(default_factory=dict)
+    failures: dict[str, str] = field(default_factory=dict)
+
+
+@dataclass(slots=True)
 class RuntimeConfig:
     proxy_url: str | None
     direct_domains: tuple[str, ...]
@@ -43,6 +55,36 @@ class RuntimeConfig:
     stock_sleep_seconds: float
     preflight_only: bool
     start_date: str
+    repair_from: str | None = None
+    trade_dates: dict[str, frozenset[date]] | None = None
+    report_through: date | None = None
+    daily_fetch: DailyFetch | None = None
+
+
+def fetch_daily_symbol(fetch, instrument: dict, code: str, config: RuntimeConfig, *, dry_run: bool) -> dict:
+    """Record the bounded run's result and keep collecting after a symbol failure."""
+    report = config.daily_fetch
+    try:
+        result = fetch(instrument, config=config, dry_run=dry_run)
+    except Exception as exc:
+        if report is None:
+            raise
+        logger.exception("采集 %s 失败", code)
+        result = {**instrument, "status": "failed", "error_type": type(exc).__name__, "error": str(exc)}
+    if report is not None:
+        if result["status"] in {"success", "warning", "no_new_rows"}:
+            report.observed[code] = result.get("written_dates", frozenset())
+        else:
+            report.failures[code] = result["error_type"] or "unknown"
+    return result
+
+
+def write_daily_rows(insert, rows: list[dict], result: dict) -> None:
+    """Record date observations only after the ODS upsert returns successfully."""
+    result["rows_inserted"] = insert(rows)
+    if result["rows_inserted"] != len(rows):
+        raise RuntimeError("ODS 写入行数与已验证行数不符")
+    result["written_dates"] = frozenset(row["trade_date"] for row in rows)
 
 
 def parse_direct_domains(raw_domains: str | None) -> tuple[str, ...]:

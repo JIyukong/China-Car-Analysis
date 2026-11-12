@@ -61,8 +61,4 @@ def load_ths_index_daily(
 
 
 if __name__ == "__main__":
-    # 测试运行
-    print("=" * 60)
-    print("测试同花顺行业指数日线数据采集")
-    print("=" * 60)
-    load_ths_index_daily()
+    raise SystemExit("请使用 python -m scheduler.runner --chain daily --step load_index_daily")
