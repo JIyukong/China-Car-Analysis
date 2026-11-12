@@ -121,8 +121,14 @@ def test_oem_alias_resolves_existing_oem_name_in_both_sales_chains(warehouse):
     execute("INSERT INTO dim_vehicle_type VALUES (1)")
     execute("INSERT INTO dim_vehicle_subtype VALUES (1,'SUV',1)")
     publish.publish_month('city', '2026-01')
-    assert execute("SELECT manufacturer_name,oem_id,model_id FROM dwd_sales_monthly_model") == [('Renamed',1,1)]
+    assert execute("SELECT manufacturer_name,oem_id,model_id FROM dwd_sales_monthly_model") == [('OEM',1,1)]
+    assert execute("SELECT manufacturer_name_raw FROM ods_sales_monthly_model") == [('Renamed',)]
     assert execute("SELECT oem_id,model_id FROM dwd_sales_monthly_model_city") == [(1,1)]
+    original = execute("SELECT id FROM dwd_sales_monthly_model")
+    execute("UPDATE dwd_sales_monthly_model SET manufacturer_name='Renamed'")
+    publish.publish_month('style', '2026-01')
+    assert execute("SELECT id FROM dwd_sales_monthly_model") == original
+    assert execute("SELECT manufacturer_name FROM dwd_sales_monthly_model") == [('OEM',)]
 
 
 def test_publication_uses_company_effective_at_sale_month_end(warehouse):

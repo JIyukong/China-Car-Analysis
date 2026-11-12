@@ -197,7 +197,7 @@
 | `model_name` | `VARCHAR(128)` | 标准化车型名 |
 | `model_name_raw` | `VARCHAR(128)` | 原始车型名 |
 | `model_id` | `BIGINT UNSIGNED` | 车型 ID |
-| `manufacturer_name` | `VARCHAR(128)` | 标准化主机厂名 |
+| `manufacturer_name` | `VARCHAR(128)` | `dim_oem.oem_name` 中的正式主机厂名。来源原名保留在 ODS 的 `manufacturer_name_raw` |
 | `oem_id` | `BIGINT UNSIGNED` | 主机厂 ID |
 | `brand_id` | `BIGINT UNSIGNED` | 品牌 ID |
 | `company_id` | `BIGINT UNSIGNED` | 上市公司 ID |

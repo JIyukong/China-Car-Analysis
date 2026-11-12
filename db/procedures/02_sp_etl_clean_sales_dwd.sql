@@ -145,7 +145,7 @@ BEGIN
         TRIM(ods.model_name_raw)                                               AS model_name,
         ods.model_name_raw                                                     AS model_name_raw,
         dm.id                                                                  AS model_id,
-        TRIM(ods.manufacturer_name_raw)                                        AS manufacturer_name,
+        doem.oem_name                                                        AS manufacturer_name,
         doem.id                                                                AS oem_id,
         dm.brand_id                                                            AS brand_id,
         doem.company_id                                                        AS company_id,

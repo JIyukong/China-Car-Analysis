@@ -125,10 +125,17 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--status", action="store_true", help="读取本地巡检摘要，不连库")
     parser.add_argument("--merge-oem-aliases", nargs="+", metavar="OLD:CANONICAL",
                         help="归并已确认的主机厂别名及销量关联")
+    parser.add_argument("--normalize-oem-names", action="store_true",
+                        help="按正式主机厂名更新已发布 DWD")
     parser.add_argument("--reconcile-reviewed-companies", action="store_true",
                         help="按已核验的主机厂归属修正已发布销量")
     parser.add_argument("--tick", choices=TICKS, help=argparse.SUPPRESS)
     args = parser.parse_args(argv)
+    if args.normalize_oem_names and any((
+        args.status, args.plan, args.tick, args.chain, args.period, args.from_csv, args.step,
+        args.resume, args.merge_oem_aliases, args.reconcile_reviewed_companies,
+    )):
+        parser.error("--normalize-oem-names 需要单独运行")
     if args.reconcile_reviewed_companies and any((args.status, args.plan, args.tick, args.chain,
                                                   args.period, args.from_csv, args.step, args.resume,
                                                   args.merge_oem_aliases)):
@@ -169,6 +176,18 @@ def main(argv: list[str] | None = None) -> int:
     if get_settings().DB_USER.strip().casefold() in {"", "root", "admin", "administrator"}:
         logger.error("请为 CarApp 配置独立的 ETL 数据库账号")
         return 1
+    if args.normalize_oem_names:
+        from scheduler.oem_normalize import normalize_oem_names
+        from scheduler.workflow import State
+
+        try:
+            with State().lock("warehouse", timeout=10):
+                count = normalize_oem_names()
+            print(json.dumps({"normalized_dwd_rows": count}, ensure_ascii=False))
+            return 0
+        except Exception:
+            logger.exception("主机厂名称统一失败")
+            return 1
     if args.reconcile_reviewed_companies:
         from scheduler.company_reconcile import reconcile_reviewed_companies
         from scheduler.workflow import State

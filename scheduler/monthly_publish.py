@@ -270,6 +270,8 @@ def _candidates(chain, period, rows, dimensions):
             labels = (model, _name(row['manufacturer_name' if chain == 'style' else 'city_name']))
             payload = '|'.join((row['source'], period, *labels))
             candidate['row_hash'] = hashlib.md5(payload.encode('utf-8')).hexdigest()
+        if chain == 'style':
+            candidate['manufacturer_name'] = dim['oem_name']
         if chain == 'city':
             candidate.update({field: dim[field] for field in ('area_id', 'subtype_name', 'vehicle_subtype_id', 'vehicle_type_id')})
         candidates.append(candidate)
@@ -298,9 +300,13 @@ def _numeric(value):
 
 
 def _write_dwd(conn, chain, period, source, candidates):
-    key = lambda row: _natural_key(chain, row)
+    def key(row):
+        if chain == 'style':
+            return _name(row['model_name']).casefold(), row['oem_id']
+        return _natural_key(chain, row)
+
     expected = _index(candidates, key, 'DWD 候选')
-    if {key(row): row['sales_volume'] for row in source} != {key(row): row['sales_volume'] for row in candidates}:
+    if {row['id']: row['sales_volume'] for row in source} != {row['id']: row['sales_volume'] for row in candidates}:
         raise ReconciliationError('ODS 与 DWD 候选业务键或销量不一致')
     _index(candidates, lambda row: row['row_hash'], 'DWD 候选哈希')
     if chain == 'style':
