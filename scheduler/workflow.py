@@ -119,7 +119,8 @@ class State:
         for row in self.batches():
             for gap in json.loads(row["gaps"]):
                 kind, key = gap["kind"], gap["key"]
-                if (kind, key) in resolved:
+                # Older publication receipts still contain retired ADS tasks.
+                if kind == "ads" or (kind, key) in resolved:
                     continue
                 item = grouped.setdefault((kind, key), {"fields": set(), "periods": set()})
                 item["fields"].update(gap["fields"])

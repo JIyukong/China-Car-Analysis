@@ -13,7 +13,7 @@ from scheduler.task_config import CHAINS, DAILY_TIMES, MONTHLY_CRON
 
 ROOT = Path(__file__).resolve().parents[1]
 TIMEZONE = "Asia/Shanghai"
-TICKS = (*MONTHLY_CRON, *DAILY_TIMES, "manual", "resume")
+TICKS = (*MONTHLY_CRON, *DAILY_TIMES, "manual", "resume", "ads")
 
 
 def print_plan(chain: str | None = None, period: str | None = None, *, from_csv=False, step=None, resume=False) -> None:
@@ -34,7 +34,7 @@ def print_plan(chain: str | None = None, period: str | None = None, *, from_csv=
                 for task, (hour, minute) in DAILY_TIMES.items():
                     print(f"  北京时间每日 {hour:02}:{minute:02} {task}")
     if not chain:
-        print("北京时间每 5 分钟同步飞书补录并恢复已验收批次")
+        print("北京时间每 5 分钟同步飞书补录和独立 ADS 维表，并恢复已验收批次")
 
 
 def run_scheduled(task: str) -> None:
@@ -92,7 +92,14 @@ def run_tick(task: str) -> bool:
             results.append(process_month(state, task, period, prefer_resume=True))
         return all(results)
     if task == "manual":
+        from scheduler.ads_workflow import poll as poll_ads
         from scheduler.manual_workflow import poll
+
+        manual_ok = poll(state)
+        ads_ok = poll_ads(state)
+        return manual_ok and ads_ok
+    if task == "ads":
+        from scheduler.ads_workflow import poll
 
         return poll(state)
     if task == "resume":
@@ -116,8 +123,19 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--step", choices=DAILY_TIMES, help="只运行一项独立的日链任务")
     parser.add_argument("--plan", action="store_true", help="离线预览步骤")
     parser.add_argument("--status", action="store_true", help="读取本地巡检摘要，不连库")
+    parser.add_argument("--merge-oem-aliases", nargs="+", metavar="OLD:CANONICAL",
+                        help="归并已确认的主机厂别名及销量关联")
+    parser.add_argument("--reconcile-reviewed-companies", action="store_true",
+                        help="按已核验的主机厂归属修正已发布销量")
     parser.add_argument("--tick", choices=TICKS, help=argparse.SUPPRESS)
     args = parser.parse_args(argv)
+    if args.reconcile_reviewed_companies and any((args.status, args.plan, args.tick, args.chain,
+                                                  args.period, args.from_csv, args.step, args.resume,
+                                                  args.merge_oem_aliases)):
+        parser.error("--reconcile-reviewed-companies 需要单独运行")
+    if args.merge_oem_aliases and any((args.status, args.plan, args.tick, args.chain, args.period,
+                                       args.from_csv, args.step, args.resume)):
+        parser.error("--merge-oem-aliases 需要单独运行")
 
     if not args.chain and (args.period or args.from_csv or args.step):
         parser.error("--period、--from-csv、--step 需要 --chain")
@@ -151,6 +169,31 @@ def main(argv: list[str] | None = None) -> int:
     if get_settings().DB_USER.strip().casefold() in {"", "root", "admin", "administrator"}:
         logger.error("请为 CarApp 配置独立的 ETL 数据库账号")
         return 1
+    if args.reconcile_reviewed_companies:
+        from scheduler.company_reconcile import reconcile_reviewed_companies
+        from scheduler.workflow import State
+
+        try:
+            with State().lock("warehouse", timeout=10):
+                report = reconcile_reviewed_companies()
+            print(json.dumps(report, ensure_ascii=False))
+            return 0
+        except Exception:
+            logger.exception("公司归属修正失败")
+            return 1
+    if args.merge_oem_aliases:
+        from scheduler.oem_merge import merge_oems
+        from scheduler.workflow import State
+
+        try:
+            pairs = [tuple(map(int, pair.split(":"))) for pair in args.merge_oem_aliases]
+            with State().lock("warehouse", timeout=10):
+                counts = merge_oems(pairs)
+            print(json.dumps(counts, ensure_ascii=False))
+            return 0
+        except Exception:
+            logger.exception("主机厂归并失败")
+            return 1
     if args.chain or args.tick:
         try:
             if args.tick:

@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 def _tickets(state: State) -> list[dict]:
     with state.transaction() as conn:
-        return [dict(row) for row in conn.execute("SELECT * FROM feishu_ticket ORDER BY kind, entity")]
+        return [dict(row) for row in conn.execute("SELECT * FROM feishu_ticket WHERE kind <> 'ads' ORDER BY kind, entity")]
 
 
 def _bind(state: State, gap: dict, record_id: str) -> None:
@@ -98,7 +98,8 @@ def _sync(state: State, client, table_url: str, *, notify: bool = True) -> bool:
             keys.setdefault(key, []).append(row)
     tickets = {(row["kind"], row["entity"]): row for row in _tickets(state)}
     ok = True
-    for gap in state.gaps():
+    gaps = state.gaps()
+    for gap in gaps:
         identity = gap["kind"], gap["key"]
         try:
             _ensure_ticket(state, client, gap, tickets.get(identity, {}).get("record_id"), records, keys)
@@ -116,7 +117,7 @@ def _sync(state: State, client, table_url: str, *, notify: bool = True) -> bool:
             except Exception:
                 logger.exception("Feishu submission failed for record %s", ticket["record_id"])
                 ok = False
-    active = {(gap["kind"], gap["key"]) for gap in state.gaps()}
+    active = {(gap["kind"], gap["key"]) for gap in gaps}
     unnotified = [
         row for row in tickets if row["notified"] is None and (row["kind"], row["entity"]) in active
     ]

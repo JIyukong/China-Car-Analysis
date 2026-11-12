@@ -47,6 +47,7 @@ class Settings(BaseSettings):
     FEISHU_ALERT_CHAT_ID: str = ""
     FEISHU_BASE_TOKEN: str = ""
     FEISHU_TABLE_ID: str = ""
+    FEISHU_ADS_TABLE_ID: str = ""
     FEISHU_TABLE_URL: str = ""
     ETL_STOCK_DWD_ENABLED: bool = False
 

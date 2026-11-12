@@ -46,12 +46,24 @@ def _postcheck(conn: Connection, sql: str, values: dict) -> None:
         raise RuntimeError("飞书补录写入后复查未通过")
 
 
+_CURRENT_OEM = """
+    AND NOT EXISTS (
+        SELECT 1 FROM dim_oem legacy JOIN dim_oem canonical
+          ON canonical.company_id = legacy.company_id AND canonical.id <> legacy.id
+         AND JSON_CONTAINS(canonical.aliases, JSON_QUOTE(legacy.oem_name))
+        WHERE legacy.id = m.oem_id
+          AND NOT EXISTS (SELECT 1 FROM dwd_sales_monthly_model d WHERE d.oem_id=legacy.id)
+          AND NOT EXISTS (SELECT 1 FROM dwd_sales_monthly_model_city d WHERE d.oem_id=legacy.id)
+    )
+"""
+
+
 def _model(conn: Connection, key: str) -> dict:
-    rows = conn.execute(text("""
+    rows = conn.execute(text(f"""
         SELECT m.id, m.model_name, m.energy_type, m.vehicle_type,
                e.energy_type AS stored_energy_type, e.vehicle_type AS stored_vehicle_type
         FROM dim_model m LEFT JOIN dim_energy_vehicle e ON e.model_name = m.model_name
-        WHERE m.model_name = :key FOR UPDATE
+        WHERE m.model_name = :key {_CURRENT_OEM} FOR UPDATE
     """), {"key": key}).mappings().all()
     if len(rows) != 1 or rows[0]["model_name"] != key:
         raise ValueError("业务键未命中唯一车型，请先修正车型映射")
@@ -161,11 +173,20 @@ def _complete_ads(conn: Connection, key: str, values: dict) -> dict:
     return merged
 
 
-def _apply_ads(conn: Connection, key: str, values: dict) -> None:
-    model = _model(conn, key)
+def apply_ads(conn: Connection, key: str, values: dict) -> None:
+    models = conn.execute(text(f"""
+        SELECT m.id, m.model_name FROM dim_model m WHERE m.model_name = :key {_CURRENT_OEM} FOR UPDATE
+    """), {"key": key}).mappings().all()
+    if len(models) > 1 or (models and models[0]["model_name"] != key):
+        raise ValueError("ADS 业务键未命中唯一车型，请先修正车型映射")
+    model_id = models[0]["id"] if models else None
     merged = _complete_ads(conn, key, values)
-    payload = {"model_id": model["id"], "model_name": key, "source_file": FEISHU_SOURCE, **merged}
-    current_rows = conn.execute(text("""
+    payload = {
+        "model_id": model_id, "model_name": key, "source_file": FEISHU_SOURCE, **merged,
+        "matched": int(model_id is not None),
+        "missing_reason": "DIM_MODEL_NOT_FOUND" if model_id is None else None,
+    }
+    current_rows = [] if model_id is None else conn.execute(text("""
         SELECT id, ads_supplier, ads_supplier_mode, effective_start_date
         FROM dim_model_ads_zipper WHERE model_id = :model_id AND is_current = 1 FOR UPDATE
     """), payload).mappings().all()
@@ -175,7 +196,7 @@ def _apply_ads(conn: Connection, key: str, values: dict) -> None:
     same_supplier = current is not None and all(
         current[field] == payload[field] for field in ("ads_supplier", "ads_supplier_mode")
     )
-    if not same_supplier:
+    if model_id is not None and not same_supplier:
         _validate_ads_period(conn, payload, current)
 
     # 欠缺项补录时，只更新此次提交的权威字段，拉链使用合并后的完整值。
@@ -187,12 +208,19 @@ def _apply_ads(conn: Connection, key: str, values: dict) -> None:
             missing_in_dim_model_reason, match_checked_at, source_file
         ) VALUES (
             :model_name, :ads_proportion_raw, :ads_proportion_pct, :ads_supplier, :ads_supplier_mode,
-            :listed_at_raw, :listed_at_date, :listed_at_granularity, :model_id, 1, NULL, NOW(), :source_file
+            :listed_at_raw, :listed_at_date, :listed_at_granularity, :model_id, :matched, :missing_reason, NOW(), :source_file
         ) ON DUPLICATE KEY UPDATE
             {assignments}matched_model_id = VALUES(matched_model_id),
-            is_in_dim_model = 1, missing_in_dim_model_reason = NULL, match_checked_at = NOW(),
+            is_in_dim_model = VALUES(is_in_dim_model),
+            missing_in_dim_model_reason = VALUES(missing_in_dim_model_reason), match_checked_at = NOW(),
             source_file = VALUES(source_file)
     """), payload)
+    if model_id is None:
+        _postcheck(conn, """
+            SELECT COUNT(*) FROM dim_model_ads_manual
+            WHERE model_name = :model_name AND matched_model_id IS NULL AND is_in_dim_model = 0
+        """, payload)
+        return
     if same_supplier:
         conn.execute(text("""
             UPDATE dim_model_ads_zipper z JOIN dim_model dm ON dm.id = z.model_id
@@ -359,7 +387,7 @@ def _apply_ownership(conn: Connection, key: str, values: dict) -> None:
 def apply_feishu_dimension(conn: Connection, kind: str, key: str, values: dict) -> None:
     """写入已校验的补录项，并在同一事务内复查当前业务键。"""
     handlers = {
-        "energy": _apply_energy, "ads": _apply_ads, "area": _apply_area,
+        "energy": _apply_energy, "ads": apply_ads, "area": _apply_area,
         "subtype": _apply_subtype, "ownership": _apply_ownership,
     }
     handlers[kind](conn, key, values)

@@ -55,12 +55,12 @@ def test_optional_gaps_merge_and_do_not_change_published_state(tmp_path, monkeyp
     store = workflow.State(tmp_path)
     monkeypatch.setattr(workflow, "collect_month", lambda *args, **kwargs: "source-1")
     monkeypatch.setattr(workflow, "publish_month", lambda *args: [
-        {"kind": "ads", "key": "测试车型", "fields": ["智驾供应商"]},
+        {"kind": "energy", "key": "测试车型", "fields": ["energy_type"]},
     ])
     for period in ("2026-08", "2026-09"):
         assert workflow.process_month(store, "style", period)
     assert store.gaps() == [{
-        "kind": "ads", "key": "测试车型", "fields": ["智驾供应商"], "periods": ["2026-08", "2026-09"],
+        "kind": "energy", "key": "测试车型", "fields": ["energy_type"], "periods": ["2026-08", "2026-09"],
     }]
 
 

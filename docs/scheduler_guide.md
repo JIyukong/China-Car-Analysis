@@ -35,9 +35,13 @@ python -m scheduler.runner --chain daily --period 2026-07-03 --step load_index_d
 
 使用飞书 CLI 部署时，设置 `FEISHU_CLI_PATH` 为可执行文件的绝对路径，补录通过 CLI 的应用身份调用 Base v3。常驻任务需以持有该 CLI 配置及系统密钥的 Windows 用户运行。应用机器人加入通知群后，用 `FEISHU_ALERT_CHAT_ID` 指定群 ID。启用群 ID 后，群消息发送失败会记录失败并按原策略重试。
 
-收到通知后，打开链接并填写「补录数据」中预填的 JSON 字段，再把状态改为「已提交」。系统回填结果，受影响的已验收批次自动续跑。ADS 确认不适用时，填写 `{"not_applicable":true}`。主机厂归属使用已存在的 `company_code` 和 `brand_code`。存在归属冲突、城市车型无法唯一定位或原始级别为空时，按回执核对来源和主数据后续跑。能源和智驾缺项继续提醒，全国销量按自身依赖发布。
+收到通知后，打开链接并填写「补录数据」中预填的 JSON 字段，再把状态改为「已提交」。系统回填结果，受影响的已验收批次自动续跑。主机厂归属使用已存在的 `company_code` 和 `brand_code`。存在归属冲突、城市车型无法唯一定位或原始级别为空时，按回执核对来源和主数据后续跑。能源缺项继续提醒，全国销量按自身依赖发布。
 
-原有手工维度 CSV 可用于专人维护。使用现有 `pipelines.dim.refresh_dim_energy_vehicle`、`refresh_dim_model_ads`、`refresh_dim_area` 命令，完成后按月份 `--resume`。
+能源和地区 CSV 可分别用 `pipelines.dim.refresh_dim_energy_vehicle` 和 `pipelines.dim.refresh_dim_area` 专人维护，完成后按月份 `--resume`。
+
+ADS 单独维护。在同一个飞书 Base 中配置独立数据表 `dim_model_ads_manual`，设置 `FEISHU_ADS_TABLE_ID` 并给调度应用读取权限。五列均为文本：`model_name`（唯一车型名）、`ads_proportion`（如 `95%`）、`ads_supplier`、`ads_supplier_mode`、`listed_at`（如 `2026-07-01` 或 `2026年7月`）。调度每五分钟增量同步到 `dim_model_ads_manual`；已匹配车型同步生成 `dim_model_ads_zipper`，供应商或模式变化时按上市日期开启新版本。尚未建档的车型先进入权威表。源表缺行不会删除数据库记录。
+
+手动同步 ADS：`python -m scheduler.runner --tick ads`。切换到飞书后停止使用 ADS CSV 导入及数据库旧 ADS 事件，避免重复写入。DWD 不再读取或写入 ADS 字段；正式库旧列及历史值保留，结构由管理员另行维护。查询历史方案时，按 `model_id` 和所需时点关联拉链表。
 
 主机厂工作簿 `汽车品牌主机厂信息表.xlsx` 放在本地仓库根目录。使用 `python -m pipelines.dim.seed_dim_from_excel` 更新已有品牌关系时会保留其生效日期。工作簿没有品牌变更的生效日期，遇到品牌变更会停止导入，待确认日期后单独维护关系。
 

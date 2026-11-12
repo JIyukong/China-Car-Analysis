@@ -14,6 +14,7 @@ from decimal import Decimal, ROUND_HALF_UP
 from sqlalchemy import bindparam, text
 
 from base_infra.db import engine
+from pipelines.dim.oem_aliases import canonical_model_clause, read_aliases
 
 
 class ReconciliationError(RuntimeError):
@@ -35,10 +36,9 @@ class Publication:
 
 _ODS = {'style': 'ods_sales_monthly_model', 'city': 'ods_sales_monthly_model_city'}
 _DWD = {'style': 'dwd_sales_monthly_model', 'city': 'dwd_sales_monthly_model_city'}
-_ADS_FIELDS = ('ads_proportion', 'ads_supplier', 'ads_supplier_mode', 'listed_at')
 _COMMON_COLUMNS = (
     'stat_month', 'source', 'model_name', 'model_name_raw', 'model_id', 'oem_id',
-    'brand_id', 'company_id', 'ads_id', 'ads_supplier_name', 'sales_volume',
+    'brand_id', 'company_id', 'sales_volume',
     'price_min', 'price_max', 'rank_no', 'row_hash',
 )
 _COLUMNS = {
@@ -126,9 +126,20 @@ def _source(conn, chain, month):
 
 
 def _dimensions(conn, chain, month):
+    aliases, retired = read_aliases(conn)
+    params = {}
     if chain == 'style':
-        ownership = '''
-            LEFT JOIN dim_oem o ON o.oem_name = TRIM(s.manufacturer_name_raw)
+        cases = []
+        for i, (alias, identifier) in enumerate(sorted(aliases.items())):
+            cases.append(f"WHEN :alias_{i} THEN :oem_{i}")
+            params.update({f"alias_{i}": alias, f"oem_{i}": identifier})
+        canonical = (
+            f"CASE LOWER(TRIM(s.manufacturer_name_raw)) {' '.join(cases)} ELSE raw_o.id END"
+            if cases else "raw_o.id"
+        )
+        ownership = f'''
+            LEFT JOIN dim_oem raw_o ON raw_o.oem_name = TRIM(s.manufacturer_name_raw)
+            LEFT JOIN dim_oem o ON o.id = {canonical}
             LEFT JOIN dim_model m ON m.oem_id = o.id AND m.model_name = TRIM(s.model_name_raw)
             LEFT JOIN (
                 SELECT oem_id, MIN(brand_id) AS brand_id
@@ -140,41 +151,31 @@ def _dimensions(conn, chain, month):
         '''
         extra = 'derived.id AS derived_brand_id, derived.brand_name AS derived_brand_name'
     else:
-        ownership = '''
-            LEFT JOIN dim_model m ON m.model_name = TRIM(s.model_name_raw)
+        clause, params = canonical_model_clause(retired, "m.oem_id")
+        ownership = f'''
+            LEFT JOIN dim_model m ON m.model_name = TRIM(s.model_name_raw) {clause}
             LEFT JOIN dim_oem o ON o.id = m.oem_id
             LEFT JOIN dim_area a ON a.city_short_name = TRIM(s.city_name_raw)
             LEFT JOIN dim_vehicle_subtype st ON st.subtype_name = TRIM(s.level_raw)
             LEFT JOIN dim_vehicle_type vt ON vt.id = st.vehicle_type_id
         '''
         extra = 'a.id AS area_id, st.id AS vehicle_subtype_id, st.subtype_name, vt.id AS vehicle_type_id'
-    as_of = (_month_shift(month, 1) - timedelta(days=1)).isoformat()
     rows = _read(conn, f'''
         SELECT s.id, m.id AS model_id, o.id AS oem_id, o.oem_name,
                b.id AS brand_id, b.brand_code, b.brand_name,
                c.id AS company_id, c.company_code,
-               z.id AS ads_id, z.ads_supplier AS ads_supplier_name, e.energy_type, e.vehicle_type,
-               CASE WHEN z.id IS NULL THEN ads.ads_proportion_pct ELSE z.ads_proportion_pct END AS ads_proportion_pct,
-               CASE WHEN z.id IS NULL THEN ads.ads_supplier ELSE z.ads_supplier END AS ads_supplier,
-               CASE WHEN z.id IS NULL THEN ads.ads_supplier_mode ELSE z.ads_supplier_mode END AS ads_supplier_mode,
-               CASE WHEN z.id IS NULL THEN ads.listed_at_raw ELSE z.listed_at_raw END AS listed_at_raw,
-               ads_version.first_start, {extra}
+               e.energy_type, e.vehicle_type, {extra}
           FROM {_ODS[chain]} s
           {ownership}
           LEFT JOIN dim_brand b ON b.id = m.brand_id
-          LEFT JOIN dim_company c ON c.id = o.company_id
+          LEFT JOIN bridge_brand_oem historical ON historical.oem_id = o.id
+              AND historical.brand_id = m.brand_id AND historical.is_current = 0
+              AND historical.effective_start_date <= :as_of AND historical.effective_end_date >= :as_of
+          LEFT JOIN dim_company c ON c.id = COALESCE(historical.company_id, o.company_id)
           LEFT JOIN dim_energy_vehicle e ON e.model_name = TRIM(s.model_name_raw)
-          LEFT JOIN dim_model_ads_manual ads ON ads.model_name = TRIM(s.model_name_raw)
-          LEFT JOIN (
-              SELECT model_id, MIN(effective_start_date) AS first_start,
-                     MIN(CASE WHEN :as_of BETWEEN effective_start_date AND effective_end_date THEN id END) AS active_id
-                FROM dim_model_ads_zipper
-               GROUP BY model_id
-              HAVING COUNT(CASE WHEN :as_of BETWEEN effective_start_date AND effective_end_date THEN 1 END) <= 1
-          ) ads_version ON ads_version.model_id = m.id
-          LEFT JOIN dim_model_ads_zipper z ON z.id = ads_version.active_id
          WHERE s.stat_month = :month AND s.source = :source
-    ''', month=month.isoformat(), source=f'16888_{chain}', as_of=as_of)
+    ''', month=month.isoformat(), as_of=(_month_shift(month, 1) - timedelta(days=1)).isoformat(),
+          source=f'16888_{chain}', **params)
     grouped = defaultdict(list)
     for row in rows:
         grouped[row['id']].append(row)
@@ -191,11 +192,17 @@ def _gap(gaps, kind, key, *fields):
 def _derive_models(conn, rows, dimensions):
     inserts = []
     updates = []
+    seen = set()
     for row in rows:
         matches = dimensions[row['id']]
         if len(matches) != 1:
             continue
         dim = matches[0]
+        if dim["oem_id"] is not None:
+            key = (_name(row["model_name"]).casefold(), dim["oem_id"])
+            if key in seen:
+                raise ReconciliationError(f"主机厂归并后 ODS 车型重复：{key}")
+            seen.add(key)
         if dim['derived_brand_id'] is None or dim['company_code'] in (None, 'OTHER'):
             continue
         model, oem = _name(row['model_name']), dim['oem_name']
@@ -256,18 +263,8 @@ def _candidates(chain, period, rows, dimensions):
             if dim['vehicle_type_id'] is None:
                 _gap(required, 'subtype', _name(row['level_raw']) or '(空)', 'subtype_code', 'type_name')
 
-        ads_values = (dim['ads_proportion_pct'], dim['ads_supplier'], dim['ads_supplier_mode'], dim['listed_at_raw'])
-        missing_ads = [field for field, value in zip(_ADS_FIELDS, ads_values) if value in (None, '', '未知', '占位')]
-        if ads_values[0] is not None and not 0 <= _numeric(ads_values[0]) <= 100:
-            missing_ads.append('ads_proportion')
-        before_first_ads = dim['first_start'] is not None and str(dim['first_start'])[:7] > period
-        if missing_ads or dim['ads_id'] is None or not _name(dim['ads_supplier_name']):
-            if not before_first_ads:
-                _gap(optional, 'ads', model, *(missing_ads or _ADS_FIELDS))
-            dim['ads_id'], dim['ads_supplier_name'] = None, None
-
         price_min, price_max = _price_bounds(row['price_range_raw'])
-        candidate = {**row, **{key: dim[key] for key in ('model_id', 'oem_id', 'brand_id', 'company_id', 'ads_id', 'ads_supplier_name')}}
+        candidate = {**row, **{key: dim[key] for key in ('model_id', 'oem_id', 'brand_id', 'company_id')}}
         candidate.update(stat_month=period, model_name=model, price_min=price_min, price_max=price_max)
         if not candidate['row_hash']:
             labels = (model, _name(row['manufacturer_name' if chain == 'style' else 'city_name']))
@@ -501,7 +498,6 @@ def affected_months(kind: str, key: str) -> list[tuple[str, str]]:
     """Resolve exact source-key matches for a manual edit, independently of DWD."""
     filters = {
         'energy': {'style': 'TRIM(s.model_name_raw) = :key'},
-        'ads': {chain: 'TRIM(s.model_name_raw) = :key' for chain in _ODS},
         'area': {'city': 'TRIM(s.city_name_raw) = :key'},
         'subtype': {'city': 'TRIM(s.level_raw) = :key'},
         'ownership': {

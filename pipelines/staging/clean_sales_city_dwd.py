@@ -5,7 +5,7 @@
   2. 支持按目标月增量（p_month），避免全表扫描
   3. 标准化车型名/城市名（TRIM）
   4. stat_month 由 DATE 转 CHAR(7) YYYY-MM
-  5. 关联 dim_model 补 model_id / oem_id / brand_id / company_id / ads_id / ads_supplier_name
+  5. 关联 dim_model 补 model_id / oem_id / brand_id / company_id
   6. 关联 dim_area（city_short_name = TRIM(city_name_raw)）补 area_id
   7. 关联 dim_vehicle_subtype（subtype_name = TRIM(level_raw)）补 vehicle_subtype_id
      并回滚到 dim_vehicle_type 得到 vehicle_type_id
@@ -162,7 +162,6 @@ INSERT INTO dwd_sales_monthly_model_city (
     stat_month, source,
     model_name, model_name_raw, model_id,
     oem_id, brand_id, company_id,
-    ads_id, ads_supplier_name,
     city_name, city_name_raw, area_id,
     subtype_name, level_raw, vehicle_subtype_id, vehicle_type_id,
     sales_volume, price_min, price_max, rank_no, row_hash
@@ -176,8 +175,6 @@ SELECT
     dm.oem_id                                                        AS oem_id,
     dm.brand_id                                                      AS brand_id,
     doem.company_id                                                  AS company_id,
-    dm.ads_id                                                        AS ads_id,
-    dm.ads_supplier_name                                             AS ads_supplier_name,
     TRIM(ods.city_name_raw)                                          AS city_name,
     ods.city_name_raw                                                AS city_name_raw,
     da.id                                                            AS area_id,

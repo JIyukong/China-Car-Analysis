@@ -258,11 +258,12 @@ class FeishuCliClient(FeishuClient):
         self._call("PATCH", f"/{quote(record_id, safe='')}", body=self._cells(fields))
 
 
-def client_from_settings(settings) -> FeishuClient:
+def client_from_settings(settings, *, table_id: str | None = None) -> FeishuClient:
+    table_id = settings.FEISHU_TABLE_ID if table_id is None else table_id
     if getattr(settings, "FEISHU_CLI_PATH", ""):
-        return FeishuCliClient(settings.FEISHU_CLI_PATH, settings.FEISHU_BASE_TOKEN, settings.FEISHU_TABLE_ID)
+        return FeishuCliClient(settings.FEISHU_CLI_PATH, settings.FEISHU_BASE_TOKEN, table_id)
     return FeishuClient(
-        settings.FEISHU_APP_ID, settings.FEISHU_APP_SECRET, settings.FEISHU_BASE_TOKEN, settings.FEISHU_TABLE_ID,
+        settings.FEISHU_APP_ID, settings.FEISHU_APP_SECRET, settings.FEISHU_BASE_TOKEN, table_id,
     )
 
 

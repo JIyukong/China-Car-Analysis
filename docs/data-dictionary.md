@@ -201,8 +201,6 @@
 | `oem_id` | `BIGINT UNSIGNED` | 主机厂 ID |
 | `brand_id` | `BIGINT UNSIGNED` | 品牌 ID |
 | `company_id` | `BIGINT UNSIGNED` | 上市公司 ID |
-| `ads_id` | `BIGINT UNSIGNED` | 智驾 ADS 拉链 ID（冗余自 `dim_model.ads_id`） |
-| `ads_supplier_name` | `VARCHAR(128)` | 智驾供应商名称快照 |
 | `sales_volume` | `INT UNSIGNED` | 月销量 |
 | `price_min` | `DECIMAL(10,2)` | 价格下限 |
 | `price_max` | `DECIMAL(10,2)` | 价格上限 |
@@ -222,8 +220,6 @@
 | `oem_id` | `BIGINT UNSIGNED` | 主机厂 ID |
 | `brand_id` | `BIGINT UNSIGNED` | 品牌 ID |
 | `company_id` | `BIGINT UNSIGNED` | 上市公司 ID |
-| `ads_id` | `BIGINT UNSIGNED` | 智驾 ADS 拉链 ID（冗余自 `dim_model.ads_id`） |
-| `ads_supplier_name` | `VARCHAR(128)` | 智驾供应商名称快照 |
 | `city_name` | `VARCHAR(64)` | 标准化城市名 |
 | `city_name_raw` | `VARCHAR(64)` | 原始城市名 |
 | `area_id` | `BIGINT UNSIGNED` | 地区 ID → `dim_area.id` |
