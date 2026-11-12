@@ -18,7 +18,7 @@
     - 排名（rank，整数，如 1）
     - 车型（model_name，如"驱逐舰05"）
     - 城市（city，如"宁波"）
-    - 上牌量（sales_volume，整数，如 2446）
+    - 上牌量原文（sales_volume，如 "2446"）
     - 级别（level，如"紧凑型车"）
     - 指导价（price_range，如"7.98-13.68"，单位万元）
 
@@ -64,18 +64,23 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
+if not __package__:
+    # 保留直接运行入口，同时避免本目录的 selectors.py 遮蔽标准库。
+    sys.path[0] = str(Path(__file__).resolve().parents[4])
+    __package__ = "pipelines.ingest.sales.crawl_16888_city"
+
 from playwright.sync_api import (
     Browser,
     BrowserContext,
     Page,
     Playwright,
-    TimeoutError as PlaywrightTimeoutError,
     sync_playwright,
 )
+from playwright.sync_api import (
+    TimeoutError as PlaywrightTimeoutError,
+)
 
-# 处理包内导入：确保 selectors 可作为包内模块导入                            兼容直接运行与作为模块导入
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-from selectors import (  # noqa: E402  (sys.path 已处理)
+from .selectors import (
     CITY_URL,
     MONTH_DROPDOWN_INDEX,
     NEXT_PAGE_BUTTON,
@@ -84,7 +89,6 @@ from selectors import (  # noqa: E402  (sys.path 已处理)
     TABLE_ROW_SELECTOR,
     TOTAL_COUNT_TEXT_REGEX,
 )
-
 
 # ============================================================================
 # 常量配置
@@ -347,11 +351,11 @@ def get_total_count(page: Page) -> int | None:
 
 # 提取当前页全部数据行的 JS 代码                                      # 直接读 td 文本，无需正则
 _EXTRACT_ROWS_JS = """() => {
-    const rows = document.querySelectorAll('table tbody tr');
+    const rows = document.querySelectorAll('.mod-table table tbody tr');
     const out = [];
     for (const tr of rows) {
         const tds = tr.querySelectorAll('td');
-        if (tds.length < 6) continue;                              // 跳过不完整行
+        if (!tds.length || tr.matches('.nodata')) continue;
         // 安全读取 helper：取元素 innerText 并 trim，元素不存在返回空串
         const txt = (el) => el ? ((el.innerText || '').trim()) : '';
         const num = (el) => {
@@ -360,12 +364,12 @@ _EXTRACT_ROWS_JS = """() => {
             return m ? parseInt(m[0], 10) : 0;
         };
         out.push({
-            rank:         num(tds[0].querySelector('strong')),
-            model_name:   txt(tds[1].querySelector('a')),
-            city:         txt(tds[2].querySelector('a')),
-            sales_volume: num(tds[3].querySelector('em')),
-            level:        txt(tds[4].querySelector('a')),
-            price_range:  txt(tds[5].querySelector('span')),
+            rank:         num(tds[0]?.querySelector('strong')),
+            model_name:   txt(tds[1]?.querySelector('a')),
+            city:         txt(tds[2]?.querySelector('a')),
+            sales_volume: txt(tds[3]),
+            level:        txt(tds[4]?.querySelector('a')),
+            price_range:  txt(tds[5]?.querySelector('span')),
         });
     }
     return out;
@@ -541,9 +545,8 @@ def crawl_one_month(
             with csv_path.open("r", encoding="utf-8-sig") as f:
                 reader = csv.DictReader(f)
                 for row in reader:
-                    # 类型转换: rank/sales_volume 转回 int
+                    # 排名转回 int，销量保留原文。
                     row["rank"] = int(row["rank"]) if row.get("rank") else 0
-                    row["sales_volume"] = int(row["sales_volume"]) if row.get("sales_volume") else 0
                     all_records.append(row)
         print(f"  → 断点续传：已读入 {len(all_records)} 条历史记录，从第 {start_page} 页继续。")
         # 跳转到断点页（避免重复点击下一页多次）

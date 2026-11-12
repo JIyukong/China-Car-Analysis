@@ -12,7 +12,6 @@ from __future__ import annotations
 import json
 import threading
 import time
-import urllib.error
 import urllib.request
 from datetime import datetime
 
@@ -81,6 +80,8 @@ def send_alert(
     task_id: str,
     run_id: str,
     message: str,
+    *,
+    deduplicate: bool = True,
     **extra: object,
 ) -> bool:
     """发送一条调度器告警。
@@ -94,11 +95,12 @@ def send_alert(
     """
     lvl = (level or "INFO").upper()
 
-    if _should_skip(lvl, task_id, run_id):
+    if deduplicate and _should_skip(lvl, task_id, run_id):
         logger.debug("告警命中去重窗口，跳过发送: %s/%s/%s", task_id, run_id, lvl)
         return True
 
     settings = get_settings()
+    chat_id = getattr(settings, "FEISHU_ALERT_CHAT_ID", "") or ""
     webhook_url = getattr(settings, "ALERT_WEBHOOK_URL", "") or ""
     webhook_type = getattr(settings, "ALERT_WEBHOOK_TYPE", "feishu") or "feishu"
 
@@ -107,6 +109,17 @@ def send_alert(
     if extra_text:
         text = f"{text}\n{extra_text}"
     text = f"{text}\n{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+
+    if chat_id:
+        from scheduler.feishu import FeishuError, client_from_settings
+
+        try:
+            client_from_settings(settings).send_chat_text(chat_id, text)
+        except FeishuError as exc:
+            logger.warning("飞书群告警发送失败: task=%s run=%s reason=%s", task_id, run_id, exc)
+            return False
+        logger.info("飞书群告警已发送[%s]: %s/%s", lvl, task_id, run_id)
+        return True
 
     if not webhook_url:
         logger.warning("[ALERT][%s] %s/%s - %s", lvl, task_id, run_id, message)
@@ -125,9 +138,16 @@ def send_alert(
             if status >= 400:
                 logger.warning("告警 webhook 返回非 2xx: status=%s", status)
                 return False
+            result = json.loads(resp.read())
+            code = result.get("errcode") if webhook_type.lower() == "wecom" else result.get(
+                "code", result.get("StatusCode"),
+            )
+            if code != 0:
+                logger.warning("告警 webhook 拒绝请求: type=%s code=%s", webhook_type, code)
+                return False
         logger.info("告警已发送[%s]: %s/%s", lvl, task_id, run_id)
         return True
-    except (urllib.error.URLError, OSError, TimeoutError) as exc:
+    except (OSError, TimeoutError, ValueError, AttributeError) as exc:
         # 网络异常不允许抛出，仅记录日志，避免影响调度主流程
-        logger.warning("告警发送失败: task=%s run=%s err=%s", task_id, run_id, exc)
+        logger.warning("告警发送失败: task=%s run=%s error_type=%s", task_id, run_id, type(exc).__name__)
         return False

@@ -32,8 +32,8 @@ STEPS = {
 }
 
 MONTHLY_CRON = {
-    "style": {"day": "12-15", "hour": 3, "minute": 0},
-    "city": {"day": "20-25", "hour": 3, "minute": 30},
+    "style": {"hour": 3, "minute": 0},
+    "city": {"hour": 3, "minute": 30},
 }
 
 DAILY_TIMES = {

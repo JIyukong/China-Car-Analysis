@@ -96,13 +96,4 @@ def load_all_stock_data() -> bool:
 
 
 if __name__ == "__main__":
-    # 测试运行
-    print("=" * 60)
-    print("测试日线数据采集")
-    print("=" * 60)
-    load_stock_daily()
-
-    print("\n" + "=" * 60)
-    print("测试财务数据采集")
-    print("=" * 60)
-    load_stock_finance()
+    raise SystemExit("请使用 python -m scheduler.runner --chain daily --step load_stock_daily 或 load_stock_finance")

@@ -62,8 +62,4 @@ def load_futures_main_daily(
 
 
 if __name__ == "__main__":
-    # 测试运行
-    print("=" * 60)
-    print("测试商品期货主力连续日线数据采集")
-    print("=" * 60)
-    load_futures_main_daily()
+    raise SystemExit("请使用 python -m scheduler.runner --chain daily --step load_futures_daily")

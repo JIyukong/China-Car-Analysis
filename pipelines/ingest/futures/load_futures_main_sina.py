@@ -6,10 +6,8 @@
 
 from __future__ import annotations
 
-import argparse
 import time
 from datetime import datetime
-from typing import Optional
 
 import akshare as ak
 import pandas as pd
@@ -18,21 +16,25 @@ from sqlalchemy import text
 from base_infra.db import engine
 from base_infra.logging_config import get_logger
 from pipelines.ingest.common.ingest_utils import (
+    build_common_parser,
+    execute_insert,
     make_stats,
-    reset_stats,
-    record_error_type,
     pick_float,
     pick_int,
-    execute_insert,
+    record_error_type,
+    reset_stats,
 )
+from pipelines.ingest.common.market_quality import market_start, valid_price_rows
 from pipelines.ingest.stock.network_runtime import (
     RuntimeConfig,
     build_runtime_config,
     classify_fetch_error,
+    fetch_daily_symbol,
     patched_requests_runtime,
     run_preflight_check,
     setup_proxy,
     sleep_before_retry,
+    write_daily_rows,
 )
 
 logger = get_logger(__name__)
@@ -54,7 +56,7 @@ def parse_args():
     return parser.parse_args()
 
 
-def get_all_commodities(commodity_filter: Optional[str] = None):
+def get_all_commodities(commodity_filter: str | None = None):
     """从 dim_commodity 表获取所有启用中的品种。"""
     sql = text("""
         SELECT id, commodity_code, commodity_name, exchange, category,
@@ -194,7 +196,7 @@ def insert_daily_data(rows):
     return execute_insert(rows, sql)
 
 
-def check_daily_data_completeness(rows, last_date=None, start_date="19990101"):
+def check_daily_data_completeness(rows, last_date=None, start_date="19990101", *, bounded=False):
     """完整性校验：close/settle/open_interest 缺失率、首次全量行数。"""
     result = {
         "is_complete": True,
@@ -208,7 +210,7 @@ def check_daily_data_completeness(rows, last_date=None, start_date="19990101"):
         return result
 
     total_rows = len(rows)
-    is_full_load = last_date is None
+    is_full_load = last_date is None and not bounded
 
     # close 缺失率                                              # 收盘价必填
     close_missing = sum(1 for row in rows if row.get("close") is None)
@@ -266,8 +268,10 @@ def fetch_single_commodity(commodity_info, config: RuntimeConfig, dry_run=False)
     }
 
     # 获取增量起始日期
-    last_date = get_last_trade_date(commodity_id)
-    start_date = last_date.strftime("%Y%m%d") if last_date else config.start_date
+    requested = config.trade_dates[commodity_code] if config.trade_dates is not None else None
+    last_date = get_last_trade_date(commodity_id) if requested is None else None
+    start_date = (market_start(last_date, config.start_date, config.repair_from) if requested is None
+                  else min(requested).strftime("%Y%m%d"))
 
     df = None
     for attempt_index in range(config.max_retries):
@@ -296,6 +300,9 @@ def fetch_single_commodity(commodity_info, config: RuntimeConfig, dry_run=False)
             )
 
     if df is None or df.empty:
+        if df is not None and requested is not None:
+            result.update(status="no_new_rows", error="接口尚未返回请求日期的数据")
+            return result
         result["status"] = "failed"
         result["error"] = "接口返回空数据"
         result["error_type"] = "empty_payload"
@@ -311,6 +318,15 @@ def fetch_single_commodity(commodity_info, config: RuntimeConfig, dry_run=False)
     result["rows_fetched"] = len(df)
 
     rows = transform_daily_data(df, commodity_info)
+    if requested is not None and rows:
+        try:
+            rows = valid_price_rows(rows, requested)
+        except ValueError as exc:
+            result.update(status="failed", error_type="invalid_rows", error=str(exc))
+            return result
+        if not rows:
+            result["status"] = "no_new_rows"
+            return result
     if not rows:
         result["status"] = "failed"
         result["error"] = "数据转换后为空"
@@ -320,7 +336,8 @@ def fetch_single_commodity(commodity_info, config: RuntimeConfig, dry_run=False)
     completeness = check_daily_data_completeness(
         rows,
         last_date=last_date,
-        start_date=config.start_date,
+        start_date=config.repair_from or config.start_date,
+        bounded=requested is not None,
     )
     result["completeness"] = completeness
     if not completeness["is_complete"]:
@@ -334,7 +351,7 @@ def fetch_single_commodity(commodity_info, config: RuntimeConfig, dry_run=False)
         result["error_type"] = "data_warning"
 
     if not dry_run:
-        result["rows_inserted"] = insert_daily_data(rows)
+        write_daily_rows(insert_daily_data, rows, result)
 
     return result
 
@@ -373,7 +390,7 @@ def print_summary():
 def run_futures_ingest(
     config: RuntimeConfig,
     dry_run: bool = False,
-    commodity_filter: Optional[str] = None,
+    commodity_filter: str | None = None,
 ) -> bool:
     """采集主流程。"""
     reset_stats(STATS, "total_commodities")
@@ -399,6 +416,8 @@ def run_futures_ingest(
         return preflight["ok"]
 
     commodities = get_all_commodities(commodity_filter=commodity_filter)
+    if config.trade_dates is not None:
+        commodities = [item for item in commodities if item["commodity_code"] in config.trade_dates]
     STATS["total_commodities"] = len(commodities)
 
     if not commodities:
@@ -420,7 +439,7 @@ def run_futures_ingest(
             commodity["main_symbol"],
         )
 
-        result = fetch_single_commodity(commodity, config=config, dry_run=dry_run)
+        result = fetch_daily_symbol(fetch_single_commodity, commodity, commodity["commodity_code"], config, dry_run=dry_run)
 
         if result["status"] == "success":
             STATS["success_count"] += 1
@@ -436,7 +455,7 @@ def run_futures_ingest(
             STATS["total_rows"] += result["rows_inserted"]
             record_error_type(STATS, result["error_type"] or "data_warning")
             logger.warning("  -> 成功（有警告）: %s", result["error"])
-        elif result["status"] == "skipped":
+        elif result["status"] in {"skipped", "no_new_rows"}:
             STATS["skip_count"] += 1
             record_error_type(STATS, result["error_type"] or "skipped")
             logger.warning("  -> 跳过: %s", result["error"])
@@ -467,6 +486,9 @@ def run_futures_ingest(
 def main():
     """脚本入口。"""
     args = parse_args()
+    if not args.dry_run and not args.preflight_only:
+        logger.error("请通过 python -m scheduler.runner --chain daily --step load_futures_daily --period YYYY-MM-DD 入库")
+        return False
     config = build_runtime_config(args)
     return run_futures_ingest(
         config,
@@ -476,4 +498,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(0 if main() else 1)

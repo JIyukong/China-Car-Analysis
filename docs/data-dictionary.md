@@ -25,12 +25,14 @@
 | 字段名 | 类型 | 说明 |
 |--------|------|------|
 | `id` | `BIGINT UNSIGNED` | 主键 ID |
-| `company_code` | `VARCHAR(32)` | 上市公司业务编码 |
-| `company_name` | `VARCHAR(64)` | 上市公司简称 |
-| `full_name` | `VARCHAR(128)` | 上市公司全称 |
-| `company_type` | `ENUM` | A股 / 港股 / 美股 / 非上市占位 / 其他 |
+| `company_code` | `VARCHAR(32)` | 公司业务编码 |
+| `company_name` | `VARCHAR(64)` | 公司简称 |
+| `full_name` | `VARCHAR(128)` | 公司全称 |
+| `company_type` | `ENUM` | A股 / 港股 / 美股 / 其他。历史枚举值「非上市占位」用于 `OTHER` |
 | `aliases` | `JSON` | 名称别名集合 |
-| `is_listed` | `TINYINT(1)` | 是否上市 |
+| `is_listed` | `TINYINT(1)` | 该公司当前是否上市。1 为上市，0 为未上市或已退市 |
+
+已确认归属的非上市公司按实际公司单独建档，写入时显式设置 `is_listed=0` 和 `company_type='其他'`。`OTHER` 只用于公司归属尚未确认的记录，使用 `company_code <> 'OTHER'` 筛出已确认公司。
 
 ### 1.2 `dim_oem`
 

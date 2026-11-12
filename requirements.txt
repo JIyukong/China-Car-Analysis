@@ -14,6 +14,7 @@ python-dotenv>=1.0.0
 # akshare: A 股/H 股日线、A 股财务、同花顺行业指数、商品期货主力连续采集
 akshare>=1.11.0
 APScheduler>=3.10,<4.0
+filelock>=3.13
 
 # 汽车之家销量爬虫（独立于 AKShare 主链路）
 # 安装后需额外执行: playwright install chromium

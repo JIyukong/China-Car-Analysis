@@ -1,79 +1,55 @@
-"""爬取完成后将 CSV 加载到 ODS 层的任务薄壳。
-
-拆为两个独立函数以匹配 style / city 两条月链：
-    - :func:`load_style_ods`  → ods_sales_monthly_model
-    - :func:`load_city_ods`   → ods_sales_monthly_model_city
-
-调度器按 business_key（YYYY-MM）只入库目标月 CSV，避免每月重放 data 目录
-下全部历史文件；入库脚本自身 UPSERT 幂等。
-"""
+"""通过统一月度验收流程重放销量 CSV。"""
 
 from __future__ import annotations
 
-from pathlib import Path
+import argparse
+import logging
 
-from base_infra.logging_config import get_logger
-from pipelines.ingest.sales.load_16888_city_to_ods import (
-    data_dir as city_data_dir,
-    main as load_city_main,
-)
-from pipelines.ingest.sales.load_16888_style_to_ods import (
-    data_dir as style_data_dir,
-    main as load_style_main,
-)
-from scheduler.runtime import SkipTask
-
-logger = get_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
-def _target_csv(
-    business_key: str | None,
-    data_dir_getter,
-    prefix: str,
-) -> Path | None:
-    """按 business_key 定位目标月 CSV；business_key 为空时返回 None（全量）。
-
-    若目标月 CSV 不存在（爬虫未生成目标月数据），抛 :class:`SkipTask`，
-    交由调度器重试/次日探测，避免误跑全量入库。
-    """
+def _load_ods(chain: str, business_key: str | None) -> bool:
     if not business_key:
-        return None
-    month = business_key[:7]
-    csv_path = data_dir_getter() / f"{prefix}_{month}.csv"
-    if not csv_path.exists():
-        raise SkipTask(f"目标月 CSV 不存在，跳过入库: {csv_path}")
-    return csv_path
+        logger.error("%s ODS 重放需要指定 YYYY-MM 月份", chain)
+        return False
+
+    from scheduler.monthly_source import collect_month
+
+    try:
+        collect_month(chain, business_key, from_csv=True)
+        return True
+    except Exception:
+        logger.exception("%s %s ODS 重放失败", chain, business_key)
+        return False
 
 
 def load_style_ods(business_key: str | None = None) -> bool:
-    """车型月销量 CSV → ods_sales_monthly_model（只入目标月）。"""
-    try:
-        target = _target_csv(business_key, style_data_dir, "style")
-        logger.info("开始加载 16888 style → ODS (file=%s)", target or "ALL")
-        load_style_main(target, expected_month=business_key[:7] if business_key else None)
-        logger.info("style ODS 入库完成")
-        return True
-    except SkipTask:
-        raise
-    except Exception:
-        logger.exception("style ODS 入库失败")
-        return False
+    """验收并写入指定月份的车型销量 CSV。"""
+    return _load_ods("style", business_key)
 
 
 def load_city_ods(business_key: str | None = None) -> bool:
-    """城市车型月销量 CSV → ods_sales_monthly_model_city（只入目标月）。"""
-    try:
-        target = _target_csv(business_key, city_data_dir, "city")
-        logger.info("开始加载 16888 city → ODS (file=%s)", target or "ALL")
-        load_city_main(target, expected_month=business_key[:7] if business_key else None)
-        logger.info("city ODS 入库完成")
-        return True
-    except SkipTask:
-        raise
-    except Exception:
-        logger.exception("city ODS 入库失败")
-        return False
+    """验收并写入指定月份的城市销量 CSV。"""
+    return _load_ods("city", business_key)
+
+
+def replay_cli(chain: str | None = None) -> int:
+    """兼容旧命令名，使用统一入口重放单个月份。"""
+    from scheduler.runner import main
+
+    selector = "--chain {style,city} " if chain is None else ""
+    command = f"python -m scheduler.runner --chain {chain or '{style,city}'} --period YYYY-MM --from-csv"
+    parser = argparse.ArgumentParser(
+        description="重放指定月份的 CSV 与来源验收清单",
+        usage=f"%(prog)s {selector}--period YYYY-MM\n       {command}",
+        allow_abbrev=False,
+    )
+    if chain is None:
+        parser.add_argument("--chain", choices=("style", "city"), required=True)
+    parser.add_argument("--period", metavar="YYYY-MM", required=True)
+    args = parser.parse_args()
+    return main(["--chain", chain or args.chain, "--period", args.period, "--from-csv"])
 
 
 if __name__ == "__main__":
-    load_style_ods()
+    raise SystemExit(replay_cli())

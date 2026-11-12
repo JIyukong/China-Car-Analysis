@@ -1,94 +1,28 @@
-"""定时爬取 16888 销量数据任务。
-
-数据发布节奏（业务事实）：
-    - 车型月销量（style）：每月 12~15 号发布上月数据
-    - 城市车型月销量（city）：每月 20~25 号发布上月数据
-
-因此拆成两条独立月链，cron 在各自窗口内每日探测，由 ODS 行数判断上月数据是否
-到位，未到位抛 :class:`scheduler.runtime.SkipTask`，次日继续探测。
-已到位则从 ODS 后面的步骤继续。爬虫子进程有独立的超时上限。
-"""
+"""Capture one fresh monthly 16888 snapshot in a bounded browser process."""
 
 from __future__ import annotations
 
+import argparse
 import csv
+import hashlib
+import json
 import os
+import random
 import signal
 import subprocess
 import sys
-from datetime import date, datetime, timedelta
+import time
+from importlib import import_module
 from pathlib import Path
 
-from sqlalchemy import text
-
 from base_infra.config import get_settings
-from base_infra.db import engine
 from base_infra.logging_config import get_logger
-from scheduler import alert
-from scheduler.runtime import AlreadyLoaded, SkipTask
+from scheduler.runtime import AlreadyLoaded, business_period
 
 logger = get_logger(__name__)
 
-# Popen 安全上限，超时后记录输出尾部并停止爬虫进程树。
 _POPEN_TIMEOUT_SEC = 170 * 60
 _TAIL_CHARS = 4000
-# 判定目标月数据"已到位"所需的最小行数（防止抓到半截页面误判）：
-# style 每月约 500+ 行，city 每月约 25000 行，阈值取预期的 ~80%
-_MIN_ROWS_STYLE = 400
-_MIN_ROWS_CITY = 20000
-
-
-def _project_root() -> Path:
-    """从配置读取项目根目录；失败时回退到本文件向上两级。"""
-    try:
-        return Path(get_settings().PROJECT_ROOT)
-    except Exception:  # noqa: BLE001 - .env 未加载或字段缺失时回退
-        return Path(__file__).resolve().parents[2]
-
-
-def _target_month(business_key: str | None) -> str:
-    """把业务键 YYYY-MM 归一化；缺省取上月（月链 cron 默认语义）。"""
-    if business_key:
-        month = business_key[:7]
-        # 严格校验，避免非法 key 静默传入 SQL/CSV 路径
-        try:
-            datetime.strptime(month, "%Y-%m")
-        except ValueError as exc:
-            raise ValueError(f"非法 business_key: {business_key!r}") from exc
-        return month
-    first_of_this = date.today().replace(day=1)
-    return (first_of_this - timedelta(days=1)).strftime("%Y-%m")
-
-
-def _month_first_day(month: str) -> date:
-    """YYYY-MM → 当月第一天 date。"""
-    return datetime.strptime(month, "%Y-%m").date()
-
-
-def _ods_rows_for_month(table: str, month: str) -> int:
-    """统计 ODS 表中指定月份（stat_month = 该月 1 号）的行数。"""
-    with engine.connect() as conn:
-        row = conn.execute(
-            text(
-                f"SELECT COUNT(*) FROM {table} "  # noqa: S608 - table 为内部常量
-                "WHERE stat_month = :d"
-            ),
-            {"d": _month_first_day(month)},
-        ).fetchone()
-    return int(row[0] or 0) if row else 0
-
-
-def _csv_rows_for_month(csv_path: Path, month: str) -> int:
-    """统计本地 CSV 中目标月份的数据行数（不含表头）。
-
-    爬虫落地 ``data/<prefix>_<YYYY-MM>.csv``，用于在 ODS 入库前判断站点
-    是否已发布目标月数据；CSV 不存在或为空返回 0。
-    """
-    if not csv_path.exists():
-        return 0
-    with csv_path.open("r", encoding="utf-8-sig", newline="") as handle:
-        reader = csv.DictReader(handle)
-        return sum(1 for row in reader if str(row.get("month", "")).strip() == month)
 
 
 def _kill_process_tree(proc: subprocess.Popen) -> None:
@@ -112,146 +46,137 @@ def _kill_process_tree(proc: subprocess.Popen) -> None:
             logger.warning("killpg 失败 pid=%s err=%s", proc.pid, exc)
 
 
-def _run_script(name: str, script: Path, args: list[str], cwd: Path) -> bool:
-    """启动脚本并等待结束；超时强杀进程树，失败时 tail stdout 写入日志。"""
-    if not script.exists():
-        logger.error("爬虫脚本不存在，跳过 %s: %s", name, script)
-        return False
-
-    # Windows 用 CREATE_NEW_PROCESS_GROUP；POSIX 用 start_new_session 建立新进程组，
-    # 便于超短时按组 kill 掉 Playwright 拉起的 Chromium 孙进程。
-    popen_kwargs: dict = {
-        "cwd": str(cwd),
-        "stdout": subprocess.PIPE,
-        "stderr": subprocess.STDOUT,
-        "text": True,
-        "encoding": "utf-8",
-        "errors": "replace",
-        "bufsize": 1,
-    }
-    if sys.platform == "win32":
-        popen_kwargs["creationflags"] = subprocess.CREATE_NEW_PROCESS_GROUP
-    else:
-        popen_kwargs["start_new_session"] = True
-
-    cmd = [sys.executable, str(script), *args]
-    logger.info("开始爬取 %s: %s", name, " ".join(cmd))
-
-    proc = subprocess.Popen(cmd, **popen_kwargs)
-    try:
-        stdout, _ = proc.communicate(timeout=_POPEN_TIMEOUT_SEC)
-    except subprocess.TimeoutExpired:
-        logger.error("%s 执行超时（%ss），强杀进程树 pid=%s",
-                     name, _POPEN_TIMEOUT_SEC, proc.pid)
-        _kill_process_tree(proc)
+def crawl_snapshot(chain: str, period: str, path: Path) -> None:
+    """Launch an isolated capture without consulting existing CSV or crawl progress."""
+    root = Path(get_settings().PROJECT_ROOT)
+    command = [sys.executable, "-m", "scheduler.jobs.crawl_16888_job", chain, period, str(path.resolve())]
+    process_group = ({"creationflags": subprocess.CREATE_NEW_PROCESS_GROUP} if sys.platform == "win32"
+                     else {"start_new_session": True})
+    with (
+        (path / "crawl.log").open("w", encoding="utf-8") as output,
+        subprocess.Popen(
+            command,
+            cwd=root,
+            stdout=output,
+            stderr=subprocess.STDOUT,
+            env={**os.environ, "PYTHONIOENCODING": "utf-8", "PYTHONUNBUFFERED": "1"},
+            **process_group,
+        ) as proc,
+    ):
         try:
-            stdout, _ = proc.communicate(timeout=10)
-        except Exception:  # noqa: BLE001
-            stdout = ""
-        tail = (stdout or "")[-_TAIL_CHARS:]
-        logger.error("%s 超时输出尾部:\n%s", name, tail)
-        return False
+            proc.wait(timeout=_POPEN_TIMEOUT_SEC)
+        except subprocess.TimeoutExpired as exc:
+            _kill_process_tree(proc)
+            if proc.poll() is None:
+                proc.kill()
+            raise RuntimeError(f"16888 {chain} {period} 抓取超时，检查 {path / 'crawl.log'}") from exc
 
     if proc.returncode != 0:
-        tail = (stdout or "")[-_TAIL_CHARS:]
-        logger.error("%s 爬取失败 exit=%s 输出尾部:\n%s",
-                     name, proc.returncode, tail)
-        return False
-
-    logger.info("%s 爬取完成", name)
-    return True
+        tail = (path / "crawl.log").read_text(encoding="utf-8", errors="replace")[-_TAIL_CHARS:]
+        raise RuntimeError(f"16888 {chain} {period} 抓取失败，原始材料位于 {path}\n{tail}")
 
 
-def _crawl_one(
-    *,
-    name: str,
-    script_rel: str,
-    data_dir_rel: str,
-    csv_prefix: str,
-    ods_table: str,
-    min_rows: int,
-    business_key: str | None,
-) -> bool:
-    """通用单源月度爬取：前置 ODS 去重 → 子进程抓取 → 后置 CSV 就绪校验。
-
-    - 前置：ODS 已有目标月足够行数 → 从清洗步骤继续（窗口内后续每日不重抓）。
-    - 后置：抓完后本地 CSV 仍无目标月数据 → 抛 SkipTask（站点尚未发布，次日再探）。
-      入库由下游 load_*_ods 任务完成，故此处校验 CSV 而非 ODS。
-    """
-    month = _target_month(business_key)
-    logger.info("%s 月度爬取 business_key=%s 目标月=%s", name, business_key, month)
-
-    existing = _ods_rows_for_month(ods_table, month)
-    if existing >= min_rows:
-        raise AlreadyLoaded(
-            f"{name} {month} 已在 ODS 存在 {existing} 行（≥{min_rows}），跳过抓取"
-        )
-
-    root = _project_root()
-    script = root / script_rel
-    args = ["--target", month, "--headless", "--resume"]
-
-    if not _run_script(name, script, args, root):
-        return False
-
-    # 目标月尚未发布时，CSV 不会达到入库所需行数。
-    csv_path = root / data_dir_rel / f"{csv_prefix}_{month}.csv"
-    new_rows = _csv_rows_for_month(csv_path, month)
-    if new_rows < min_rows:
-        raise SkipTask(
-            f"{name} 抓取完成但 {month} 在 {csv_path.name} 仅 {new_rows} 行"
-            f"（<{min_rows}），判定站点尚未发布，等待次日窗口重试"
-        )
-
-    logger.info("%s %s 数据已到位，CSV 行数=%s", name, month, new_rows)
-    try:
-        alert.send_alert(
-            "INFO",
-            f"crawl_16888_{name}",
-            f"crawl_16888_{name}:{month}",
-            f"✅ {name} 数据下载成功\n"
-            f"目标月份：{month}\n"
-            f"CSV 行数：{new_rows}\n"
-            f"文件：{csv_path.name}",
-        )
-    except Exception:
-        logger.exception("发送下载成功通知失败（不影响链路）")
-    return True
+def _reported_months(page, chain: str) -> list[str]:
+    if chain == "style":
+        return page.locator("input.xl-date-input").evaluate_all("els => els.slice(0, 2).map(el => el.value)")
+    return page.locator(".J_a_date .drop_checked").evaluate_all("els => els.map(el => el.dataset.id)")
 
 
-def crawl_16888_style_monthly(business_key: str | None = None) -> bool:
-    """爬取上月 16888 车型月销量（style）。
+def _capture_pages(page, crawler, chain: str, period: str, path: Path) -> None:
+    csv_path = path / f"{chain}_{period}.csv"
+    page_rows: list[int] = []
+    status = "published"
+    source_total = None
+    observed = 0
+    with csv_path.open("w", encoding="utf-8-sig", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=crawler.CSV_COLUMNS)
+        writer.writeheader()
+        while True:
+            page_number = len(page_rows) + 1
+            url = crawler.PAGE_URL_TEMPLATE.format(month=period, ym=period.replace("-", ""), page=page_number)
+            response = page.goto(url, wait_until="domcontentloaded")
+            if response is None or not response.ok or page.url != url:
+                (path / f"page_{page_number}.html").write_text(page.content(), encoding="utf-8")
+                raise RuntimeError(f"请求 {url} 失败或重定向到 {page.url}，请检查站点响应")
+            reported_months = _reported_months(page, chain)
+            if reported_months != [period] * (2 if chain == "style" else 1):
+                (path / f"page_{page_number}.html").write_text(page.content(), encoding="utf-8")
+                raise RuntimeError(f"目标月 {period} 与站点实际月份 {reported_months!r} 不一致: {url}")
 
-    站点每月 12~15 号发布上月数据，cron 在窗口内每日 03:00 探测；
-    已到位或未发布均抛 :class:`SkipTask`，只有抓取异常才返回 False 触发重试。
-    """
-    return _crawl_one(
-        name="16888_style",
-        script_rel="pipelines/ingest/sales/crawl_16888_style/crawl_style.py",
-        data_dir_rel="pipelines/ingest/sales/crawl_16888_style/data",
-        csv_prefix="style",
-        ods_table="ods_sales_monthly_model",
-        min_rows=_MIN_ROWS_STYLE,
-        business_key=business_key,
-    )
+            total = crawler.get_total_count(page)
+            records = crawler.extract_table_rows(page)
+            if page_number == 1 and not records and total in (0, None):
+                empty = "table.xl-table-a .table-nodata" if chain == "style" else ".mod-table table tr.nodata"
+                if page.locator(empty).count() == 1 and (chain == "style" or total == 0):
+                    status = "unpublished"
+                    source_total = 0
+                    break
+
+            writer.writerows({**row, "month": period} for row in records)
+            handle.flush()
+            page_rows.append(len(records))
+            if page_number == 1:
+                source_total = total
+            if not records or source_total is None or source_total <= 0 or total != source_total:
+                (path / f"page_{page_number}.html").write_text(page.content(), encoding="utf-8")
+                raise RuntimeError(f"第 {page_number} 页缺少有效站点总数或数据、或站点总数变化: {url} ({total!r})")
+
+            pager = page.locator(crawler.PAGER_CONTAINER).first
+            current = pager.locator(".curr").all_text_contents()
+            has_next = pager.locator(".next").count() > 0
+            single_page = page_number == 1 and not current and len(records) == source_total and not has_next
+            if [value.strip() for value in current] != [str(page_number)] and not single_page:
+                raise RuntimeError(f"第 {page_number} 页与分页器页码 {current!r} 不一致: {url}")
+            observed += len(records)
+            if observed > source_total or has_next != (observed < source_total):
+                raise RuntimeError(f"分页覆盖无法与站点总数核对: 第 {page_number} 页，累计 {observed}/{source_total}")
+            print(f"{chain} {period} 第 {page_number} 页 {len(records)} 行，累计 {observed}/{source_total}")
+            if not has_next:
+                break
+            time.sleep(random.uniform(crawler.PAGE_SLEEP_MIN, crawler.PAGE_SLEEP_MAX))
+
+    (path / "manifest.json").write_text(json.dumps({
+        "chain": chain,
+        "period": period,
+        "status": status,
+        "pagination_complete": status == "published",
+        "source_total": source_total,
+        "page_rows": page_rows,
+        "csv_sha256": hashlib.sha256(csv_path.read_bytes()).hexdigest(),
+    }, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
-def crawl_16888_city_monthly(business_key: str | None = None) -> bool:
-    """爬取上月 16888 城市车型月销量（city）。
+def _capture(chain: str, period: str, path: Path) -> None:
+    crawler = import_module(f"pipelines.ingest.sales.crawl_16888_{chain}.crawl_{chain}")
+    with crawler.sync_playwright() as playwright:
+        browser, context, page = crawler.launch_browser(playwright, headless=True)
+        try:
+            _capture_pages(page, crawler, chain, period, path)
+        finally:
+            context.close()
+            browser.close()
 
-    站点每月 20~25 号发布上月数据，cron 在窗口内每日 03:30 探测；
-    已到位或未发布均抛 :class:`SkipTask`，只有抓取异常才返回 False 触发重试。
-    """
-    return _crawl_one(
-        name="16888_city",
-        script_rel="pipelines/ingest/sales/crawl_16888_city/crawl_city.py",
-        data_dir_rel="pipelines/ingest/sales/crawl_16888_city/data",
-        csv_prefix="city",
-        ods_table="ods_sales_monthly_model_city",
-        min_rows=_MIN_ROWS_CITY,
-        business_key=business_key,
-    )
+
+def _collect_legacy(chain: str, business_key: str | None) -> None:
+    from scheduler.monthly_source import collect_month
+
+    period = business_period(chain, business_key)
+    collect_month(chain, period)
+    raise AlreadyLoaded(f"16888 {chain} {period} 已按完整榜单核对 ODS")
+
+
+def crawl_16888_style_monthly(business_key: str | None = None) -> None:
+    _collect_legacy("style", business_key)
+
+
+def crawl_16888_city_monthly(business_key: str | None = None) -> None:
+    _collect_legacy("city", business_key)
 
 
 if __name__ == "__main__":
-    crawl_16888_style_monthly()
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("chain", choices=("style", "city"))
+    parser.add_argument("period")
+    parser.add_argument("path", type=Path)
+    args = parser.parse_args()
+    _capture(args.chain, business_period(args.chain, args.period), args.path)

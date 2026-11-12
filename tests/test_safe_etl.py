@@ -32,8 +32,8 @@ def test_legacy_commands_fail_after_retirement(script):
 def test_dry_run_lists_real_chains_without_db_dependencies():
     result = offline_cli("scripts/dry_run_scheduler.py")
     assert result.returncode == 0, result.stderr
-    assert "crawl_16888_style_monthly -> load_style_ods -> build_sales_dimensions" in result.stdout
-    assert "crawl_16888_city_monthly -> load_city_ods -> run_dwd_city_clean" in result.stdout
+    assert "style: 16888 采集 -> 来源对账 -> ODS -> 全国 DWD / DWS 发布" in result.stdout
+    assert "city: 16888 采集 -> 来源对账 -> ODS -> 城市 DWD 发布" in result.stdout
     assert "load_stock_finance" in result.stdout
 
 
@@ -41,51 +41,31 @@ def test_csv_replay_has_an_explicit_month_and_skips_the_crawler():
     result = offline_cli("-m", "scheduler.runner", "--chain", "style", "--period", "2026-07", "--from-csv", "--plan")
     assert result.returncode == 0, result.stderr
     assert "2026-07" in result.stdout
-    assert "load_style_ods -> build_sales_dimensions" in result.stdout
-    assert "crawl_16888_style_monthly" not in result.stdout
+    assert "CSV 与来源清单 -> 来源对账 -> ODS" in result.stdout
+    assert "16888 采集" not in result.stdout
 
 
-def test_etl_failure_stops_the_monthly_chain(monkeypatch):
-    from scheduler import runtime
+def test_legacy_chain_uses_guarded_runner(monkeypatch):
+    from scheduler import runner, runtime
 
-    calls = []
+    def guarded(args):
+        assert args == ["--chain", "style", "--period", "2026-07", "--from-csv"]
+        return 1
 
-    def load(*, business_key):
-        calls.append(("load_style_ods", business_key))
-        return True
-
-    def dimensions(*, business_key):
-        calls.append(("build_dimensions", business_key))
-        return False
-
-    jobs = SimpleNamespace(load_style_ods=load, build_dimensions=dimensions)
-    monkeypatch.setattr(runtime, "import_module", lambda _: jobs)
+    monkeypatch.setattr(runner, "main", guarded)
     assert runtime.run_chain("style", "2026-07", from_csv=True) is False
-    assert calls == [("load_style_ods", "2026-07"), ("build_dimensions", "2026-07")]
 
 
-def test_city_etl_can_continue_from_already_loaded_ods(monkeypatch):
-    from scheduler import runtime
+def test_warehouse_only_resume_requires_accepted_source(monkeypatch, tmp_path):
+    from scheduler import runner, workflow
 
-    calls = []
-
-    def crawl(*, business_key):
-        calls.append(("crawl", business_key))
-        raise runtime.AlreadyLoaded()
-
-    def load(*, business_key):
-        calls.append(("load", business_key))
-
-    def clean(*, business_key):
-        calls.append(("clean", business_key))
-
-    jobs = SimpleNamespace(crawl_16888_city_monthly=crawl, load_city_ods=load, run_dwd_city_clean=clean)
-    monkeypatch.setattr(runtime, "import_module", lambda _: jobs)
-    assert runtime.run_chain("city", "2026-07") is True
-    assert calls == [("crawl", "2026-07"), ("clean", "2026-07")]
+    state = workflow.State(tmp_path)
+    monkeypatch.setattr(workflow, "State", lambda: state)
+    monkeypatch.setattr(workflow, "publish_month", lambda *_: pytest.fail("resumed unverified ODS"))
+    assert runner.main(["--chain", "city", "--period", "2026-07", "--resume"]) == 1
 
 
-def test_scheduler_registers_original_cron_times_without_starting_jobs():
+def test_scheduler_checks_monthly_sources_every_day_and_polls_feishu():
     from datetime import datetime
     from zoneinfo import ZoneInfo
 
@@ -94,12 +74,14 @@ def test_scheduler_registers_original_cron_times_without_starting_jobs():
     scheduler = create_scheduler()
     now = datetime(2026, 11, 11, tzinfo=ZoneInfo("Asia/Shanghai"))
     expected = {
-        "style": "2026-11-12T03:00:00+08:00",
-        "city": "2026-11-20T03:30:00+08:00",
+        "style": "2026-11-11T03:00:00+08:00",
+        "city": "2026-11-11T03:30:00+08:00",
         "load_stock_daily": "2026-11-11T17:30:00+08:00",
         "load_futures_daily": "2026-11-11T17:30:00+08:00",
         "load_index_daily": "2026-11-11T17:45:00+08:00",
         "load_stock_finance": "2026-11-11T18:30:00+08:00",
+        "manual": "2026-11-11T00:00:00+08:00",
+        "resume": "2026-11-11T00:00:00+08:00",
     }
     assert {job.id: job.trigger.get_next_fire_time(None, now).isoformat() for job in scheduler.get_jobs()} == expected
 

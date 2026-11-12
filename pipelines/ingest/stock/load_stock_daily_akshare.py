@@ -2,27 +2,33 @@
 
 from __future__ import annotations
 
-import argparse
 import time
 from datetime import datetime, timedelta
-from typing import Optional
 
 import akshare as ak
 import pandas as pd
-from sqlalchemy import text
+from sqlalchemy import bindparam, text
 
 from base_infra.db import engine
 from base_infra.logging_config import get_logger
-from pipelines.ingest.common.ingest_utils import make_stats, reset_stats, record_error_type, execute_insert
+from pipelines.ingest.common.ingest_utils import (
+    build_common_parser,
+    execute_insert,
+    make_stats,
+    record_error_type,
+    reset_stats,
+)
+from pipelines.ingest.common.market_quality import market_start, valid_price_rows
 from pipelines.ingest.stock.network_runtime import (
     RuntimeConfig,
     build_runtime_config,
     classify_fetch_error,
+    fetch_daily_symbol,
     patched_requests_runtime,
     run_preflight_check,
     setup_proxy,
-    should_bypass_proxy,
     sleep_before_retry,
+    write_daily_rows,
 )
 
 logger = get_logger(__name__)
@@ -43,16 +49,20 @@ def parse_args():
     return parser.parse_args()
 
 
-def get_all_stocks():
-    """从 dim_stock 表获取所有股票信息。"""
-    sql = text("""
+def get_all_stocks(codes=None):
+    """读取指定的 A/H 股（含已退市）或当前上市股票。"""
+    condition = "is_listed = 1" if codes is None else "market IN ('A', 'HK') AND stock_code IN :codes"
+    sql = text(f"""
         SELECT id, stock_code, stock_name, market, exchange
         FROM dim_stock
-        WHERE is_listed = 1
+        WHERE {condition}
         ORDER BY market, stock_code
     """)
     with engine.connect() as conn:
-        rows = conn.execute(sql).fetchall()
+        if codes is None:
+            rows = conn.execute(sql).fetchall()
+        else:
+            rows = conn.execute(sql.bindparams(bindparam("codes", expanding=True)), {"codes": list(codes)}).fetchall()
     return [
         {
             "stock_id": row[0],
@@ -159,6 +169,7 @@ def fetch_hk_stock_daily(stock_code, start_date=None):
         period="daily",
         start_date=normalized_start,
         end_date=datetime.now().strftime("%Y%m%d"),
+        adjust="",
     )
 
 
@@ -171,11 +182,11 @@ def fetch_hk_stock_daily_sina(stock_code, start_date=None):
     “源侧有历史但增量窗口内空返回”的假失败。
     """
     symbol = convert_hk_stock_code(stock_code)
-    df = ak.stock_hk_daily(symbol=symbol, adjust="qfq")
+    df = ak.stock_hk_daily(symbol=symbol, adjust="")
     if df is None or df.empty:
         return df
 
-    normalized_start = pd.to_datetime((start_date or "20170101")).date()
+    normalized_start = pd.to_datetime(start_date or "20170101").date()
     date_col = None
     if "date" in df.columns:
         date_col = "date"
@@ -315,7 +326,7 @@ def insert_daily_data(rows):
     return execute_insert(rows, sql)
 
 
-def check_daily_data_completeness(rows, last_date=None, start_date="20170101"):
+def check_daily_data_completeness(rows, last_date=None, start_date="20170101", *, bounded=False):
     result = {
         "is_complete": True,
         "issues": [],
@@ -328,7 +339,7 @@ def check_daily_data_completeness(rows, last_date=None, start_date="20170101"):
         return result
 
     total_rows = len(rows)
-    is_full_load = last_date is None
+    is_full_load = last_date is None and not bounded
 
     for field in ("open", "high", "low", "close"):
         missing = sum(1 for row in rows if row.get(field) is None)
@@ -401,8 +412,10 @@ def fetch_single_stock(stock_info, config: RuntimeConfig, dry_run=False):
         return result
 
     # 获取增量起始日期
-    last_date = get_last_trade_date(stock_id)
-    start_date = last_date.strftime("%Y%m%d") if last_date else config.start_date
+    requested = config.trade_dates[stock_code] if config.trade_dates is not None else None
+    last_date = get_last_trade_date(stock_id) if requested is None else None
+    start_date = (market_start(last_date, config.start_date, config.repair_from) if requested is None
+                  else min(requested).strftime("%Y%m%d"))
 
     df = None
     source_name = "akshare"
@@ -448,6 +461,9 @@ def fetch_single_stock(stock_info, config: RuntimeConfig, dry_run=False):
             )
 
     if df is None or df.empty:
+        if df is not None and requested is not None:
+            result.update(status="no_new_rows", error="接口尚未返回请求日期的数据")
+            return result
         result["status"] = "failed"
         result["error"] = "接口返回空数据"
         result["error_type"] = "empty_payload"
@@ -462,6 +478,15 @@ def fetch_single_stock(stock_info, config: RuntimeConfig, dry_run=False):
     result["rows_fetched"] = len(df)
 
     rows = transform_daily_data(df, stock_info, source_symbol=source_symbol)
+    if requested is not None and rows:
+        try:
+            rows = valid_price_rows(rows, requested)
+        except ValueError as exc:
+            result.update(status="failed", error_type="invalid_rows", error=str(exc))
+            return result
+        if not rows:
+            result["status"] = "no_new_rows"
+            return result
     if not rows:
         result["status"] = "failed"
         result["error"] = "数据转换后为空"
@@ -471,7 +496,8 @@ def fetch_single_stock(stock_info, config: RuntimeConfig, dry_run=False):
     completeness = check_daily_data_completeness(
         rows,
         last_date=last_date,
-        start_date=config.start_date,
+        start_date=config.repair_from or config.start_date,
+        bounded=requested is not None,
     )
     result["completeness"] = completeness
     if not completeness["is_complete"]:
@@ -485,7 +511,7 @@ def fetch_single_stock(stock_info, config: RuntimeConfig, dry_run=False):
         result["error_type"] = "data_warning"
 
     if not dry_run:
-        result["rows_inserted"] = insert_daily_data(rows)
+        write_daily_rows(insert_daily_data, rows, result)
 
     if source_name != "akshare":
         result["error"] = f"已切换至 {source_name} 备援源"
@@ -556,7 +582,7 @@ def run_daily_preflight(config: RuntimeConfig) -> dict:
     return preflight
 
 
-def run_daily_ingest(config: RuntimeConfig, dry_run=False, stock_code: Optional[str] = None) -> bool:
+def run_daily_ingest(config: RuntimeConfig, dry_run=False, stock_code: str | None = None) -> bool:
     reset_stats(STATS, "total_stocks")
     setup_proxy(config)
 
@@ -567,16 +593,18 @@ def run_daily_ingest(config: RuntimeConfig, dry_run=False, stock_code: Optional[
     preflight = run_daily_preflight(config)
     STATS["preflight"] = preflight
     if not preflight["ok"]:
-        logger.error("网络预检失败: [%s] %s", preflight["status"], preflight["message"])
-        print_summary()
-        return False
+        if config.trade_dates is None or config.preflight_only:
+            logger.error("网络预检失败: [%s] %s", preflight["status"], preflight["message"])
+            print_summary()
+            return False
+        logger.warning("网络预检未通过: [%s] %s，将尝试本批应采标的", preflight["status"], preflight["message"])
 
     if config.preflight_only:
         logger.info("仅执行预检，未启动采集")
         print_summary()
         return True
 
-    stocks = get_all_stocks()
+    stocks = get_all_stocks() if config.trade_dates is None else get_all_stocks(config.trade_dates)
     STATS["total_stocks"] = len(stocks)
 
     if stock_code:
@@ -597,7 +625,7 @@ def run_daily_ingest(config: RuntimeConfig, dry_run=False, stock_code: Optional[
             stock["stock_code"],
         )
 
-        result = fetch_single_stock(stock, config=config, dry_run=dry_run)
+        result = fetch_daily_symbol(fetch_single_stock, stock, stock["stock_code"], config, dry_run=dry_run)
 
         if result["status"] == "success":
             STATS["success_count"] += 1
@@ -613,7 +641,7 @@ def run_daily_ingest(config: RuntimeConfig, dry_run=False, stock_code: Optional[
             STATS["total_rows"] += result["rows_inserted"]
             record_error_type(STATS, result["error_type"] or "data_warning")
             logger.warning("  -> 成功（有警告）: %s", result["error"])
-        elif result["status"] == "skipped":
+        elif result["status"] in {"skipped", "no_new_rows"}:
             STATS["skip_count"] += 1
             record_error_type(STATS, result["error_type"] or "skipped")
             logger.warning("  -> 跳过: %s", result["error"])
@@ -644,9 +672,12 @@ def run_daily_ingest(config: RuntimeConfig, dry_run=False, stock_code: Optional[
 def main():
     """脚本入口。"""
     args = parse_args()
+    if not args.dry_run and not args.preflight_only:
+        logger.error("请通过 python -m scheduler.runner --chain daily --step load_stock_daily --period YYYY-MM-DD 入库")
+        return False
     config = build_runtime_config(args)
     return run_daily_ingest(config, dry_run=args.dry_run, stock_code=args.stock)
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(0 if main() else 1)
