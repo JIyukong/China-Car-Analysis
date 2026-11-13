@@ -159,7 +159,8 @@ def test_stock_fetch_report_tracks_only_committed_requested_dates(monkeypatch, w
     monkeypatch.setattr(loader, "setup_proxy", lambda *_: None)
     monkeypatch.setattr(loader, "run_daily_preflight", lambda *_: {"ok": False, "status": "timeout", "message": "probe timed out"})
     frame = DataFrame([{"date": today, "open": 10, "high": 12, "low": 9, "close": 11}])
-    monkeypatch.setattr(loader, "fetch_a_stock_daily_with_fallback", lambda *_: (frame, "akshare"))
+    for name in ("fetch_a_stock_daily", "fetch_a_stock_daily_tx", "fetch_a_stock_daily_sina"):
+        monkeypatch.setattr(loader, name, lambda *_: frame)
     written = []
     def insert(rows):
         if write_error and rows[0]["stock_code_raw"] == "000001.SZ":
@@ -196,3 +197,58 @@ def test_direct_market_cli_requires_diagnostic_flag_for_ingest(module, collector
     monkeypatch.setattr(sys, "argv", [module])
     monkeypatch.setattr(loader, collector, lambda *args, **kwargs: pytest.fail("unbounded CLI started ingest"))
     assert loader.main() is False
+
+def test_bounded_stock_fallback_fills_only_missing_dates(monkeypatch):
+    from pandas import DataFrame
+
+    from pipelines.ingest.stock import load_stock_daily_akshare as loader
+    from scheduler.jobs.common import build_scheduler_config
+
+    old, today = date(2026, 11, 11), date(2026, 11, 12)
+    info = {"stock_id": 1, "stock_code": "000625.SZ", "stock_name": "Test", "market": "A"}
+    config = build_scheduler_config()
+    config.trade_dates = {info["stock_code"]: frozenset({old, today})}
+
+    def row(day, close):
+        return {"date": day, "open": 10, "high": 12, "low": 9, "close": close}
+
+    monkeypatch.setattr(loader, "fetch_a_stock_daily", lambda *_: DataFrame([row(old, 10)]))
+    monkeypatch.setattr(loader, "fetch_a_stock_daily_tx", lambda *_: DataFrame([row(old, 12), row(today, 11)]))
+    written = []
+    monkeypatch.setattr(loader, "insert_daily_data", lambda rows: written.extend(rows) or len(rows))
+
+    result = loader.fetch_single_stock(info, config)
+    assert result["written_dates"] == {old, today}
+    assert {row["trade_date"]: row["close"] for row in written} == {old: 10, today: 11}
+
+
+def test_bounded_index_falls_back_to_same_index_recent_history(monkeypatch):
+    from pandas import DataFrame
+
+    from pipelines.ingest.index import load_ths_index_daily_akshare as loader
+    from scheduler.jobs.common import build_scheduler_config
+
+    day = date(2026, 11, 12)
+    info = {"index_id": 1, "index_code": "881125", "index_name": "Test"}
+    config = build_scheduler_config()
+    config.trade_dates = {"881125": frozenset({day})}
+    monkeypatch.setattr(loader, "fetch_ths_index_daily", lambda *_: DataFrame())
+    frame = DataFrame([{"date": day, "open": 10, "high": 12, "low": 9, "close": 11}])
+    monkeypatch.setattr(loader, "fetch_ths_recent_daily", lambda code: frame if code == "881125" else None, raising=False)
+    monkeypatch.setattr(loader, "insert_daily_data", len)
+
+    assert loader.fetch_single_index(info, config)["written_dates"] == {day}
+
+
+def test_tencent_stock_volume_is_not_turnover(monkeypatch):
+    from pandas import DataFrame
+
+    from pipelines.ingest.stock import load_stock_daily_akshare as loader
+
+    raw = DataFrame({"amount": [661341]})
+    monkeypatch.setattr(loader.ak, "stock_zh_a_hist_tx", lambda **_: raw)
+
+    frame = loader.fetch_a_stock_daily_tx("000625.SZ", "20261112")
+
+    assert frame["volume"].tolist() == [66134100]
+    assert "amount" not in frame

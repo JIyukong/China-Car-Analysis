@@ -24,6 +24,7 @@ from pipelines.ingest.stock.network_runtime import (
     build_runtime_config,
     classify_fetch_error,
     fetch_daily_symbol,
+    fetch_requested_prices,
     patched_requests_runtime,
     run_preflight_check,
     setup_proxy,
@@ -123,13 +124,19 @@ def fetch_a_stock_daily(stock_code, start_date=None):
 def fetch_a_stock_daily_tx(stock_code, start_date=None):
     """使用腾讯接口拉取 A 股日线数据。"""
     symbol = convert_a_stock_code(stock_code)
-    return ak.stock_zh_a_hist_tx(
+    frame = ak.stock_zh_a_hist_tx(
         symbol=symbol,
         start_date=start_date or "20170101",
         end_date=datetime.now().strftime("%Y%m%d"),
         adjust="qfq",
         timeout=15,
     )
+
+    # AKShare names Tencent's volume in board lots "amount". It is not turnover.
+    if "amount" in frame.columns:
+        frame = frame.rename(columns={"amount": "volume"})
+        frame["volume"] = frame["volume"] * 100
+    return frame
 
 
 def fetch_a_stock_daily_sina(stock_code, start_date=None):
@@ -418,10 +425,26 @@ def fetch_single_stock(stock_info, config: RuntimeConfig, dry_run=False):
                   else min(requested).strftime("%Y%m%d"))
 
     df = None
+    rows = None
     source_name = "akshare"
     for attempt_index in range(config.max_retries):
         try:
-            if market == "A":
+            if requested is not None and market in {"A", "HK"}:
+                if market == "A":
+                    providers = (("em", fetch_a_stock_daily), ("tx", fetch_a_stock_daily_tx),
+                                 ("sina", fetch_a_stock_daily_sina))
+                    source_symbol = convert_a_stock_code(stock_code)
+                else:
+                    providers = (("em", fetch_hk_stock_daily), ("sina", fetch_hk_stock_daily_sina))
+                    source_symbol = convert_hk_stock_code(stock_code)
+                rows, used = fetch_requested_prices(
+                    [(name, lambda fetch=fetch: fetch(stock_code, start_date)) for name, fetch in providers],
+                    lambda frame: transform_daily_data(frame, stock_info, source_symbol=source_symbol),
+                    requested, config,
+                )
+                if any(name != "em" for name in used):
+                    source_name = ", ".join(used)
+            elif market == "A":
                 df, source_name = fetch_a_stock_daily_with_fallback(
                     stock_code,
                     start_date,
@@ -460,24 +483,30 @@ def fetch_single_stock(stock_info, config: RuntimeConfig, dry_run=False):
                 exc,
             )
 
-    if df is None or df.empty:
-        if df is not None and requested is not None:
-            result.update(status="no_new_rows", error="接口尚未返回请求日期的数据")
+    if rows is None:
+        if df is None or df.empty:
+            if df is not None and requested is not None:
+                result.update(status="no_new_rows", error="接口尚未返回请求日期的数据")
+                return result
+            result["status"] = "failed"
+            result["error"] = "接口返回空数据"
+            result["error_type"] = "empty_payload"
             return result
-        result["status"] = "failed"
-        result["error"] = "接口返回空数据"
-        result["error_type"] = "empty_payload"
-        return result
 
-    if "日期" not in df.columns and "date" not in df.columns:
-        result["status"] = "failed"
-        result["error"] = "缺少日期字段"
-        result["error_type"] = "schema_mismatch"
-        return result
+        if "日期" not in df.columns and "date" not in df.columns:
+            result["status"] = "failed"
+            result["error"] = "缺少日期字段"
+            result["error_type"] = "schema_mismatch"
+            return result
 
-    result["rows_fetched"] = len(df)
+        result["rows_fetched"] = len(df)
 
-    rows = transform_daily_data(df, stock_info, source_symbol=source_symbol)
+        rows = transform_daily_data(df, stock_info, source_symbol=source_symbol)
+    else:
+        result["rows_fetched"] = len(rows)
+        if not rows:
+            result.update(status="no_new_rows", error="所有来源均未返回请求日期的有效行情")
+            return result
     if requested is not None and rows:
         try:
             rows = valid_price_rows(rows, requested)

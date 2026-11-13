@@ -61,6 +61,39 @@ class RuntimeConfig:
     daily_fetch: DailyFetch | None = None
 
 
+def fetch_requested_prices(sources, transform, requested, config: RuntimeConfig):
+    """Use sources in priority order and retain the first valid row for each date."""
+    from pipelines.ingest.common.market_quality import valid_price_rows
+
+    rows = []
+    used = []
+    missing = set(requested)
+    errors = []
+    received_valid_response = False
+    for name, fetch in sources:
+        try:
+            with patched_requests_runtime(config):
+                frame = fetch()
+            if frame is None or (not frame.empty and not {"date", "\u65e5\u671f"} & set(frame.columns)):
+                raise ValueError("Invalid source frame")
+            available = valid_price_rows(transform(frame), frozenset(missing))
+        except Exception as exc:
+            errors.append(f"{name}: {exc}")
+            logger.warning("Daily source %s failed: %s", name, exc)
+            continue
+        received_valid_response = True
+        if available:
+            rows.extend(available)
+            used.append(name)
+            missing.difference_update(row["trade_date"] for row in available)
+        if not missing:
+            break
+        logger.info("Daily source %s left requested dates missing: %s", name, sorted(missing))
+    if not received_valid_response:
+        raise RuntimeError(" | ".join(errors))
+    return sorted(rows, key=lambda row: row["trade_date"]), used
+
+
 def fetch_daily_symbol(fetch, instrument: dict, code: str, config: RuntimeConfig, *, dry_run: bool) -> dict:
     """Record the bounded run's result and keep collecting after a symbol failure."""
     report = config.daily_fetch

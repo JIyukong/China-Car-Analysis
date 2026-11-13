@@ -6,11 +6,13 @@
 
 from __future__ import annotations
 
+import json
 import time
 from datetime import datetime
 
 import akshare as ak
 import pandas as pd
+import requests
 from sqlalchemy import text
 
 from base_infra.db import engine
@@ -24,12 +26,13 @@ from pipelines.ingest.common.ingest_utils import (
     record_error_type,
     reset_stats,
 )
-from pipelines.ingest.common.market_quality import market_start, valid_price_rows
+from pipelines.ingest.common.market_quality import market_start
 from pipelines.ingest.stock.network_runtime import (
     RuntimeConfig,
     build_runtime_config,
     classify_fetch_error,
     fetch_daily_symbol,
+    fetch_requested_prices,
     patched_requests_runtime,
     run_preflight_check,
     setup_proxy,
@@ -114,6 +117,25 @@ def fetch_ths_index_daily(index_name: str, start_date: str):
         start_date=start_date,
         end_date=end_date,
     )
+
+
+def fetch_ths_recent_daily(index_code: str):
+    """Read the same THS index from its rolling daily-history endpoint."""
+    callback = f"quotebridge_v4_line_bk_{index_code}_01_last"
+    response = requests.get(
+        f"https://d.10jqka.com.cn/v4/line/bk_{index_code}/01/last.js",
+        headers={"Referer": "https://q.10jqka.com.cn/"},
+    )
+    response.raise_for_status()
+    body = response.text.strip()
+    if not body.startswith(f"{callback}(") or not body.endswith(")"):
+        raise ValueError("Unexpected THS recent-history response")
+    payload = json.loads(body[len(callback) + 1:-1])
+    fields = ["date", "open", "high", "low", "close", "volume", "amount"]
+    records = [line.split(",")[:len(fields)] for line in payload["data"].split(";") if line]
+    frame = pd.DataFrame(records, columns=fields)
+    frame["date"] = pd.to_datetime(frame["date"], format="%Y%m%d").dt.date
+    return frame
 
 
 def transform_daily_data(df, index_info):
@@ -261,10 +283,21 @@ def fetch_single_index(index_info, config: RuntimeConfig, dry_run=False):
                   else min(requested).strftime("%Y%m%d"))
 
     df = None
+    rows = None
     for attempt_index in range(config.max_retries):
         try:
-            with patched_requests_runtime(config):
-                df = fetch_ths_index_daily(index_name, start_date)
+            if requested is None:
+                with patched_requests_runtime(config):
+                    df = fetch_ths_index_daily(index_name, start_date)
+            else:
+                rows, used = fetch_requested_prices(
+                    [("ths_year", lambda: fetch_ths_index_daily(index_name, start_date)),
+                     ("ths_recent", lambda: fetch_ths_recent_daily(index_code))],
+                    lambda frame: transform_daily_data(frame, index_info),
+                    requested, config,
+                )
+                if "ths_recent" in used:
+                    logger.info("THS recent-history fallback supplied rows for %s", index_code)
             break
         except Exception as exc:  # noqa: BLE001
             error_type = classify_fetch_error(exc)
@@ -286,32 +319,26 @@ def fetch_single_index(index_info, config: RuntimeConfig, dry_run=False):
                 exc,
             )
 
-    if df is None or df.empty:
-        if df is not None and requested is not None:
-            result.update(status="no_new_rows", error="接口尚未返回请求日期的数据")
+    if rows is None:
+        if df is None or df.empty:
+            result["status"] = "failed"
+            result["error"] = "接口返回空数据"
+            result["error_type"] = "empty_payload"
             return result
-        result["status"] = "failed"
-        result["error"] = "接口返回空数据"
-        result["error_type"] = "empty_payload"
-        return result
 
-    if "日期" not in df.columns and "date" not in df.columns:
-        result["status"] = "failed"
-        result["error"] = "缺少日期字段"
-        result["error_type"] = "schema_mismatch"
-        return result
-
-    result["rows_fetched"] = len(df)
-
-    rows = transform_daily_data(df, index_info)
-    if requested is not None and rows:
-        try:
-            rows = valid_price_rows(rows, requested)
-        except ValueError as exc:
-            result.update(status="failed", error_type="invalid_rows", error=str(exc))
+        if "日期" not in df.columns and "date" not in df.columns:
+            result["status"] = "failed"
+            result["error"] = "缺少日期字段"
+            result["error_type"] = "schema_mismatch"
             return result
+
+        result["rows_fetched"] = len(df)
+
+        rows = transform_daily_data(df, index_info)
+    else:
+        result["rows_fetched"] = len(rows)
         if not rows:
-            result["status"] = "no_new_rows"
+            result.update(status="no_new_rows", error="所有来源均未返回请求日期的有效行情")
             return result
     if not rows:
         result["status"] = "failed"
