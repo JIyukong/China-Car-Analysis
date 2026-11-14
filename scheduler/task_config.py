@@ -35,8 +35,8 @@ MONTHLY_CRON = {
 }
 
 DAILY_TIMES = {
-    "load_stock_daily": (17, 30),
+    "load_stock_daily": (23, 30),
     "load_futures_daily": (17, 30),
-    "load_index_daily": (17, 45),
+    "load_index_daily": (23, 45),
     "load_stock_finance": (18, 30),
 }
