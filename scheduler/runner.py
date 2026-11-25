@@ -123,6 +123,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--step", choices=DAILY_TIMES, help="只运行一项独立的日链任务")
     parser.add_argument("--plan", action="store_true", help="离线预览步骤")
     parser.add_argument("--status", action="store_true", help="读取本地巡检摘要，不连库")
+    parser.add_argument('--preview-city-models', metavar='OUTPUT_DIR',
+                        help='只读本地CSV生成城市车型核查清单，不连库、不确认归属')
     parser.add_argument("--merge-oem-aliases", nargs="+", metavar="OLD:CANONICAL",
                         help="归并已确认的主机厂别名及销量关联")
     parser.add_argument("--normalize-oem-names", action="store_true",
@@ -131,6 +133,21 @@ def main(argv: list[str] | None = None) -> int:
                         help="按已核验的主机厂归属修正已发布销量")
     parser.add_argument("--tick", choices=TICKS, help=argparse.SUPPRESS)
     args = parser.parse_args(argv)
+    if args.preview_city_models:
+        if args.chain != 'city' or any((args.plan, args.status, args.tick, args.resume, args.from_csv,
+                args.step, args.normalize_oem_names, args.merge_oem_aliases, args.reconcile_reviewed_companies)):
+            parser.error('--preview-city-models 只能与 --chain city 和可选 --period 同用')
+        from pipelines.dim.city_model_preview import preview, write_preview
+
+        try:
+            root = ROOT / 'pipelines/ingest/sales'
+            report = preview(root / 'crawl_16888_city/data', root / 'crawl_16888_style/data', period=args.period)
+            output = write_preview(report, args.preview_city_models)
+        except (ValueError, OSError) as exc:
+            print(str(exc), file=sys.stderr)
+            return 1
+        print(json.dumps({'output_dir': str(output), **report['summary']}, ensure_ascii=False))
+        return 0
     if args.normalize_oem_names and any((
         args.status, args.plan, args.tick, args.chain, args.period, args.from_csv, args.step,
         args.resume, args.merge_oem_aliases, args.reconcile_reviewed_companies,

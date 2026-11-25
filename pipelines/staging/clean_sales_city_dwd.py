@@ -225,6 +225,10 @@ def run_clean_sales_city_dwd(target_month: date | None = None) -> int:
 
     :param target_month: 目标月份（该月 1 号）；None 表示全量（仅手工补数用）
     """
+    from base_infra.config import get_settings
+
+    if get_settings().ETL_CITY_WIDE_ENABLED:
+        raise RuntimeError('城市宽维表已启用，请使用 python -m scheduler.runner --chain city --period YYYY-MM --resume')
     month_label = target_month.strftime("%Y-%m") if target_month else "全量"
 
     with engine.begin() as conn:

@@ -69,6 +69,10 @@ def _ensure_ticket(state: State, client, gap: dict, bound, records: dict, keys: 
     kind, key = gap["kind"], gap["key"]
     record = records.get(bound)
     desired = feishu.ticket_fields(kind, key, gap["fields"], gap["periods"])
+    contexts = gap.get('contexts', {})
+    if contexts:
+        preview = '\n'.join(f'{period}: {contexts[period]}' for period in sorted(contexts, reverse=True)[:3])
+        desired[feishu.CONTEXT] += '\n最近月份候选（仅供核实，不代表已确认）：\n' + preview[:3000]
     if record is None:
         existing = keys.get(desired[feishu.TASK_KEY], [])
         if len(existing) > 1:

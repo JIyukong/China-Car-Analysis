@@ -125,8 +125,11 @@ class State:
                 item = grouped.setdefault((kind, key), {"fields": set(), "periods": set()})
                 item["fields"].update(gap["fields"])
                 item["periods"].add(row["period"])
+                if gap.get('context'):
+                    item.setdefault('contexts', {})[row['period']] = gap['context']
         return [
-            {"kind": kind, "key": key, "fields": sorted(item["fields"]), "periods": sorted(item["periods"])}
+            {"kind": kind, "key": key, "fields": sorted(item["fields"]), "periods": sorted(item["periods"]),
+             **({'contexts': item['contexts']} if 'contexts' in item else {})}
             for (kind, key), item in sorted(grouped.items())
         ]
 

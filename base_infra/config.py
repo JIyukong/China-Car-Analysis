@@ -50,6 +50,7 @@ class Settings(BaseSettings):
     FEISHU_ADS_TABLE_ID: str = ""
     FEISHU_TABLE_URL: str = ""
     ETL_STOCK_DWD_ENABLED: bool = False
+    ETL_CITY_WIDE_ENABLED: bool = False
 
     # 模型配置：从 .env 文件读取，字段大小写敏感
     model_config = SettingsConfigDict(env_file=".env", case_sensitive=True)

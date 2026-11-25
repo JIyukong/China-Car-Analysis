@@ -29,6 +29,19 @@ def warehouse(monkeypatch):
         f'dwd_sales_monthly_model_city ({dwd}, city_name TEXT, city_name_raw TEXT, area_id INTEGER, subtype_name TEXT, level_raw TEXT, vehicle_subtype_id INTEGER, vehicle_type_id INTEGER)',
     ]
     schema += [
+        '''dim_city_model (id INTEGER PRIMARY KEY, source TEXT, source_model_name TEXT,
+        model_code TEXT UNIQUE, model_name TEXT, brand_code TEXT, brand_name TEXT,
+        oem_code TEXT, oem_name TEXT, production_type TEXT, import_channel TEXT,
+        energy_type TEXT, vehicle_type TEXT, review_status TEXT, evidence TEXT,
+        national_candidates TEXT, first_seen_month TEXT, last_seen_month TEXT,
+        is_active INTEGER DEFAULT 1, UNIQUE(source,source_model_name))''',
+        '''dwd_sales_monthly_city (id INTEGER PRIMARY KEY, stat_month TEXT, source TEXT,
+        model_name TEXT, model_name_raw TEXT, city_model_id INTEGER, sales_volume INTEGER,
+        price_min NUMERIC, price_max NUMERIC, rank_no INTEGER, row_hash TEXT UNIQUE,
+        city_name TEXT, city_name_raw TEXT, area_id INTEGER, subtype_name TEXT,
+        level_raw TEXT, vehicle_subtype_id INTEGER, vehicle_type_id INTEGER)''',
+    ]
+    schema += [
         f'dws_sales_monthly_{group} (id INTEGER PRIMARY KEY, stat_month TEXT, {group}_id INTEGER, {group}_name TEXT, total_sales INTEGER, market_share NUMERIC, yoy_growth NUMERIC, mom_growth NUMERIC, is_current INTEGER, UNIQUE(stat_month, {group}_id))'
         for group in ('brand', 'company')
     ]
@@ -54,6 +67,150 @@ def warehouse(monkeypatch):
     monkeypatch.setattr(publish, 'engine', db)
     yield publish, execute
     db.dispose()
+
+
+def enable_city_wide(monkeypatch, execute):
+    from base_infra.config import get_settings
+    monkeypatch.setattr(get_settings(), 'ETL_CITY_WIDE_ENABLED', True)
+    execute("INSERT INTO dim_area VALUES (1,'City')")
+    execute("INSERT INTO dim_vehicle_type VALUES (1)")
+    execute("INSERT INTO dim_vehicle_subtype VALUES (1,'SUV',1)")
+
+
+def test_city_wide_publishes_unknown_models_without_national_or_company(warehouse, monkeypatch):
+    publish, execute = warehouse
+    enable_city_wide(monkeypatch, execute)
+    add_source(execute, '2026-01', 7, 'Extra(进口)', city=True)
+    gaps = publish.publish_month('city', '2026-01')
+    assert [(g['kind'], g['key']) for g in gaps] == [('city_model', 'Extra(进口)')]
+    assert execute('SELECT model_name,production_type,import_channel,review_status,oem_name FROM dim_city_model') == [
+        ('Extra(进口)', 'imported', 'unknown', 'pending', None)]
+    assert execute('SELECT sales_volume FROM dwd_sales_monthly_city') == [(7,)]
+    assert execute('SELECT id FROM dwd_sales_monthly_model_city') == []
+    assert execute('SELECT id FROM dim_model') == []
+    publish.publish_month('city', '2026-01')
+    assert execute('SELECT COUNT(*) FROM dim_city_model') == [(1,)]
+    assert execute('SELECT COUNT(*) FROM dwd_sales_monthly_city') == [(1,)]
+
+
+def test_city_wide_import_identity_and_review_are_not_overwritten(warehouse, monkeypatch):
+    from pipelines.dim.city_model import apply_city_model_review
+    publish, execute = warehouse
+    enable_city_wide(monkeypatch, execute)
+    add_source(execute, '2026-01', 8, 'Model', city=True)
+    add_source(execute, '2026-01', 2, 'Model(进口)', city=True)
+    add_source(execute, '2026-01', 10)
+    publish.publish_month('city', '2026-01')
+    assert execute('SELECT COUNT(*) FROM dim_city_model') == [(2,)]
+    values = dict(brand_code='B', brand_name='Brand', oem_code='OVERSEAS',
+                  oem_name='Overseas', production_type='imported', import_channel='unknown',
+                  energy_type='燃油', vehicle_type='SUV', evidence='人工核实的来源凭据')
+    with publish.engine.begin() as conn:
+        apply_city_model_review(conn, 'Model(进口)', values)
+    publish.publish_month('city', '2026-01')
+    assert execute("SELECT oem_name,review_status FROM dim_city_model WHERE source_model_name='Model(进口)'") == [('Overseas', 'confirmed')]
+    assert execute('SELECT SUM(sales_volume) FROM dwd_sales_monthly_city') == [(10,)]
+    with publish.engine.begin() as conn, pytest.raises(ValueError, match='进口'):
+        apply_city_model_review(conn, 'Model(进口)', {**values, 'production_type': 'domestic'})
+
+
+def test_city_wide_failed_area_gate_preserves_facts_but_discovers_candidates(warehouse, monkeypatch):
+    publish, execute = warehouse
+    enable_city_wide(monkeypatch, execute)
+    add_source(execute, '2026-01', 7, city=True)
+    publish.publish_month('city', '2026-01')
+    execute('UPDATE ods_sales_monthly_model_city SET sales_volume=99')
+    execute("UPDATE dim_area SET city_short_name='Elsewhere'")
+    with pytest.raises(publish.ManualRequired):
+        publish.publish_month('city', '2026-01')
+    assert execute('SELECT sales_volume FROM dwd_sales_monthly_city') == [(7,)]
+
+
+def test_city_wide_national_hints_are_not_confirmed_ownership(warehouse, monkeypatch):
+    import json
+    publish, execute = warehouse
+    enable_city_wide(monkeypatch, execute)
+    add_source(execute, '2026-01', 10)
+    add_source(execute, '2026-01', 7, city=True)
+    publish.publish_month('city', '2026-01')
+    hints, status, oem = execute('SELECT national_candidates,review_status,oem_name FROM dim_city_model')[0]
+    assert json.loads(hints) == [{'oem_name': 'OEM', 'brand_code': 'B', 'brand_name': 'Brand'}]
+    assert (status, oem) == ('pending', None)
+    # No company table or national model table is needed by the new city path.
+    execute('ALTER TABLE dim_company RENAME TO unused_company')
+    execute('ALTER TABLE dim_model RENAME TO unused_model')
+    publish.publish_month('city', '2026-01')
+    assert execute('SELECT SUM(sales_volume) FROM dwd_sales_monthly_city') == [(7,)]
+
+
+def test_city_wide_history_missing_keys_keep_previous_facts(warehouse, monkeypatch):
+    publish, execute = warehouse
+    enable_city_wide(monkeypatch, execute)
+    add_source(execute, '2026-01', 7, city=True)
+    publish.publish_month('city', '2026-01')
+    execute("UPDATE ods_sales_monthly_model_city SET model_name_raw='Changed', row_hash='changed'")
+    with pytest.raises(publish.ReconciliationError, match='业务键'):
+        publish.publish_month('city', '2026-01')
+    assert execute('SELECT model_name,sales_volume FROM dwd_sales_monthly_city') == [('Model', 7)]
+    assert execute("SELECT id FROM dim_city_model WHERE source_model_name='Changed'") == []
+
+
+def test_city_review_only_enqueues_city_months(warehouse):
+    publish, execute = warehouse
+    add_source(execute, '2026-01', 10)
+    add_source(execute, '2026-01', 7, city=True)
+    assert publish.affected_months('city_model', 'Model') == [('city', '2026-01')]
+
+
+def test_city_wide_lifecycle_uses_city_history(warehouse, monkeypatch):
+    publish, execute = warehouse
+    enable_city_wide(monkeypatch, execute)
+    add_source(execute, '2026-01', 7, 'Old', city=True)
+    add_source(execute, '2026-06', 4, 'New', city=True)
+    publish.publish_month('city', '2026-06')
+    publish.publish_month('city', '2026-01')
+    assert execute('SELECT model_name,first_seen_month,last_seen_month,is_active FROM dim_city_model ORDER BY model_name') == [
+        ('New', '2026-06-01', '2026-06-01', 1), ('Old', '2026-01-01', '2026-01-01', 0)]
+
+
+def test_city_wide_view_retains_pending_sales_and_imports(warehouse, monkeypatch):
+    from pathlib import Path
+
+    publish, execute = warehouse
+    enable_city_wide(monkeypatch, execute)
+    add_source(execute, '2026-01', 8, 'Model', city=True)
+    add_source(execute, '2026-01', 2, 'Model(进口)', city=True)
+    publish.publish_month('city', '2026-01')
+    ddl = (Path(__file__).resolve().parents[1] / 'db/migrations/009_city_model_wide.sql').read_text(encoding='utf-8')
+    view = ddl[ddl.index('CREATE OR REPLACE VIEW'):].replace('CREATE OR REPLACE VIEW', 'CREATE VIEW', 1)
+    execute(view)
+    assert execute('SELECT brand_name,SUM(sales_volume) FROM vw_sales_monthly_city_wide GROUP BY brand_name') == [('归属待确认', 10)]
+    assert execute("SELECT SUM(sales_volume) FROM vw_sales_monthly_city_wide WHERE production_type='imported'") == [(2,)]
+
+
+def test_city_wide_corrupted_fact_write_rolls_back_revision(warehouse, monkeypatch):
+    publish, execute = warehouse
+    enable_city_wide(monkeypatch, execute)
+    add_source(execute, '2026-01', 7, city=True)
+    publish.publish_month('city', '2026-01')
+    execute('''CREATE TRIGGER corrupt_city AFTER UPDATE OF sales_volume ON dwd_sales_monthly_city
+        BEGIN UPDATE dwd_sales_monthly_city SET sales_volume=1 WHERE id=NEW.id; END''')
+    execute('UPDATE ods_sales_monthly_model_city SET sales_volume=99')
+    with pytest.raises(publish.ReconciliationError, match='落库校验'):
+        publish.publish_month('city', '2026-01')
+    assert execute('SELECT sales_volume FROM dwd_sales_monthly_city') == [(7,)]
+
+
+def test_city_wide_discovers_zero_sales_models_without_zero_facts(warehouse, monkeypatch):
+    publish, execute = warehouse
+    enable_city_wide(monkeypatch, execute)
+    add_source(execute, '2026-01', 0, 'Zero(进口)', city=True)
+    result = publish.publish_month_result('city', '2026-01')
+    assert result.dwd_rows == 0
+    assert result.gaps[0]['key'] == 'Zero(进口)'
+    assert 'national_candidates' in result.gaps[0]['context']
+    assert execute('SELECT model_name,is_active FROM dim_city_model') == [('Zero(进口)', 0)]
+    assert execute('SELECT COUNT(*) FROM dwd_sales_monthly_city') == [(0,)]
 
 
 def add_source(execute, period, sales, name='Model', *, city=False):

@@ -187,6 +187,16 @@ def _check_city_dim_model_ready(target_month: date | None) -> None:
 
 def run_dwd_city_clean(business_key: str | None = None) -> TaskResult:
     """DWD 清洗：ods_sales_monthly_model_city → dwd_sales_monthly_model_city。"""
+    from base_infra.config import get_settings
+
+    if get_settings().ETL_CITY_WIDE_ENABLED:
+        from scheduler.runner import main
+
+        month = _to_date(business_key)
+        if month is None:
+            raise ValueError('城市宽维表发布需要明确月份，请使用 scheduler.runner --chain city --period YYYY-MM --resume')
+        success = main(['--chain', 'city', '--period', month.strftime('%Y-%m'), '--resume']) == 0
+        return TaskResult(success=success, message='城市专用宽维表发布（已验收版本）')
     from pipelines.staging.clean_sales_city_dwd import run_clean_sales_city_dwd
 
     target_month = _to_date(business_key)

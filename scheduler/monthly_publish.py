@@ -101,7 +101,7 @@ def _index(rows, key, description):
     return indexed
 
 
-def _source(conn, chain, month):
+def _source(conn, chain, month, *, positive_only=True):
     if chain == 'style':
         extra = 'TRIM(manufacturer_name_raw) AS manufacturer_name'
     else:
@@ -120,9 +120,9 @@ def _source(conn, chain, month):
             raise ReconciliationError(f'{chain} ODS 业务键或销量无效：{key}')
     _index(rows, lambda row: _natural_key(chain, row), 'ODS')
     eligible = [row for row in rows if row['sales_volume'] > 0]
-    if not eligible:
+    if not eligible and positive_only:
         raise ReconciliationError(f'{chain} {month:%Y-%m} 没有正销量明细')
-    return eligible
+    return eligible if positive_only else rows
 
 
 def _dimensions(conn, chain, month):
@@ -291,16 +291,27 @@ def _update(conn, table, rows, columns):
         conn.execute(text(f'UPDATE {table} SET {assignments} WHERE id = :id'), rows)
 
 
-def _dwd(conn, chain, period):
-    return _read(conn, f'SELECT id, {", ".join(_COLUMNS[chain])} FROM {_DWD[chain]} WHERE stat_month = :period', period=period)
+def _dwd(conn, chain, period, *, wide_city=False):
+    if wide_city:
+        from scheduler.city_publish import COLUMNS, TABLE
+    else:
+        COLUMNS, TABLE = _COLUMNS[chain], _DWD[chain]
+    return _read(conn, f'SELECT id, {", ".join(COLUMNS)} FROM {TABLE} WHERE stat_month = :period', period=period)
 
 
 def _numeric(value):
     return None if value is None else Decimal(str(value))
 
 
-def _write_dwd(conn, chain, period, source, candidates):
+def _write_dwd(conn, chain, period, source, candidates, *, wide_city=False):
+    if wide_city:
+        from scheduler.city_publish import COLUMNS as columns, TABLE as table
+    else:
+        columns, table = _COLUMNS[chain], _DWD[chain]
+
     def key(row):
+        if wide_city:
+            return _name(row['model_name_raw']).casefold(), _name(row['city_name_raw']).casefold()
         if chain == 'style':
             return _name(row['model_name']).casefold(), row['oem_id']
         return _natural_key(chain, row)
@@ -312,15 +323,15 @@ def _write_dwd(conn, chain, period, source, candidates):
     if chain == 'style':
         _index(candidates, lambda row: row['model_id'], 'DWD 候选车型')
     else:
-        _index(candidates, lambda row: (row['model_id'], row['area_id']), 'DWD 候选车型城市')
-    previous = _index(_dwd(conn, chain, period), key, '已发布 DWD')
+        identifier = 'city_model_id' if wide_city else 'model_id'
+        _index(candidates, lambda row: (row[identifier], row['area_id']), 'DWD 候选车型城市')
+    previous = _index(_dwd(conn, chain, period, wide_city=wide_city), key, '已发布 DWD')
     if any(row['source'] != f'16888_{chain}' for row in previous.values()):
         raise ReconciliationError('目标月 DWD 含其他数据来源，需人工核查后发布')
     missing = previous.keys() - expected.keys()
     if missing:
         raise ReconciliationError(f'已发布 DWD 有 {len(missing)} 个业务键不在目标 ODS，需核查：{sorted(missing)[:10]}')
 
-    columns = _COLUMNS[chain]
     inserts, updates = [], []
     for business_key, row in expected.items():
         payload = {column: row[column] for column in columns}
@@ -328,10 +339,10 @@ def _write_dwd(conn, chain, period, source, candidates):
             updates.append({**payload, 'id': previous[business_key]['id']})
         else:
             inserts.append(payload)
-    _update(conn, _DWD[chain], updates, columns)
-    _insert(conn, _DWD[chain], inserts)
+    _update(conn, table, updates, columns)
+    _insert(conn, table, inserts)
 
-    actual = _index(_dwd(conn, chain, period), key, '发布后 DWD')
+    actual = _index(_dwd(conn, chain, period, wide_city=wide_city), key, '发布后 DWD')
     if actual.keys() != expected.keys():
         raise ReconciliationError('DWD 落库后业务键集合不一致')
     for business_key, row in actual.items():
@@ -468,21 +479,35 @@ def publish_month_result(chain: str, period: str, *, source_digest: str | None =
             from scheduler.monthly_source import verify_ods_revision
 
             verify_ods_revision(chain, period, source_digest, connection=conn)
-        source = _source(conn, chain, month)
-        dimensions = _dimensions(conn, chain, month)
-        if chain == 'style' and _derive_models(conn, source, dimensions):
-            dimensions = _dimensions(conn, chain, month)
-        candidates, required, optional = _candidates(chain, period, source, dimensions)
-        if not required:
-            dwd = _write_dwd(conn, chain, period, source, candidates)
-            dws_rows = sum(_write_groups(conn, group, month, dwd) for group in ('company', 'brand')) if chain == 'style' else 0
-            if chain == 'style':
-                _refresh_lifecycle(conn)
+        from base_infra.config import get_settings
+        wide_city = chain == 'city' and get_settings().ETL_CITY_WIDE_ENABLED
+        source = _source(conn, chain, month, positive_only=not wide_city)
+        if wide_city:
+            from scheduler.city_publish import publish_city
+
+            dwd, gaps = publish_city(conn, period, source)
+            required = gaps if dwd is None else []
+            optional = gaps
+            dws_rows = 0
+        else:
+            dwd, required, optional, dws_rows = _publish_legacy(conn, chain, month, period, source)
     if required:
-        # Identity discovery can persist so a manual mapping can be applied to a
-        # new model. The DWD and DWS remain untouched until all required fields exist.
         raise ManualRequired(required)
     return Publication(optional, len(dwd), dws_rows)
+
+
+def _publish_legacy(conn, chain, month, period, source):
+    dimensions = _dimensions(conn, chain, month)
+    if chain == 'style' and _derive_models(conn, source, dimensions):
+        dimensions = _dimensions(conn, chain, month)
+    candidates, required, optional = _candidates(chain, period, source, dimensions)
+    dwd, dws_rows = [], 0
+    if not required:
+        dwd = _write_dwd(conn, chain, period, source, candidates)
+        dws_rows = sum(_write_groups(conn, group, month, dwd) for group in ('company', 'brand')) if chain == 'style' else 0
+        if chain == 'style':
+            _refresh_lifecycle(conn)
+    return dwd, required, optional, dws_rows
 
 
 def publish_month(chain: str, period: str, *, source_digest: str | None = None) -> list[dict]:
@@ -506,6 +531,7 @@ def affected_months(kind: str, key: str) -> list[tuple[str, str]]:
         'energy': {'style': 'TRIM(s.model_name_raw) = :key'},
         'area': {'city': 'TRIM(s.city_name_raw) = :key'},
         'subtype': {'city': 'TRIM(s.level_raw) = :key'},
+        'city_model': {'city': 'TRIM(s.model_name_raw) = :key'},
         'ownership': {
             'style': '(TRIM(s.manufacturer_name_raw) = :key OR TRIM(s.model_name_raw) = :key)',
         },

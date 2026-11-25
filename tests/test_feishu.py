@@ -16,6 +16,41 @@ def _record(kind, key, values):
     return {'record_id': 'rec1', 'fields': fields}
 
 
+def test_city_model_review_accepts_import_but_rejects_domestic_or_company():
+    values = dict(brand_code='CITY_B', brand_name='Brand', oem_code='CITY_O', oem_name='Overseas',
+                  production_type='imported', import_channel='unknown', energy_type='燃油',
+                  vehicle_type='SUV', evidence='已核实资料及适用月份')
+    record = _record('city_model', 'Model(进口)', values)
+    item = feishu.submission(record, kind='city_model', key='Model(进口)')
+    assert item.values == values
+    for invalid in ({**values, 'production_type': 'domestic'}, {**values, 'company_code': 'C'}):
+        with pytest.raises(ValueError):
+            feishu.submission(_record('city_model', 'Model(进口)', invalid), kind='city_model', key='Model(进口)')
+
+
+def test_city_model_submission_is_gated_before_writes(monkeypatch):
+    from base_infra.config import get_settings
+    monkeypatch.setattr(get_settings(), 'ETL_CITY_WIDE_ENABLED', False)
+    conn = MagicMock()
+    with pytest.raises(ValueError, match='尚未启用'):
+        manual_refresh.apply_feishu_dimension(conn, 'city_model', 'Model', {})
+    conn.execute.assert_not_called()
+
+
+def test_city_job_uses_verified_resume_without_national_gate(monkeypatch):
+    from base_infra.config import get_settings
+    from scheduler import runner
+    from scheduler.jobs import etl_jobs
+
+    monkeypatch.setattr(get_settings(), 'ETL_CITY_WIDE_ENABLED', True)
+    calls = []
+    monkeypatch.setattr(runner, 'main', lambda args: calls.append(args) or 0)
+    monkeypatch.setattr(etl_jobs, '_check_city_dim_model_ready', lambda *_: pytest.fail('national gate used'))
+    result = etl_jobs.run_dwd_city_clean('2026-01')
+    assert result.success
+    assert calls == [['--chain', 'city', '--period', '2026-01', '--resume']]
+
+
 def test_list_feishu_records_uses_token_and_follows_pages(monkeypatch):
     calls = []
     responses = iter([

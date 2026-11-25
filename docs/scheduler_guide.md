@@ -18,6 +18,9 @@
 
 ## 手动补跑
 
+城市专用宽维表的字段、审核口径和管理员切换步骤见 [城市车型宽维表](city-model-wide.md)。
+新增链路由 `ETL_CITY_WIDE_ENABLED` 控制，默认关闭；开发不会自动建表或回填历史。
+
 先用 `--plan` 核对步骤。手动重放时，从已核对的同一个抓取快照复制 CSV 与 `manifest.json` 到该链爬虫的 `data/`。文件名分别为 `<chain>_YYYY-MM.csv` 和 `<chain>_YYYY-MM.manifest.json`。已通过来源验收的批次用 `--resume` 按原版本对账并重跑发布。
 
 ```powershell

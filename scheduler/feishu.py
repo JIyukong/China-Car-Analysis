@@ -17,6 +17,7 @@ from urllib.request import Request, urlopen
 
 from base_infra.db import engine
 from pipelines.dim.manual_refresh import apply_feishu_dimension
+from pipelines.dim.city_model import REVIEW_FIELDS, validate_city_model_review
 from pipelines.dim.refresh_dim_area import ALLOWED_CITY_LEVELS, ALLOWED_PROVINCE_TYPES
 from pipelines.dim.refresh_dim_energy_vehicle import ALLOWED_ENERGY_TYPES, ALLOWED_VEHICLE_TYPES
 from pipelines.dim.refresh_dim_model_ads import normalize_listed_at
@@ -42,10 +43,11 @@ _AREA_TEXT_FIELDS = {
     "region_code": 8, "region_name": 16,
 }
 _REGIONS = {"EC": "华东", "SC": "华南", "NC": "华北", "CC": "华中", "SW": "西南", "NW": "西北", "NE": "东北"}
-_KEY_LENGTHS = {"energy": 128, "ads": 128, "area": 32, "subtype": 32, "ownership": 128}
+_KEY_LENGTHS = {"energy": 128, "ads": 128, "area": 32, "subtype": 32, "ownership": 128, "city_model": 128}
 _ENERGY_FIELDS = ("energy_type", "vehicle_type")
 _ADS_FIELDS = ("ads_proportion", "ads_supplier", "ads_supplier_mode", "listed_at")
 _FORM_FIELDS = {
+    "city_model": REVIEW_FIELDS,
     "energy": _ENERGY_FIELDS, "ads": _ADS_FIELDS, "area": tuple(_AREA_TEXT_FIELDS),
     "subtype": ("subtype_code", "type_name"), "ownership": ("company_code", "brand_code"),
 }
@@ -444,6 +446,8 @@ def submission(record: Mapping, *, kind: str, key: str, expected_fields: Iterabl
         return Submission(kind, key, {}, not_applicable=True)
     if kind == "area":
         normalized = _area(key, values)
+    elif kind == "city_model":
+        normalized = validate_city_model_review(key, values)
     elif kind == "ownership":
         normalized = _ownership(values, expected_fields)
     elif kind in ("energy", "ads"):
