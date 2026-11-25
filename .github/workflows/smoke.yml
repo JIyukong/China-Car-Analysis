@@ -25,5 +25,8 @@ jobs:
             requirements.txt
             requirements-dev.txt
       - run: python -m pip install -r requirements.txt -r requirements-dev.txt
+      # 阶段一先收口真实缺陷类规则（未用变量/未定义名/兼容性等）；
+      # 纯风格规则（E701/I001 等）存量较多，后续阶段再逐步启用。
+      - run: python -m ruff check scheduler pipelines base_infra backend --select F,E9,B,UP012,UP015,W605,W292
       - run: python -X utf8 -m scheduler.runner --plan
       - run: python -X utf8 -m pytest

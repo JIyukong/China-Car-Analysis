@@ -13,6 +13,7 @@ from zoneinfo import ZoneInfo
 from filelock import FileLock, Timeout
 
 from scheduler.runtime import SkipTask
+from scheduler.status import BatchStatus
 
 logger = logging.getLogger(__name__)
 TZ = ZoneInfo("Asia/Shanghai")
@@ -75,7 +76,7 @@ class State:
         return [dict(row) for row in rows]
 
     def save(
-        self, chain: str, period: str, status: str, *,
+        self, chain: str, period: str, status: BatchStatus, *,
         digest: str | None = None, message: str = "", gaps: list[dict] | None = None,
     ) -> None:
         now = timestamp()
@@ -89,24 +90,30 @@ class State:
                     published_at=COALESCE(excluded.published_at,batch.published_at),
                     updated_at=excluded.updated_at, message=excluded.message,
                     gaps=COALESCE(?,batch.gaps),
-                    recheck=CASE WHEN excluded.status IN ('published','waiting_manual') THEN 0 ELSE batch.recheck END
+                    recheck=CASE WHEN excluded.status IN (?,?) THEN 0 ELSE batch.recheck END
             """, (
-                chain, period, status, digest, digest if status in {"published", "ods_accepted"} else None,
-                now if status in {"published", "ods_accepted"} else None, now, message,
+                chain, period, status, digest,
+                digest if status in {BatchStatus.PUBLISHED, BatchStatus.ODS_ACCEPTED} else None,
+                now if status in {BatchStatus.PUBLISHED, BatchStatus.ODS_ACCEPTED} else None, now, message,
                 json.dumps(gaps, ensure_ascii=False) if gaps is not None else None,
                 json.dumps(gaps, ensure_ascii=False) if gaps is not None else None,
+                BatchStatus.PUBLISHED, BatchStatus.WAITING_MANUAL,
             ))
 
     def enqueue(self, chain: str, period: str) -> None:
         with self.transaction() as conn:
             conn.execute("""
                 INSERT INTO batch (chain, period, status, updated_at, message, gaps)
-                VALUES (?, ?, 'waiting_source', ?, '', '[]')
+                VALUES (?, ?, ?, ?, '', '[]')
                 ON CONFLICT(chain,period) DO UPDATE SET recheck=1,
                     status=CASE WHEN batch.digest IS NOT NULL AND batch.status NOT IN
-                        ('collecting','waiting_source','source_error') THEN 'ready' ELSE batch.status END,
+                        (?,?,?) THEN ? ELSE batch.status END,
                     updated_at=excluded.updated_at
-            """, (chain, period, timestamp()))
+            """, (
+                chain, period, BatchStatus.WAITING_SOURCE, timestamp(),
+                BatchStatus.COLLECTING, BatchStatus.WAITING_SOURCE, BatchStatus.SOURCE_ERROR,
+                BatchStatus.READY,
+            ))
 
     def gaps(self) -> list[dict]:
         grouped = {}
@@ -163,7 +170,9 @@ class State:
                 chain, period = row["chain"], row["period"]
                 if row["published_at"]:
                     latest.setdefault(chain, period)
-                if row["status"] not in ("published", "ods_accepted", "closed"):
+                if row["status"] not in (
+                    BatchStatus.PUBLISHED, BatchStatus.ODS_ACCEPTED, BatchStatus.CLOSED,
+                ):
                     outstanding.append({
                         name: row[name] for name in ("chain", "period", "status", "message", "updated_at")
                     })
@@ -192,7 +201,7 @@ class State:
 def target_months(state: State, chain: str, today: date) -> list[str]:
     last = (today.replace(day=1) - timedelta(days=1)).strftime("%Y-%m")
     batches = state.batches(chain)
-    periods = {last, *(row["period"] for row in batches if row["status"] != "published")}
+    periods = {last, *(row["period"] for row in batches if row["status"] != BatchStatus.PUBLISHED)}
     if batches:
         cursor = date.fromisoformat(batches[0]["period"] + "-01")
         while cursor.strftime("%Y-%m") < last:
@@ -220,34 +229,37 @@ def process_month(
     try:
         with state.lock(f"collect-{chain}"):
             batch = state.batch(chain, period)
-            can_resume = batch.get("status") in {"ready", "publish_error"} and bool(batch.get("digest"))
+            can_resume = (
+                batch.get("status") in {BatchStatus.READY, BatchStatus.PUBLISH_ERROR}
+                and bool(batch.get("digest"))
+            )
             resume = resume or (prefer_resume and can_resume)
             if resume:
                 if not can_resume:
                     return True
                 digest = batch["digest"]
             else:
-                state.save(chain, period, "collecting")
+                state.save(chain, period, BatchStatus.COLLECTING)
                 try:
                     digest = collect_month(chain, period, from_csv=from_csv, accepted_digest=batch.get("digest"))
                 except SkipTask as exc:
-                    state.save(chain, period, "waiting_source", message=str(exc))
+                    state.save(chain, period, BatchStatus.WAITING_SOURCE, message=str(exc))
                     return True
                 except Exception as exc:
                     logger.exception("%s %s source validation failed", chain, period)
-                    state.save(chain, period, "source_error", message=str(exc)[:400])
+                    state.save(chain, period, BatchStatus.SOURCE_ERROR, message=str(exc)[:400])
                     return False
-                state.save(chain, period, "ready", digest=digest)
+                state.save(chain, period, BatchStatus.READY, digest=digest)
             with state.lock("warehouse", timeout=120):
                 if (
-                    not resume and not from_csv and batch.get("status") == "published"
+                    not resume and not from_csv and batch.get("status") == BatchStatus.PUBLISHED
                     and digest == batch.get("published_digest") and not state.batch(chain, period)["recheck"]
                 ):
                     with state.transaction() as conn:
                         conn.execute(
-                            "UPDATE batch SET status='published', message='Source revision unchanged'"
+                            "UPDATE batch SET status=?, message='Source revision unchanged'"
                             " WHERE chain=? AND period=?",
-                            (chain, period),
+                            (BatchStatus.PUBLISHED, chain, period),
                         )
                     return True
                 return _publish(state, chain, period, digest)
@@ -264,18 +276,18 @@ def _publish(state: State, chain: str, period: str, digest: str) -> bool:
     try:
         gaps = publish_month(chain, period, digest)
     except SourceRevisionChanged as exc:
-        state.save(chain, period, "source_error", message=str(exc))
+        state.save(chain, period, BatchStatus.SOURCE_ERROR, message=str(exc))
         return False
     except Exception as exc:
         gaps = getattr(exc, "gaps", None)
         if gaps is not None:
-            state.save(chain, period, "waiting_manual", gaps=gaps, message=str(exc)[:400])
+            state.save(chain, period, BatchStatus.WAITING_MANUAL, gaps=gaps, message=str(exc)[:400])
             return True
         logger.exception("%s %s warehouse publication failed", chain, period)
-        state.save(chain, period, "publish_error", message=str(exc)[:400])
+        state.save(chain, period, BatchStatus.PUBLISH_ERROR, message=str(exc)[:400])
         return False
-    state.save(chain, period, "published", digest=digest, gaps=gaps)
-    if chain == "style" and state.batch("city", period).get("status") == "waiting_manual":
+    state.save(chain, period, BatchStatus.PUBLISHED, digest=digest, gaps=gaps)
+    if chain == "style" and state.batch("city", period).get("status") == BatchStatus.WAITING_MANUAL:
         state.enqueue("city", period)
     return True
 
@@ -285,9 +297,9 @@ def resume_ready(state: State) -> bool:
     results = []
     for chain in MONTHLY:
         for row in reversed(state.batches(chain)):
-            retry_due = row["status"] == "publish_error" and (
+            retry_due = row["status"] == BatchStatus.PUBLISH_ERROR and (
                 now - datetime.fromisoformat(row["updated_at"]) >= timedelta(minutes=30)
             )
-            if row["status"] == "ready" or retry_due:
+            if row["status"] == BatchStatus.READY or retry_due:
                 results.append(process_month(state, chain, row["period"], resume=True))
     return all(results)

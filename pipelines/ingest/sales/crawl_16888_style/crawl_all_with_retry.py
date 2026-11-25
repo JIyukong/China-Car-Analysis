@@ -18,8 +18,6 @@
     python scripts/crawl_16888_style/crawl_all_with_retry.py --max-rounds 30 --rest-minutes 3
 """
 import argparse
-import csv
-import re
 import subprocess
 import sys
 import time
@@ -60,7 +58,7 @@ def get_local_records(month_id: str) -> int:
     """
     csv_file = DATA_DIR / f"style_{month_id}.csv"
     if csv_file.exists():
-        with open(csv_file, "r", encoding="utf-8-sig") as f:
+        with open(csv_file, encoding="utf-8-sig") as f:
             lines = f.readlines()
             return max(0, len(lines) - 1)                            # 减去表头行
     return 0
@@ -180,12 +178,12 @@ def main() -> None:
     target_months = get_target_months()
 
     print(f"\n{'#' * 60}")
-    print(f"# 车型销量数据 - 全量历史抓取（断点续传 + 重试）")
-    print(f"# 年份范围: 2017-01 至今")
+    print("# 车型销量数据 - 全量历史抓取（断点续传 + 重试）")
+    print("# 年份范围: 2017-01 至今")
     print(f"# 总月份数: {len(target_months)}")
     print(f"# 最大重试: {max_rounds} 轮")
     print(f"# 每轮休息: {args.rest_minutes} 分钟")
-    print(f"# 断点续传: 已启用")
+    print("# 断点续传: 已启用")
     print(f"{'#' * 60}\n")
 
     # 初始进度检查
@@ -203,8 +201,8 @@ def main() -> None:
         print(f"# 时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
         print(f"{'#' * 60}")
 
-        # 执行一轮抓取
-        success = run_crawl_round(resume=True)
+        # 执行一轮抓取（失败时由后续完成度检查与重试轮次处理）
+        run_crawl_round(resume=True)
 
         # 抓取后进度检查
         completed, total, incomplete = check_completion(target_months)
@@ -240,5 +238,5 @@ if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
-        print(f"\n[中断] 用户手动终止，进度已保存，可重新运行继续。")
+        print("\n[中断] 用户手动终止，进度已保存，可重新运行继续。")
         sys.exit(130)

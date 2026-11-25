@@ -344,7 +344,7 @@ def scroll_to_load_all(page: Page) -> int:
     stable_rounds = 0
     end_hint_count = 0                                          # 连续出现「到底」文本的次数         # 配合重试逻辑
 
-    for round_idx in range(SCROLL_MAX_ROUNDS):
+    for _ in range(SCROLL_MAX_ROUNDS):
         # 检查是否出现"已经到底了~"
         body_text = page.inner_text("body") or ""
         if END_HINT_TEXT in body_text:

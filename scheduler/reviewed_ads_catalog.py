@@ -98,7 +98,7 @@ def seed(conn):
         observed_class = conn.execute(text('SELECT * FROM dim_energy_vehicle WHERE model_name=:model_name'), classification).mappings().one()
         if any(observed_class[k] != classification[k] for k in ('model_name', 'energy_type', 'vehicle_type')):
             raise RuntimeError('Classification readback mismatch')
-        code = hashlib.md5(f'{model}|{oem}'.encode('utf8')).hexdigest()[:10].upper()
+        code = hashlib.md5(f'{model}|{oem}'.encode()).hexdigest()[:10].upper()
         desired = dict(model_code=f'MODEL_{code}', model_name=model, brand_id=brands[brand],
                        brand_name=brand, oem_id=oem_id, oem_name=oem,
                        energy_type='新能源', vehicle_type=vehicle)

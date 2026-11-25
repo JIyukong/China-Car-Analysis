@@ -30,7 +30,7 @@ def test_legacy_commands_fail_after_retirement(script):
 
 
 def test_dry_run_lists_real_chains_without_db_dependencies():
-    result = offline_cli("scripts/dry_run_scheduler.py")
+    result = offline_cli("-m", "scheduler.runner", "--plan")
     assert result.returncode == 0, result.stderr
     assert "style: 16888 采集 -> 来源对账 -> ODS -> 全国 DWD / DWS 发布" in result.stdout
     assert "city: 16888 采集 -> 来源对账 -> ODS -> 城市 DWD 发布" in result.stdout

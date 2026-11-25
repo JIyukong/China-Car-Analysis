@@ -153,6 +153,7 @@ def apply_gaps(plan,path):
 
 def reconcile_gap_acceptance(days,*,state=None):
     from scheduler.market_workflow import expected_sessions,actual_sessions
+    from scheduler.status import BatchStatus
     from scheduler.workflow import State
     state=state if state is not None else State()
     task='load_futures_daily'
@@ -162,5 +163,5 @@ def reconcile_gap_acceptance(days,*,state=None):
         if unknown[day] or expected[day]!={'CU','AL'} or not expected[day]<=actual[day]:
             raise ValueError('Verified gap dates still have incomplete expected ODS coverage')
     for day in days:
-        state.save(task,str(day),'ods_accepted',message='2 instruments reconciled: reviewed Eastmoney unadjusted main-continuous identity + SHFE official contract evidence; Sina omission retained in provenance',gaps=[])
-    return [{'date':str(day),'status':'ods_accepted','expected':sorted(expected[day]),'actual':sorted(actual[day])} for day in days]
+        state.save(task,str(day),BatchStatus.ODS_ACCEPTED,message='2 instruments reconciled: reviewed Eastmoney unadjusted main-continuous identity + SHFE official contract evidence; Sina omission retained in provenance',gaps=[])
+    return [{'date':str(day),'status':BatchStatus.ODS_ACCEPTED,'expected':sorted(expected[day]),'actual':sorted(actual[day])} for day in days]

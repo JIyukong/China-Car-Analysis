@@ -10,7 +10,24 @@ import httpx
 import pytest
 
 from scheduler import runner
-from scheduler.task_config import CHAINS, STEPS
+from scheduler.task_config import CHAINS
+
+# 冒烟用的任务到 job 函数的直接映射（模块:函数名），替代已删除的 task_config.STEPS 死分发表。
+JOB_TARGETS = {
+    "crawl_16888_style_monthly": "crawl_16888_job:crawl_16888_style_monthly",
+    "load_style_ods": "load_ods_job:load_style_ods",
+    "build_sales_dimensions": "etl_jobs:build_dimensions",
+    "run_dwd_clean": "etl_jobs:run_dwd_clean",
+    "update_lifecycle": "etl_jobs:update_lifecycle",
+    "run_dws_agg": "etl_jobs:run_dws_agg",
+    "crawl_16888_city_monthly": "crawl_16888_job:crawl_16888_city_monthly",
+    "load_city_ods": "load_ods_job:load_city_ods",
+    "run_dwd_city_clean": "etl_jobs:run_dwd_city_clean",
+    "load_stock_daily": "load_stock_ods_job:load_stock_daily",
+    "load_futures_daily": "load_futures_ods_job:load_futures_main_daily",
+    "load_index_daily": "load_index_ods_job:load_ths_index_daily",
+    "load_stock_finance": "load_stock_ods_job:load_stock_finance",
+}
 
 
 def get_api(path):
@@ -48,7 +65,7 @@ def test_health_reports_database_availability(monkeypatch, connected, status, st
 
 @pytest.mark.parametrize("task", sorted({task for chain in CHAINS.values() for task in chain}))
 def test_scheduled_job_imports_and_accepts_business_key(task):
-    module, name = STEPS[task].split(":")
+    module, name = JOB_TARGETS[task].split(":")
     job = getattr(import_module(f"scheduler.jobs.{module}"), name)
     signature(job).bind(business_key="2026-07")
 

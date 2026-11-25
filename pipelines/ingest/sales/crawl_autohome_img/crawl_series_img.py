@@ -200,7 +200,7 @@ def scroll_to_load_all(page: Page, limit: int | None) -> int:
     prev_count = 0
     stable_rounds = 0
 
-    for round_idx in range(SCROLL_MAX_ROUNDS):
+    for _ in range(SCROLL_MAX_ROUNDS):
         page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
         page.wait_for_timeout(SCROLL_WAIT_MS)
 
@@ -384,14 +384,14 @@ def crawl(headless: bool, limit: int | None) -> None:
 
             # 2. 滚动加载全部车型卡片（无限滚动列表）
             print("[2/5] 滚动加载全部车型卡片 ...")
-            total = scroll_to_load_all(page, limit)
+            scroll_to_load_all(page, limit)
 
             # 3. 逐个触发图片懒加载
-            print(f"[3/5] 逐个触发图片懒加载 ...")
+            print("[3/5] 逐个触发图片懒加载 ...")
             trigger_lazy_load(page)
 
             # 4. 提取全部卡片字段
-            print(f"[4/5] 提取卡片字段 ...")
+            print("[4/5] 提取卡片字段 ...")
             records = extract_all_cards(page)
 
         finally:
@@ -406,7 +406,7 @@ def crawl(headless: bool, limit: int | None) -> None:
                 print("\n" + "=" * 70)
                 print("[完成] 抓取汇总")
                 print(f"  记录总数: {len(records)}")
-                print(f"  字段:     series_name, image_src")
+                print("  字段:     series_name, image_src")
                 # 打印前 5 条样例
                 for rec in records[:5]:
                     print(f"  样例: {rec['series_name']} -> {rec['image_src'][:60]}...")
