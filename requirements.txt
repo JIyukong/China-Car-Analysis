@@ -12,7 +12,8 @@ python-dotenv>=1.0.0
 
 # 数据采集
 # akshare: A 股/H 股日线、A 股财务、同花顺行业指数、商品期货主力连续采集
-akshare>=1.11.0
+# Raw decoder/factor field contract verified by stock_hfq_cache tests and live runs.
+akshare==1.17.91
 APScheduler>=3.10,<4.0
 filelock>=3.13
 

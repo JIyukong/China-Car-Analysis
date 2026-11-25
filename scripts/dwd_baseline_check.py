@@ -24,10 +24,6 @@ def run_baseline() -> None:
          "SELECT COLUMN_TYPE FROM information_schema.COLUMNS "
          "WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='dwd_sales_monthly_model' "
          "AND COLUMN_NAME='stat_month'"),
-        ("dwd_sales_monthly_model 是否已有 ads_id 列",
-         "SELECT COUNT(*) FROM information_schema.COLUMNS "
-         "WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='dwd_sales_monthly_model' "
-         "AND COLUMN_NAME='ads_id'"),
         ("ods_sales_monthly_model 行数",
          "SELECT COUNT(*) FROM ods_sales_monthly_model"),
         ("ods_sales_monthly_model_city 行数",
@@ -76,8 +72,6 @@ def run_verify() -> None:
         # 3. NULL 率检查
         print("\n========== 3. 维度 NULL 率 ==========")
         null_checks = [
-            ("dwd_sales_monthly_model", "ads_id"),
-            ("dwd_sales_monthly_model_city", "ads_id"),
             ("dwd_sales_monthly_model_city", "area_id"),
             ("dwd_sales_monthly_model_city", "vehicle_subtype_id"),
         ]

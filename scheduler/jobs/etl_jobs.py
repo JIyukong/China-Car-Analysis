@@ -56,8 +56,8 @@ def _alert_dimension_not_ready(
         task_id,
         f"dim-gate:{business_key or 'all'}",
         "⚠️ 维度未就绪，DWD 之后链路已暂停\n"
-        "原因：存在缺失 ADS 供应商/能源类型/车型大类等手工属性的车型（B 类，需人工补维）。\n"
-        "处理：请按下方清单补全手工 CSV（dim_model_ads_manual 等）并重新导入，"
+        "原因：存在缺失 能源类型/车型大类等手工属性的车型（B 类，需人工补维）。\n"
+        "处理：请按下方清单补全手工 CSV（dim_energy_vehicle 等）并重新导入，"
         "次日 cron 会自动重跑；补维完成前 DWS 聚合/生命周期刷新不会执行。\n"
         "注意：DWD 明细已落库（保留 NULL + dq_flag），不会重复抓取 ODS。\n\n"
         f"【就绪报告】\n{human_report}\n\n"
@@ -91,7 +91,7 @@ def build_dimensions(business_key: str | None = None) -> TaskResult:
     """DIM 派生：ods_sales_monthly_model → dim_model。
 
     新车型/品牌/OEM 可自动入维（A 类），此处只发"新增实体"通知，不阻断链路。
-    ADS 供应商/能源类型/车型大类等手工属性（B 类）的缺失，由 DWD 清洗后的
+    能源类型/车型大类等手工属性（B 类）的缺失，由 DWD 清洗后的
     dimension_readiness 门控阻断 DWS/lifecycle，职责分离。
     """
     from scheduler import alert
@@ -115,7 +115,7 @@ def build_dimensions(business_key: str | None = None) -> TaskResult:
                 f"目标月份：{month_label}\n"
                 f"新增数量：{len(new_models)}\n"
                 f"车型清单：{preview}{more}\n"
-                "说明：新车型已自动写入 dim_model。若其 ADS 供应商/能源类型/"
+                "说明：新车型已自动写入 dim_model。若其 能源类型/"
                 "车型大类尚未补全，DWD 清洗后的维度门控会阻断 DWS 聚合并告警，"
                 "届时请补手工 CSV 后次日自动重跑。",
             )
@@ -128,12 +128,6 @@ def build_dimensions(business_key: str | None = None) -> TaskResult:
         message=f"dim_model 派生 {n} 条，新增车型 {len(new_models)} 个",
     )
 
-
-def refresh_ads(business_key: str | None = None) -> TaskResult:
-    """调用现有 sp_refresh_dim_model_ads_all（无参，无 OUT 变量）。"""
-    with engine.begin() as conn:
-        conn.execute(text("CALL sp_refresh_dim_model_ads_all()"))
-    return TaskResult(success=True, message="ADS 拉链刷新完成")
 
 
 def run_dwd_clean(business_key: str | None = None) -> TaskResult:
@@ -193,6 +187,16 @@ def _check_city_dim_model_ready(target_month: date | None) -> None:
 
 def run_dwd_city_clean(business_key: str | None = None) -> TaskResult:
     """DWD 清洗：ods_sales_monthly_model_city → dwd_sales_monthly_model_city。"""
+    from base_infra.config import get_settings
+
+    if get_settings().ETL_CITY_WIDE_ENABLED:
+        from scheduler.runner import main
+
+        month = _to_date(business_key)
+        if month is None:
+            raise ValueError('城市宽维表发布需要明确月份，请使用 scheduler.runner --chain city --period YYYY-MM --resume')
+        success = main(['--chain', 'city', '--period', month.strftime('%Y-%m'), '--resume']) == 0
+        return TaskResult(success=success, message='城市专用宽维表发布（已验收版本）')
     from pipelines.staging.clean_sales_city_dwd import run_clean_sales_city_dwd
 
     target_month = _to_date(business_key)

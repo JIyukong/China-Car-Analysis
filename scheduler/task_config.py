@@ -5,7 +5,6 @@ CHAINS = {
         "crawl_16888_style_monthly",
         "load_style_ods",
         "build_sales_dimensions",
-        "refresh_ads_zipper",
         "run_dwd_clean",
         "update_lifecycle",
         "run_dws_agg",
@@ -18,7 +17,6 @@ STEPS = {
     "crawl_16888_style_monthly": "crawl_16888_job:crawl_16888_style_monthly",
     "load_style_ods": "load_ods_job:load_style_ods",
     "build_sales_dimensions": "etl_jobs:build_dimensions",
-    "refresh_ads_zipper": "etl_jobs:refresh_ads",
     "run_dwd_clean": "etl_jobs:run_dwd_clean",
     "update_lifecycle": "etl_jobs:update_lifecycle",
     "run_dws_agg": "etl_jobs:run_dws_agg",
@@ -37,8 +35,8 @@ MONTHLY_CRON = {
 }
 
 DAILY_TIMES = {
-    "load_stock_daily": (17, 30),
+    "load_stock_daily": (23, 30),
     "load_futures_daily": (17, 30),
-    "load_index_daily": (17, 45),
+    "load_index_daily": (23, 45),
     "load_stock_finance": (18, 30),
 }

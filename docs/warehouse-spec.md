@@ -20,7 +20,7 @@ CarApp 将贴源数据保存在 MySQL 的 ODS 层，结合维度加工成 DWD �
 | DWS | 汇总公司、品牌月度销量。月份为 `DATE`，取每月第一天，BI 读取当前发布视图 | [发布逻辑](../scheduler/monthly_publish.py)、[当前视图](../db/migrations/006_monthly_publication_current_groups.sql) |
 | ADS 和 BI | 仓库有 [缺少智驾映射的车型视图](../db/ads/01_create_vw_dim_model_ads_manual_missing_models.sql) 和 [Power BI 只读账号脚本](../db/system/01_create_powerbi_user.sql)。报表计划见 [路线图](roadmap.md) | [ADS SQL](../db/ads/) |
 
-飞书补录提供能源与车型大类、智驾方案、地区、级别和归属映射。智驾 ADS 拉链保留供应商及模式历史。城市明细依赖车型维度，待补期间全国销量按自身依赖独立发布。刷新命令和缺维处理见 [调度指南](scheduler_guide.md#飞书补录)。
+飞书补录提供能源与车型大类、地区、级别和归属映射。智驾方案通过独立的飞书表同步，ADS 拉链保留供应商及模式历史；DWD 不复制 ADS 字段。城市明细依赖车型维度，待补期间全国销量按自身依赖独立发布。刷新命令和缺维处理见 [调度指南](scheduler_guide.md#飞书补录)。
 
 ## 数据库结构维护
 

@@ -14,6 +14,7 @@ from decimal import Decimal, ROUND_HALF_UP
 from sqlalchemy import bindparam, text
 
 from base_infra.db import engine
+from pipelines.dim.oem_aliases import canonical_model_clause, read_aliases
 
 
 class ReconciliationError(RuntimeError):
@@ -35,10 +36,9 @@ class Publication:
 
 _ODS = {'style': 'ods_sales_monthly_model', 'city': 'ods_sales_monthly_model_city'}
 _DWD = {'style': 'dwd_sales_monthly_model', 'city': 'dwd_sales_monthly_model_city'}
-_ADS_FIELDS = ('ads_proportion', 'ads_supplier', 'ads_supplier_mode', 'listed_at')
 _COMMON_COLUMNS = (
     'stat_month', 'source', 'model_name', 'model_name_raw', 'model_id', 'oem_id',
-    'brand_id', 'company_id', 'ads_id', 'ads_supplier_name', 'sales_volume',
+    'brand_id', 'company_id', 'sales_volume',
     'price_min', 'price_max', 'rank_no', 'row_hash',
 )
 _COLUMNS = {
@@ -101,7 +101,7 @@ def _index(rows, key, description):
     return indexed
 
 
-def _source(conn, chain, month):
+def _source(conn, chain, month, *, positive_only=True):
     if chain == 'style':
         extra = 'TRIM(manufacturer_name_raw) AS manufacturer_name'
     else:
@@ -120,15 +120,26 @@ def _source(conn, chain, month):
             raise ReconciliationError(f'{chain} ODS 业务键或销量无效：{key}')
     _index(rows, lambda row: _natural_key(chain, row), 'ODS')
     eligible = [row for row in rows if row['sales_volume'] > 0]
-    if not eligible:
+    if not eligible and positive_only:
         raise ReconciliationError(f'{chain} {month:%Y-%m} 没有正销量明细')
-    return eligible
+    return eligible if positive_only else rows
 
 
 def _dimensions(conn, chain, month):
+    aliases, retired = read_aliases(conn)
+    params = {}
     if chain == 'style':
-        ownership = '''
-            LEFT JOIN dim_oem o ON o.oem_name = TRIM(s.manufacturer_name_raw)
+        cases = []
+        for i, (alias, identifier) in enumerate(sorted(aliases.items())):
+            cases.append(f"WHEN :alias_{i} THEN :oem_{i}")
+            params.update({f"alias_{i}": alias, f"oem_{i}": identifier})
+        canonical = (
+            f"CASE LOWER(TRIM(s.manufacturer_name_raw)) {' '.join(cases)} ELSE raw_o.id END"
+            if cases else "raw_o.id"
+        )
+        ownership = f'''
+            LEFT JOIN dim_oem raw_o ON raw_o.oem_name = TRIM(s.manufacturer_name_raw)
+            LEFT JOIN dim_oem o ON o.id = {canonical}
             LEFT JOIN dim_model m ON m.oem_id = o.id AND m.model_name = TRIM(s.model_name_raw)
             LEFT JOIN (
                 SELECT oem_id, MIN(brand_id) AS brand_id
@@ -140,41 +151,31 @@ def _dimensions(conn, chain, month):
         '''
         extra = 'derived.id AS derived_brand_id, derived.brand_name AS derived_brand_name'
     else:
-        ownership = '''
-            LEFT JOIN dim_model m ON m.model_name = TRIM(s.model_name_raw)
+        clause, params = canonical_model_clause(retired, "m.oem_id")
+        ownership = f'''
+            LEFT JOIN dim_model m ON m.model_name = TRIM(s.model_name_raw) {clause}
             LEFT JOIN dim_oem o ON o.id = m.oem_id
             LEFT JOIN dim_area a ON a.city_short_name = TRIM(s.city_name_raw)
             LEFT JOIN dim_vehicle_subtype st ON st.subtype_name = TRIM(s.level_raw)
             LEFT JOIN dim_vehicle_type vt ON vt.id = st.vehicle_type_id
         '''
         extra = 'a.id AS area_id, st.id AS vehicle_subtype_id, st.subtype_name, vt.id AS vehicle_type_id'
-    as_of = (_month_shift(month, 1) - timedelta(days=1)).isoformat()
     rows = _read(conn, f'''
         SELECT s.id, m.id AS model_id, o.id AS oem_id, o.oem_name,
                b.id AS brand_id, b.brand_code, b.brand_name,
                c.id AS company_id, c.company_code,
-               z.id AS ads_id, z.ads_supplier AS ads_supplier_name, e.energy_type, e.vehicle_type,
-               CASE WHEN z.id IS NULL THEN ads.ads_proportion_pct ELSE z.ads_proportion_pct END AS ads_proportion_pct,
-               CASE WHEN z.id IS NULL THEN ads.ads_supplier ELSE z.ads_supplier END AS ads_supplier,
-               CASE WHEN z.id IS NULL THEN ads.ads_supplier_mode ELSE z.ads_supplier_mode END AS ads_supplier_mode,
-               CASE WHEN z.id IS NULL THEN ads.listed_at_raw ELSE z.listed_at_raw END AS listed_at_raw,
-               ads_version.first_start, {extra}
+               e.energy_type, e.vehicle_type, {extra}
           FROM {_ODS[chain]} s
           {ownership}
           LEFT JOIN dim_brand b ON b.id = m.brand_id
-          LEFT JOIN dim_company c ON c.id = o.company_id
+          LEFT JOIN bridge_brand_oem historical ON historical.oem_id = o.id
+              AND historical.brand_id = m.brand_id AND historical.is_current = 0
+              AND historical.effective_start_date <= :as_of AND historical.effective_end_date >= :as_of
+          LEFT JOIN dim_company c ON c.id = COALESCE(historical.company_id, o.company_id)
           LEFT JOIN dim_energy_vehicle e ON e.model_name = TRIM(s.model_name_raw)
-          LEFT JOIN dim_model_ads_manual ads ON ads.model_name = TRIM(s.model_name_raw)
-          LEFT JOIN (
-              SELECT model_id, MIN(effective_start_date) AS first_start,
-                     MIN(CASE WHEN :as_of BETWEEN effective_start_date AND effective_end_date THEN id END) AS active_id
-                FROM dim_model_ads_zipper
-               GROUP BY model_id
-              HAVING COUNT(CASE WHEN :as_of BETWEEN effective_start_date AND effective_end_date THEN 1 END) <= 1
-          ) ads_version ON ads_version.model_id = m.id
-          LEFT JOIN dim_model_ads_zipper z ON z.id = ads_version.active_id
          WHERE s.stat_month = :month AND s.source = :source
-    ''', month=month.isoformat(), source=f'16888_{chain}', as_of=as_of)
+    ''', month=month.isoformat(), as_of=(_month_shift(month, 1) - timedelta(days=1)).isoformat(),
+          source=f'16888_{chain}', **params)
     grouped = defaultdict(list)
     for row in rows:
         grouped[row['id']].append(row)
@@ -191,11 +192,17 @@ def _gap(gaps, kind, key, *fields):
 def _derive_models(conn, rows, dimensions):
     inserts = []
     updates = []
+    seen = set()
     for row in rows:
         matches = dimensions[row['id']]
         if len(matches) != 1:
             continue
         dim = matches[0]
+        if dim["oem_id"] is not None:
+            key = (_name(row["model_name"]).casefold(), dim["oem_id"])
+            if key in seen:
+                raise ReconciliationError(f"主机厂归并后 ODS 车型重复：{key}")
+            seen.add(key)
         if dim['derived_brand_id'] is None or dim['company_code'] in (None, 'OTHER'):
             continue
         model, oem = _name(row['model_name']), dim['oem_name']
@@ -256,23 +263,15 @@ def _candidates(chain, period, rows, dimensions):
             if dim['vehicle_type_id'] is None:
                 _gap(required, 'subtype', _name(row['level_raw']) or '(空)', 'subtype_code', 'type_name')
 
-        ads_values = (dim['ads_proportion_pct'], dim['ads_supplier'], dim['ads_supplier_mode'], dim['listed_at_raw'])
-        missing_ads = [field for field, value in zip(_ADS_FIELDS, ads_values) if value in (None, '', '未知', '占位')]
-        if ads_values[0] is not None and not 0 <= _numeric(ads_values[0]) <= 100:
-            missing_ads.append('ads_proportion')
-        before_first_ads = dim['first_start'] is not None and str(dim['first_start'])[:7] > period
-        if missing_ads or dim['ads_id'] is None or not _name(dim['ads_supplier_name']):
-            if not before_first_ads:
-                _gap(optional, 'ads', model, *(missing_ads or _ADS_FIELDS))
-            dim['ads_id'], dim['ads_supplier_name'] = None, None
-
         price_min, price_max = _price_bounds(row['price_range_raw'])
-        candidate = {**row, **{key: dim[key] for key in ('model_id', 'oem_id', 'brand_id', 'company_id', 'ads_id', 'ads_supplier_name')}}
+        candidate = {**row, **{key: dim[key] for key in ('model_id', 'oem_id', 'brand_id', 'company_id')}}
         candidate.update(stat_month=period, model_name=model, price_min=price_min, price_max=price_max)
         if not candidate['row_hash']:
             labels = (model, _name(row['manufacturer_name' if chain == 'style' else 'city_name']))
             payload = '|'.join((row['source'], period, *labels))
             candidate['row_hash'] = hashlib.md5(payload.encode('utf-8')).hexdigest()
+        if chain == 'style':
+            candidate['manufacturer_name'] = dim['oem_name']
         if chain == 'city':
             candidate.update({field: dim[field] for field in ('area_id', 'subtype_name', 'vehicle_subtype_id', 'vehicle_type_id')})
         candidates.append(candidate)
@@ -292,43 +291,70 @@ def _update(conn, table, rows, columns):
         conn.execute(text(f'UPDATE {table} SET {assignments} WHERE id = :id'), rows)
 
 
-def _dwd(conn, chain, period):
-    return _read(conn, f'SELECT id, {", ".join(_COLUMNS[chain])} FROM {_DWD[chain]} WHERE stat_month = :period', period=period)
+def _dwd(conn, chain, period, *, wide_city=False):
+    if wide_city:
+        from scheduler.city_publish import COLUMNS, TABLE
+    else:
+        COLUMNS, TABLE = _COLUMNS[chain], _DWD[chain]
+    return _read(conn, f'SELECT id, {", ".join(COLUMNS)} FROM {TABLE} WHERE stat_month = :period', period=period)
 
 
 def _numeric(value):
     return None if value is None else Decimal(str(value))
 
 
-def _write_dwd(conn, chain, period, source, candidates):
-    key = lambda row: _natural_key(chain, row)
+def _write_dwd(conn, chain, period, source, candidates, *, wide_city=False):
+    if wide_city:
+        from scheduler.city_publish import COLUMNS as columns, TABLE as table
+    else:
+        columns, table = _COLUMNS[chain], _DWD[chain]
+
+    def key(row):
+        if wide_city:
+            return _name(row['model_name_raw']).casefold(), _name(row['city_name_raw']).casefold()
+        if chain == 'style':
+            return _name(row['model_name']).casefold(), row['oem_id']
+        return _natural_key(chain, row)
+
     expected = _index(candidates, key, 'DWD 候选')
-    if {key(row): row['sales_volume'] for row in source} != {key(row): row['sales_volume'] for row in candidates}:
+    if {row['id']: row['sales_volume'] for row in source} != {row['id']: row['sales_volume'] for row in candidates}:
         raise ReconciliationError('ODS 与 DWD 候选业务键或销量不一致')
     _index(candidates, lambda row: row['row_hash'], 'DWD 候选哈希')
     if chain == 'style':
         _index(candidates, lambda row: row['model_id'], 'DWD 候选车型')
     else:
-        _index(candidates, lambda row: (row['model_id'], row['area_id']), 'DWD 候选车型城市')
-    previous = _index(_dwd(conn, chain, period), key, '已发布 DWD')
+        identifier = 'city_model_id' if wide_city else 'model_id'
+        _index(candidates, lambda row: (row[identifier], row['area_id']), 'DWD 候选车型城市')
+    previous = _index(_dwd(conn, chain, period, wide_city=wide_city), key, '已发布 DWD')
     if any(row['source'] != f'16888_{chain}' for row in previous.values()):
         raise ReconciliationError('目标月 DWD 含其他数据来源，需人工核查后发布')
     missing = previous.keys() - expected.keys()
     if missing:
         raise ReconciliationError(f'已发布 DWD 有 {len(missing)} 个业务键不在目标 ODS，需核查：{sorted(missing)[:10]}')
 
-    columns = _COLUMNS[chain]
     inserts, updates = [], []
     for business_key, row in expected.items():
         payload = {column: row[column] for column in columns}
         if business_key in previous:
-            updates.append({**payload, 'id': previous[business_key]['id']})
+            stored = previous[business_key]
+            changed = False
+            for column, value in payload.items():
+                actual = stored[column]
+                if column in ('price_min', 'price_max'):
+                    actual, value = _numeric(actual), _numeric(value)
+                    if value is not None:
+                        value = value.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+                if actual != value:
+                    changed = True
+                    break
+            if changed:
+                updates.append({**payload, 'id': stored['id']})
         else:
             inserts.append(payload)
-    _update(conn, _DWD[chain], updates, columns)
-    _insert(conn, _DWD[chain], inserts)
+    _update(conn, table, updates, columns)
+    _insert(conn, table, inserts)
 
-    actual = _index(_dwd(conn, chain, period), key, '发布后 DWD')
+    actual = _index(_dwd(conn, chain, period, wide_city=wide_city), key, '发布后 DWD')
     if actual.keys() != expected.keys():
         raise ReconciliationError('DWD 落库后业务键集合不一致')
     for business_key, row in actual.items():
@@ -465,21 +491,35 @@ def publish_month_result(chain: str, period: str, *, source_digest: str | None =
             from scheduler.monthly_source import verify_ods_revision
 
             verify_ods_revision(chain, period, source_digest, connection=conn)
-        source = _source(conn, chain, month)
-        dimensions = _dimensions(conn, chain, month)
-        if chain == 'style' and _derive_models(conn, source, dimensions):
-            dimensions = _dimensions(conn, chain, month)
-        candidates, required, optional = _candidates(chain, period, source, dimensions)
-        if not required:
-            dwd = _write_dwd(conn, chain, period, source, candidates)
-            dws_rows = sum(_write_groups(conn, group, month, dwd) for group in ('company', 'brand')) if chain == 'style' else 0
-            if chain == 'style':
-                _refresh_lifecycle(conn)
+        from base_infra.config import get_settings
+        wide_city = chain == 'city' and get_settings().ETL_CITY_WIDE_ENABLED
+        source = _source(conn, chain, month, positive_only=not wide_city)
+        if wide_city:
+            from scheduler.city_publish import publish_city
+
+            dwd, gaps = publish_city(conn, period, source)
+            required = gaps if dwd is None else []
+            optional = gaps
+            dws_rows = 0
+        else:
+            dwd, required, optional, dws_rows = _publish_legacy(conn, chain, month, period, source)
     if required:
-        # Identity discovery can persist so a manual mapping can be applied to a
-        # new model. The DWD and DWS remain untouched until all required fields exist.
         raise ManualRequired(required)
     return Publication(optional, len(dwd), dws_rows)
+
+
+def _publish_legacy(conn, chain, month, period, source):
+    dimensions = _dimensions(conn, chain, month)
+    if chain == 'style' and _derive_models(conn, source, dimensions):
+        dimensions = _dimensions(conn, chain, month)
+    candidates, required, optional = _candidates(chain, period, source, dimensions)
+    dwd, dws_rows = [], 0
+    if not required:
+        dwd = _write_dwd(conn, chain, period, source, candidates)
+        dws_rows = sum(_write_groups(conn, group, month, dwd) for group in ('company', 'brand')) if chain == 'style' else 0
+        if chain == 'style':
+            _refresh_lifecycle(conn)
+    return dwd, required, optional, dws_rows
 
 
 def publish_month(chain: str, period: str, *, source_digest: str | None = None) -> list[dict]:
@@ -501,9 +541,9 @@ def affected_months(kind: str, key: str) -> list[tuple[str, str]]:
     """Resolve exact source-key matches for a manual edit, independently of DWD."""
     filters = {
         'energy': {'style': 'TRIM(s.model_name_raw) = :key'},
-        'ads': {chain: 'TRIM(s.model_name_raw) = :key' for chain in _ODS},
         'area': {'city': 'TRIM(s.city_name_raw) = :key'},
         'subtype': {'city': 'TRIM(s.level_raw) = :key'},
+        'city_model': {'city': 'TRIM(s.model_name_raw) = :key'},
         'ownership': {
             'style': '(TRIM(s.manufacturer_name_raw) = :key OR TRIM(s.model_name_raw) = :key)',
         },

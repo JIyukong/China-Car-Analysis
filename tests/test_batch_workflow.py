@@ -3,6 +3,22 @@ from datetime import date
 import pytest
 
 
+def test_monthly_tick_collects_latest_before_historical_backlog(tmp_path, monkeypatch):
+    from scheduler import runner, workflow
+
+    store = workflow.State(tmp_path)
+    store.save('city', '2023-01', 'source_error')
+    store.save('city', '2026-09', 'source_error')
+    visited = []
+    monkeypatch.setattr(workflow, 'State', lambda: store)
+    monkeypatch.setattr(runner, 'business_period', lambda *args: '2026-10')
+    monkeypatch.setattr(workflow, 'process_month',
+                        lambda state, chain, period, **kwargs: visited.append(period) or True)
+    assert runner.run_tick('city')
+    assert visited[0] == '2026-10'
+    assert '2023-01' in visited and '2026-09' in visited
+
+
 def test_validated_source_survives_interruption_and_resumes_without_crawling(tmp_path, monkeypatch):
     from scheduler import workflow
 
@@ -55,12 +71,12 @@ def test_optional_gaps_merge_and_do_not_change_published_state(tmp_path, monkeyp
     store = workflow.State(tmp_path)
     monkeypatch.setattr(workflow, "collect_month", lambda *args, **kwargs: "source-1")
     monkeypatch.setattr(workflow, "publish_month", lambda *args: [
-        {"kind": "ads", "key": "测试车型", "fields": ["智驾供应商"]},
+        {"kind": "energy", "key": "测试车型", "fields": ["energy_type"]},
     ])
     for period in ("2026-08", "2026-09"):
         assert workflow.process_month(store, "style", period)
     assert store.gaps() == [{
-        "kind": "ads", "key": "测试车型", "fields": ["智驾供应商"], "periods": ["2026-08", "2026-09"],
+        "kind": "energy", "key": "测试车型", "fields": ["energy_type"], "periods": ["2026-08", "2026-09"],
     }]
 
 

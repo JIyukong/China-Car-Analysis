@@ -4,7 +4,7 @@
 --   1. dwd_sales_monthly_model_city  月 × 车型 × 城市 销量明细
 --   2. dwd_stock_daily               日 × 股票 股价明细
 --   3. dwd_stock_finance             报告期 × 股票 财务指标明细
--- 依赖：dim_model / dim_area / dim_vehicle_subtype / dim_vehicle_type / dim_stock / dim_model_ads_zipper 已就位
+-- 依赖：dim_model / dim_area / dim_vehicle_subtype / dim_vehicle_type / dim_stock 已就位
 -- ============================================================
 
 USE dw_auto_stock;
@@ -22,8 +22,6 @@ CREATE TABLE IF NOT EXISTS dwd_sales_monthly_model_city (
     oem_id              BIGINT UNSIGNED NOT NULL                COMMENT '主机厂ID（由 dim_model 派生，非空）',
     brand_id            BIGINT UNSIGNED NOT NULL                COMMENT '品牌ID（由 dim_model 派生，非空）',
     company_id          BIGINT UNSIGNED NOT NULL                COMMENT '上市公司ID（由 dim_model 派生，非空）',
-    ads_id              BIGINT UNSIGNED DEFAULT NULL            COMMENT '智驾 ADS 拉链ID（冗余自 dim_model.ads_id）',
-    ads_supplier_name   VARCHAR(128)    DEFAULT NULL            COMMENT '智驾供应商名称快照',
     city_name           VARCHAR(64)     NOT NULL                COMMENT '标准化城市名（TRIM）',
     city_name_raw       VARCHAR(64)     NOT NULL                COMMENT '原始城市名（溯源）',
     area_id             BIGINT UNSIGNED DEFAULT NULL            COMMENT '地区ID → dim_area.id（大区/省/地级市）',
@@ -45,7 +43,6 @@ CREATE TABLE IF NOT EXISTS dwd_sales_monthly_model_city (
     KEY idx_dwd_sales_city_oem (oem_id),
     KEY idx_dwd_sales_city_brand (brand_id),
     KEY idx_dwd_sales_city_company (company_id),
-    KEY idx_dwd_sales_city_ads (ads_id),
     KEY idx_dwd_sales_city_area (area_id),
     KEY idx_dwd_sales_city_subtype (vehicle_subtype_id),
     KEY idx_dwd_sales_city_vtype (vehicle_type_id)

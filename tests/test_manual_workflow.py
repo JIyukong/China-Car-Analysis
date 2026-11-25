@@ -2,6 +2,32 @@ from copy import deepcopy
 from unittest.mock import Mock
 
 
+def test_existing_ads_gap_does_not_recreate_feishu_ticket(tmp_path):
+    from scheduler import manual_workflow, workflow
+
+    state = workflow.State(tmp_path)
+    state.save("style", "2026-09", "published", digest="source", gaps=[
+        {"kind": "ads", "key": "Test", "fields": ["ads_supplier"]},
+    ])
+    client = Bitable()
+    assert state.gaps() == []
+    assert manual_workflow._sync(state, client, "", notify=False)
+    assert client.records() == []
+
+
+def test_city_candidates_reach_feishu_context(tmp_path):
+    from scheduler import feishu, manual_workflow, workflow
+    state = workflow.State(tmp_path)
+    state.save('city', '2026-01', 'published', digest='accepted', gaps=[{
+        'kind': 'city_model', 'key': 'Model', 'fields': ['oem_name'],
+        'context': 'national_candidates: OEM candidate; unconfirmed',
+    }])
+    client = Bitable()
+    assert manual_workflow._sync(state, client, '', notify=False)
+    assert 'OEM candidate' in client.record['fields'][feishu.CONTEXT]
+    assert '2026-01' in client.record['fields'][feishu.CONTEXT]
+
+
 class Bitable:
     def __init__(self):
         self.record = None

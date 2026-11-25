@@ -137,7 +137,6 @@ BEGIN
         stat_month, source,
         model_name, model_name_raw, model_id,
         manufacturer_name, oem_id, brand_id, company_id,
-        ads_id, ads_supplier_name,
         sales_volume, price_min, price_max, rank_no, row_hash
     )
     SELECT
@@ -146,12 +145,10 @@ BEGIN
         TRIM(ods.model_name_raw)                                               AS model_name,
         ods.model_name_raw                                                     AS model_name_raw,
         dm.id                                                                  AS model_id,
-        TRIM(ods.manufacturer_name_raw)                                        AS manufacturer_name,
+        doem.oem_name                                                        AS manufacturer_name,
         doem.id                                                                AS oem_id,
         dm.brand_id                                                            AS brand_id,
         doem.company_id                                                        AS company_id,
-        dm.ads_id                                                              AS ads_id,
-        dm.ads_supplier_name                                                   AS ads_supplier_name,
         ods.sales_volume,
         CAST(NULLIF(TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(ods.price_range_raw, '-',  1), '-', -1)), '') AS DECIMAL(10,2)) AS price_min,
         CAST(NULLIF(TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(ods.price_range_raw, '-', -1), '-',  1)), '') AS DECIMAL(10,2)) AS price_max,

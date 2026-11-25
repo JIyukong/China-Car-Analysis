@@ -71,12 +71,16 @@ def check_single_current_brand_per_oem(conn) -> bool:
 
 
 def check_dim_model_brand_alignment(conn) -> bool:
-    """校验 dim_model.brand_id 与当前桥接关系保持一致。"""
-    mismatch_count = conn.execute(
+    """校验默认品牌；仅允许已核验的具体车型采用独立品牌。"""
+    from scheduler.reviewed_ads_catalog import verified_identity
+
+    mismatches = conn.execute(
         text(
             """
-            SELECT COUNT(*)
+            SELECT m.model_name, actual.brand_name, o.oem_name
             FROM dim_model m
+            LEFT JOIN dim_brand actual ON actual.id = m.brand_id
+            LEFT JOIN dim_oem o ON o.id = m.oem_id
             JOIN bridge_brand_oem b
               ON b.oem_id = m.oem_id
              AND b.is_current = 1
@@ -84,7 +88,9 @@ def check_dim_model_brand_alignment(conn) -> bool:
             WHERE m.brand_id <> b.brand_id
             """
         )
-    ).scalar_one()
+    ).mappings().all()
+    mismatch_count = sum(not verified_identity(row['model_name'], row['brand_name'], row['oem_name'])
+                         for row in mismatches)
     if mismatch_count > 0:
         logger.error("dim_model.brand_id 与当前桥接关系不一致: %d 条", mismatch_count)
         return False

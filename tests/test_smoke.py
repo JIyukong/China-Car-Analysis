@@ -76,7 +76,7 @@ def test_closed_market_never_calls_provider(monkeypatch, tmp_path):
     monkeypatch.setattr(market_workflow, "expected_sessions", lambda *_: ({day: set()}, {day: set()}))
     monkeypatch.setattr(market_workflow, "ingest_daily", lambda *_: pytest.fail("Closed market ran a provider"))
     state = State(tmp_path)
-    assert market_workflow.process_market(state, "load_stock_daily", day)
+    assert market_workflow._daily(state, "load_stock_daily", [day])
     assert state.batch("load_stock_daily", str(day))["status"] == "closed"
 
 

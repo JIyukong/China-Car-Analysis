@@ -76,9 +76,9 @@ def test_scheduler_checks_monthly_sources_every_day_and_polls_feishu():
     expected = {
         "style": "2026-11-11T03:00:00+08:00",
         "city": "2026-11-11T03:30:00+08:00",
-        "load_stock_daily": "2026-11-11T17:30:00+08:00",
+        "load_stock_daily": "2026-11-11T23:30:00+08:00",
         "load_futures_daily": "2026-11-11T17:30:00+08:00",
-        "load_index_daily": "2026-11-11T17:45:00+08:00",
+        "load_index_daily": "2026-11-11T23:45:00+08:00",
         "load_stock_finance": "2026-11-11T18:30:00+08:00",
         "manual": "2026-11-11T00:00:00+08:00",
         "resume": "2026-11-11T00:00:00+08:00",

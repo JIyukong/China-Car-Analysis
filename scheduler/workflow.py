@@ -119,13 +119,26 @@ class State:
         for row in self.batches():
             for gap in json.loads(row["gaps"]):
                 kind, key = gap["kind"], gap["key"]
-                if (kind, key) in resolved:
+                # Older publication receipts still contain retired ADS tasks.
+                if kind == "ads" or (kind, key) in resolved:
                     continue
                 item = grouped.setdefault((kind, key), {"fields": set(), "periods": set()})
                 item["fields"].update(gap["fields"])
                 item["periods"].add(row["period"])
+                if gap.get('context'):
+                    item.setdefault('contexts', {})[row['period']] = gap['context']
+        with self.transaction() as conn:
+            queue = conn.execute("SELECT message FROM service_status WHERE task='city_model_gaps'").fetchone()
+        if queue:
+            grouped = {identity: item for identity, item in grouped.items() if identity[0] != 'city_model'}
+        for gap in json.loads(queue['message']) if queue else []:
+            item = grouped.setdefault((gap['kind'], gap['key']), {'fields': set(), 'periods': set()})
+            item['fields'].update(gap['fields'])
+            item['periods'].update(gap['periods'])
+            item.setdefault('contexts', {}).update(gap.get('contexts', {}))
         return [
-            {"kind": kind, "key": key, "fields": sorted(item["fields"]), "periods": sorted(item["periods"])}
+            {"kind": kind, "key": key, "fields": sorted(item["fields"]), "periods": sorted(item["periods"]),
+             **({'contexts': item['contexts']} if 'contexts' in item else {})}
             for (kind, key), item in sorted(grouped.items())
         ]
 

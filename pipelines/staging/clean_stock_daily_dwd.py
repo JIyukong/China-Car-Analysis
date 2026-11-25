@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+from contextlib import nullcontext
 from collections.abc import Callable, Mapping
 from datetime import date
 from decimal import ROUND_HALF_UP, Decimal
@@ -28,8 +29,12 @@ _SOURCE_SQL = text("""
            ds.id AS stock_id, ds.stock_code, ds.stock_name, ds.market, ds.exchange, ds.currency,
            ods.`open`, ods.high, ods.low, ods.`close`, ods.volume, ods.amount, ods.pct_change
     FROM ods_stock_daily ods
-    LEFT JOIN dim_stock ds ON ds.stock_code = ods.stock_code_raw
+    LEFT JOIN dim_stock ds ON CAST(ds.stock_code AS BINARY) = CAST(ods.stock_code_raw AS BINARY)
     WHERE ods.trade_date = :period AND ods.source = 'akshare' AND ods.market_raw IN ('A', 'HK')
+      AND NOT EXISTS (SELECT 1 FROM etl_stock_suspension suspended
+                      WHERE CAST(suspended.stock_code AS BINARY) = CAST(ods.stock_code_raw AS BINARY) AND suspended.trade_date = ods.trade_date)
+      AND (ds.listed_date IS NULL OR ds.listed_date <= ods.trade_date)
+      AND (ds.delisted_date IS NULL OR ds.delisted_date >= ods.trade_date)
     ORDER BY ods.stock_code_raw
     FOR UPDATE
 """)
@@ -72,10 +77,15 @@ def _publish_rows(
     columns: tuple[str, ...],
     natural_key: tuple[str, ...],
     payload: list[dict],
+    *, retained_invalid_keys: set | None = None,
 ) -> int:
     # 固定标识符由日线和财务发布器提供，所有行值使用绑定参数。
     def key(row: Mapping) -> tuple:
         return tuple(row[name] for name in natural_key)
+
+    retained_invalid_keys=retained_invalid_keys or set()
+    def relevant(rows):
+        return [row for row in rows if not (key(row) in retained_invalid_keys and row.get('is_valid_ohlc')==0)]
 
     day_column = natural_key[1]
     column_list = ", ".join(f"`{column}`" for column in columns)
@@ -85,14 +95,16 @@ def _publish_rows(
         ORDER BY {', '.join(natural_key)} FOR UPDATE
     """)
     params = {"period": period}
-    existing_rows = conn.execute(select_period, params).mappings().all()
+    existing_rows = relevant(conn.execute(select_period, params).mappings().all())
     existing = {key(row) for row in existing_rows}
     expected = {key(row): row for row in payload}
     if existing - expected.keys() or len(existing) != len(existing_rows):
         raise ValueError(f"{table} 既有业务键与本期验收范围冲突，须先核对")
 
     inserts = [row for row in payload if key(row) not in existing]
-    updates = [row for row in payload if key(row) in existing]
+    indexed={key(row):row for row in existing_rows}
+    updates = [row for row in payload if key(row) in existing and
+               any(indexed[key(row)].get(column)!=row[column] for column in columns)]
     if inserts:
         bindings = ", ".join(f":{column}" for column in columns)
         conn.execute(text(f"INSERT INTO {table} ({column_list}) VALUES ({bindings})"), inserts)
@@ -101,7 +113,7 @@ def _publish_rows(
         key_filter = " AND ".join(f"{column} = :{column}" for column in natural_key)
         conn.execute(text(f"UPDATE {table} SET {assignments} WHERE {key_filter}"), updates)
 
-    actual_rows = conn.execute(select_period, params).mappings().all()
+    actual_rows = relevant(conn.execute(select_period, params).mappings().all())
     actual = {key(row): {column: row[column] for column in columns} for row in actual_rows}
     if actual != expected or len(actual_rows) != len(expected):
         raise RuntimeError(f"{table} 发布后复查失败，交易回滚")
@@ -141,12 +153,12 @@ def _previous_closes(conn: Connection, day: date, market: str, codes: list[str])
     # DWD 已发布有效收盘价优先，其次用同一日期同一标的的有效 ODS 行。
     query = text("""
         SELECT dwd.stock_code, dwd.`open`, dwd.high, dwd.low, dwd.`close`, 0 AS priority
-        FROM dwd_stock_daily dwd JOIN dim_stock ds ON ds.id = dwd.stock_id AND ds.stock_code = dwd.stock_code
+        FROM dwd_stock_daily dwd JOIN dim_stock ds ON ds.id = dwd.stock_id AND CAST(ds.stock_code AS BINARY) = CAST(dwd.stock_code AS BINARY)
         WHERE dwd.trade_date = :previous AND dwd.market = :market AND ds.market = :market
           AND dwd.stock_code IN :codes AND dwd.is_valid_ohlc = 1
         UNION ALL
         SELECT ods.stock_code_raw AS stock_code, ods.`open`, ods.high, ods.low, ods.`close`, 1 AS priority
-        FROM ods_stock_daily ods JOIN dim_stock ds ON ds.stock_code = ods.stock_code_raw
+        FROM ods_stock_daily ods JOIN dim_stock ds ON CAST(ds.stock_code AS BINARY) = CAST(ods.stock_code_raw AS BINARY)
         WHERE ods.trade_date = :previous AND ods.market_raw = :market AND ds.market = :market
           AND ods.stock_code_raw IN :codes AND ods.source = 'akshare'
           AND (ods.stock_id IS NULL OR ods.stock_id = ds.id)
@@ -175,18 +187,18 @@ def _validate_daily_row(day: date, row: Mapping) -> None:
             raise ValueError(f"日线 {field} 字段无效：{code}")
 
 
-def publish_stock_day(day: date, expected_codes: set[str]) -> int:
+def publish_stock_day(day: date, expected_codes: set[str], *, connection=None, calculate_returns=True) -> int:
     """校验并在同一事务内发布、复查指定交易日的全部规范日线。"""
     if type(day) is not date or not expected_codes:
         raise ValueError("日线发布需要交易日和非空股票清单")
-    with engine.begin() as conn:
+    with (nullcontext(connection) if connection is not None else engine.begin()) as conn:
         rows = conn.execute(_SOURCE_SQL, {"period": day}).mappings().all()
         _exact_keys(rows, lambda row: row["stock_code_raw"], expected_codes, "日线 ODS")
         for row in rows:
             _validate_daily_row(day, row)
 
         previous = {}
-        for market in sorted({row["market"] for row in rows}):
+        for market in sorted({row["market"] for row in rows}) if calculate_returns else ():
             missing_returns = [row["stock_code"] for row in rows if row["market"] == market and row["pct_change"] is None]
             previous.update(_previous_closes(conn, day, market, missing_returns))
 
@@ -202,7 +214,15 @@ def publish_stock_day(day: date, expected_codes: set[str]) -> int:
                     values["pct_change"] = change
             values.update(is_valid_ohlc=1, row_hash=_natural_hash(row["stock_code_raw"], day, "akshare"))
             payload.append(values)
-        return _publish_rows(conn, "dwd_stock_daily", day, _DAILY_MARKETS, _COLUMNS, ("stock_id", "trade_date"), payload)
+        retained=conn.execute(text('SELECT dwd.stock_id,dwd.stock_code,dwd.trade_date,dwd.is_valid_ohlc '
+                                   'FROM dwd_stock_daily dwd WHERE dwd.trade_date=:day AND dwd.is_valid_ohlc=0 '
+                                   'AND EXISTS (SELECT 1 FROM etl_stock_suspension suspended '
+                                   'WHERE CAST(suspended.stock_code AS BINARY)=CAST(dwd.stock_code AS BINARY) '
+                                   'AND suspended.trade_date=dwd.trade_date)'),{'day':day}).mappings().all()
+        retained_keys={(r['stock_id'],r['trade_date']) for r in retained
+                       if r.get('is_valid_ohlc')==0 and r['stock_code'] not in expected_codes}
+        return _publish_rows(conn, "dwd_stock_daily", day, _DAILY_MARKETS, _COLUMNS, ("stock_id", "trade_date"), payload,
+                             retained_invalid_keys=retained_keys)
 
 
 def main(argv: list[str] | None = None) -> int:
