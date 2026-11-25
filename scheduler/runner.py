@@ -134,6 +134,13 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--step", choices=DAILY_TIMES, help="只运行一项独立的日链任务")
     parser.add_argument("--plan", action="store_true", help="离线预览步骤")
     parser.add_argument("--status", action="store_true", help="读取本地巡检摘要，不连库")
+    parser.add_argument('--repair-stock-dates', metavar='CSV', help='按 code,date 清单补采 A/H 股 ODS')
+    parser.add_argument('--stock-repair-evidence', metavar='JSON', help='登记已核实停牌及恢复备源遗漏的原成交额')
+    parser.add_argument('--audit-stock-history', action='store_true', help='只读对账 A/H 股全历史及原价/因子验收证据')
+    parser.add_argument('--rebase-stock-history', action='store_true', help='全历史单源原价/因子验收后事务切换后复权')
+    parser.add_argument('--adjust', choices=['hfq'], help='历史切换仅支持后复权 hfq')
+    parser.add_argument('--start-date', type=lambda value: datetime.fromisoformat(value).date(), help='历史起点（默认 2017-01-01）')
+    parser.add_argument('--end-date', type=lambda value: datetime.fromisoformat(value).date(), help='历史审计/初始化截至业务日；不允许未来日期')
     parser.add_argument('--preview-city-models', metavar='OUTPUT_DIR',
                         help='只读本地CSV生成城市车型核查清单，不连库、不确认归属')
     parser.add_argument("--merge-oem-aliases", nargs="+", metavar="OLD:CANONICAL",
@@ -144,6 +151,53 @@ def main(argv: list[str] | None = None) -> int:
                         help="按已核验的主机厂归属修正已发布销量")
     parser.add_argument("--tick", choices=TICKS, help=argparse.SUPPRESS)
     args = parser.parse_args(argv)
+    if args.audit_stock_history or args.rebase_stock_history:
+        if (args.audit_stock_history and args.rebase_stock_history) or any((args.chain,args.period,args.step,
+                args.tick,args.plan,args.status,args.resume,args.from_csv,args.preview_city_models,
+                args.merge_oem_aliases,args.normalize_oem_names,args.reconcile_reviewed_companies,
+                args.repair_stock_dates,args.stock_repair_evidence)):
+            parser.error('历史审计、后复权切换需要分别独立运行')
+        if args.rebase_stock_history and args.adjust != 'hfq':
+            parser.error('历史切换必须明确 --adjust hfq')
+        from base_infra.config import get_settings
+        if get_settings().DB_USER.strip().casefold() in {'','root','admin','administrator'}:
+            parser.error('请配置独立 ETL 账号')
+        from scheduler.stock_history import START, audit, run
+        if args.start_date is not None and args.start_date != START:
+            parser.error('当前业务历史起点固定为 2017-01-01')
+        now = datetime.now(ZoneInfo(TIMEZONE))
+        last = now.date() if now.hour >= 18 else now.date()-timedelta(days=1)
+        if args.end_date is not None:
+            if not START<=args.end_date<=last:
+                parser.error('--end-date 必须在业务历史起点与当前已结束的业务日之间')
+            last=args.end_date
+        try:
+            if args.audit_stock_history:
+                _, report, _ = audit(START, last)
+                from scheduler.stock_history import summarize
+                print(json.dumps(summarize(report), ensure_ascii=False))
+                return 0 if report['complete'] else 1
+            return 0 if run(last=last, rebase=True) else 1
+        except Exception:
+            import logging
+            logging.getLogger(__name__).exception('股票全历史审计或切换失败，未完成验收')
+            return 1
+    if args.adjust or args.start_date or args.end_date:
+        parser.error('--adjust/--start-date/--end-date 仅用于历史审计或后复权切换')
+    if args.repair_stock_dates or args.stock_repair_evidence:
+        if args.repair_stock_dates and args.stock_repair_evidence:
+            parser.error('股票补采与证据登记需分别运行')
+        if any((args.chain, args.period, args.step, args.tick, args.plan, args.status, args.resume,
+                args.from_csv, args.preview_city_models, args.merge_oem_aliases,
+                args.normalize_oem_names, args.reconcile_reviewed_companies)):
+            parser.error('--repair-stock-dates 需要单独运行')
+        from base_infra.config import get_settings
+        if get_settings().DB_USER.strip().casefold() in {'', 'root', 'admin', 'administrator'}:
+            parser.error('请配置独立 ETL 账号')
+        from scheduler.stock_repair import apply_evidence, repair
+        if args.stock_repair_evidence:
+            return 0 if apply_evidence(args.stock_repair_evidence) else 1
+        return 0 if repair(args.repair_stock_dates) else 1
     if args.preview_city_models:
         if args.chain != 'city' or any((args.plan, args.status, args.tick, args.resume, args.from_csv,
                 args.step, args.normalize_oem_names, args.merge_oem_aliases, args.reconcile_reviewed_companies)):

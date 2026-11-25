@@ -52,7 +52,7 @@ def parse_args():
 
 def get_all_stocks(codes=None):
     """读取指定的 A/H 股（含已退市）或当前上市股票。"""
-    condition = "is_listed = 1" if codes is None else "market IN ('A', 'HK') AND stock_code IN :codes"
+    condition = "is_listed = 1 AND market IN ('A','HK')" if codes is None else "market IN ('A', 'HK') AND stock_code IN :codes"
     sql = text(f"""
         SELECT id, stock_code, stock_name, market, exchange
         FROM dim_stock
@@ -325,9 +325,9 @@ def insert_daily_data(rows):
             high = VALUES(high),
             low = VALUES(low),
             close = VALUES(close),
-            volume = VALUES(volume),
-            amount = VALUES(amount),
-            pct_change = VALUES(pct_change),
+            volume = COALESCE(VALUES(volume), volume),
+            amount = COALESCE(VALUES(amount), amount),
+            pct_change = COALESCE(VALUES(pct_change), pct_change),
             fetch_time = VALUES(fetch_time)
     """
     return execute_insert(rows, sql)

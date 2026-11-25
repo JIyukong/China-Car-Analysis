@@ -38,6 +38,10 @@ def load_stock_daily(
     """
     try:
         logger.info("开始采集股票日线数据...")
+        if not dry_run and not preflight_only:
+            from datetime import date
+            from scheduler.stock_history import run
+            return run(last=date.fromisoformat(business_key) if business_key else date.today())
         ok = run_daily_ingest(
             build_scheduler_config(proxy_url=proxy_url, preflight_only=preflight_only),
             dry_run=dry_run,

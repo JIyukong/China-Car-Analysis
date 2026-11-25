@@ -71,6 +71,8 @@ class MockTransaction:
             result.mappings.return_value.all.return_value = self.previous
         elif 'FROM ods_stock_' in sql:
             result.mappings.return_value.all.return_value = self.source
+        elif 'FROM dwd_stock_daily dwd' in sql and 'dwd.is_valid_ohlc=0' in sql:
+            result.mappings.return_value.all.return_value = []
         elif 'FROM dwd_stock_' in sql:
             rows = self.written if self.read_dwd and not self.mismatch else self.existing
             result.mappings.return_value.all.return_value = rows

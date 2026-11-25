@@ -50,6 +50,7 @@ class Settings(BaseSettings):
     FEISHU_ADS_TABLE_ID: str = ""
     FEISHU_TABLE_URL: str = ""
     ETL_STOCK_DWD_ENABLED: bool = False
+    STOCK_MARKET_PROXY_URL: str = ''
     ETL_CITY_WIDE_ENABLED: bool = False
     ETL_CITY_MODEL_SYNC_ENABLED: bool = False
 

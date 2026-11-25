@@ -144,6 +144,8 @@ def _dates(state: State, task: str, day: date, catch_up: bool) -> list[date]:
     terminal = {"published", "closed"}
     if task != STOCK or not get_settings().ETL_STOCK_DWD_ENABLED:
         terminal.add("ods_accepted")
+    # Stock history no longer uses this state-based window; other assets retain
+    # their existing recent-window and explicit unfinished-period behavior.
     start = date.fromisoformat(rows[0]["period"]) if rows else day - timedelta(days=6)
     # Recheck yesterday alongside today's data to catch late rows and prior-close corrections.
     start = min(start, day - timedelta(days=1))
@@ -201,6 +203,9 @@ def _daily(state: State, task: str, dates: list[date]) -> bool:
 
 def process_market(state: State, task: str, day: date, *, catch_up: bool = False) -> bool:
     try:
+        if task == STOCK:
+            from scheduler.stock_history import run
+            return run(last=day, state=state)
         with state.lock(task):
             if task == FINANCE:
                 from scheduler.finance_workflow import process_finance

@@ -22,6 +22,7 @@ def pytest_configure(config):
     patch.setenv("FEISHU_TABLE_ID", "")
     patch.setenv("FEISHU_TABLE_URL", "")
     patch.setenv("ETL_STOCK_DWD_ENABLED", "false")
+    patch.setenv("STOCK_MARKET_PROXY_URL", "")
     patch.setenv("ETL_CITY_WIDE_ENABLED", "false")
     patch.setenv("LOG_DIR", "logs")
     patch.setenv("LOG_TO_FILE", "false")

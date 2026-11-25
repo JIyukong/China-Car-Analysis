@@ -75,7 +75,7 @@ def test_observed_instrument_with_missing_ods_row_does_not_publish(tmp_path, mon
     monkeypatch.setattr(market, "actual_sessions", lambda *_: {day: {"A1"}})
     monkeypatch.setattr(market, "publish_daily", lambda *_: pytest.fail("published an incomplete date"))
     store = State(tmp_path)
-    assert not market.process_market(store, "load_stock_daily", day)
+    assert not market._daily(store, "load_stock_daily", [day])
     assert store.batch("load_stock_daily", str(day))["status"] == "source_error"
 
 
@@ -90,7 +90,7 @@ def test_late_source_row_is_not_hidden_by_old_ods_copy(tmp_path, monkeypatch):
     monkeypatch.setattr(market, "publish_daily", lambda *_: pytest.fail("published based on a stale ODS row"))
     store = State(tmp_path)
 
-    assert not market.process_market(store, market.STOCK, day)
+    assert not market._daily(store, market.STOCK, [day])
     assert store.batch(market.STOCK, str(day))["status"] == "waiting_source"
 
 
