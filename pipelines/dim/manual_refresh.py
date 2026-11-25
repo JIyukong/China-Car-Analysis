@@ -174,10 +174,14 @@ def _complete_ads(conn: Connection, key: str, values: dict) -> dict:
 
 
 def apply_ads(conn: Connection, key: str, values: dict) -> None:
+    # Verified spelling corrections only; retain the authoritative source key.
+    # https://www.dfmc.com.cn/news/company/news_20260724_1035.html
+    # https://epicland.dfmc.com.cn/
+    canonical_key = {"亦派M8": "奕派M8", "亦境X9": "奕境X9"}.get(key, key)
     models = conn.execute(text(f"""
         SELECT m.id, m.model_name FROM dim_model m WHERE m.model_name = :key {_CURRENT_OEM} FOR UPDATE
-    """), {"key": key}).mappings().all()
-    if len(models) > 1 or (models and models[0]["model_name"] != key):
+    """), {"key": canonical_key}).mappings().all()
+    if len(models) > 1 or (models and models[0]["model_name"] != canonical_key):
         raise ValueError("ADS 业务键未命中唯一车型，请先修正车型映射")
     model_id = models[0]["id"] if models else None
     merged = _complete_ads(conn, key, values)

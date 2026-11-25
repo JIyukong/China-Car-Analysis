@@ -19,7 +19,7 @@ DEFAULT_CSV_PATH = PROJECT_ROOT / "data" / "manual_dimensions" / "dim_area.csv"
 
 # CSV 白名单校验取值，与 dim_area 表 ENUM 保持一致
 ALLOWED_REGION_NAMES = {"华东", "华南", "华北", "华中", "西南", "西北", "东北"}
-ALLOWED_CITY_LEVELS = {"地级市", "直辖市", "自治州", "地区", "盟"}
+ALLOWED_CITY_LEVELS = {"地级市", "直辖市", "自治州", "地区", "盟", "县级市"}
 ALLOWED_PROVINCE_TYPES = {"省", "自治区", "直辖市"}
 
 REQUIRED_COLUMNS = {

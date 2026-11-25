@@ -186,6 +186,29 @@ def test_csv_replay_cannot_accept_bare_historical_file(source, tmp_path):
     assert ods.writes == 0
 
 
+def test_capture_navigation_retries_transient_http_without_accepting_failure(monkeypatch):
+    from scheduler.jobs import crawl_16888_job as job
+    responses = iter([SimpleNamespace(ok=False, status=503), SimpleNamespace(ok=True, status=200)])
+    calls = []
+    page = SimpleNamespace(url='https://xl.16888.com/page')
+    def goto(url, **kwargs):
+        calls.append(url)
+        return next(responses)
+    page.goto = goto
+    monkeypatch.setattr(job.time, 'sleep', lambda _: None)
+    assert job._navigate_capture(page, page.url).ok
+    assert len(calls) == 2
+
+
+def test_capture_navigation_stops_after_bounded_failures(monkeypatch):
+    from scheduler.jobs import crawl_16888_job as job
+    page = SimpleNamespace(url='https://xl.16888.com/page',
+                           goto=lambda *a, **kw: SimpleNamespace(ok=False, status=503))
+    monkeypatch.setattr(job.time, 'sleep', lambda _: None)
+    with pytest.raises(RuntimeError, match='请求'):
+        job._navigate_capture(page, page.url)
+
+
 def test_capture_cannot_declare_completion_when_next_button_disappears_early(tmp_path):
     from scheduler.jobs import crawl_16888_job
 

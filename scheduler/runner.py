@@ -93,7 +93,10 @@ def run_tick(task: str) -> bool:
         periods = target_months(state, task, now.date())
         last = business_period(task, None)
         results = []
-        for period in periods:
+        # A multi-year backlog must not delay the newly due month for hours.
+        # Keep the historical order after checking the latest month first.
+        ordered = [last, *(period for period in periods if period != last)]
+        for period in ordered:
             batch = state.batch(task, period)
             if period != last and batch.get("digest") and batch["status"] == "waiting_manual":
                 continue
@@ -150,7 +153,112 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--reconcile-reviewed-companies", action="store_true",
                         help="按已核验的主机厂归属修正已发布销量")
     parser.add_argument("--tick", choices=TICKS, help=argparse.SUPPRESS)
+    parser.add_argument('--restore-national-history', metavar='REPORT_JSON',
+                        help='按 ODS 核对保留的全国 DWD 后恢复历史 DWS，未知归属保留 OTHER')
+    parser.add_argument('--restore-city-history', metavar='REPORT_JSON',
+                        help='按保留 ODS 恢复城市独立 DWD；不接受网站新版本、不修改来源批次状态')
+    parser.add_argument('--repair-futures-history', metavar='EVIDENCE_JSON',
+                        help='按已保存交易所证据增量修正期货异常及历史日历')
+    parser.add_argument('--seed-reviewed-ads-models', metavar='REPORT_JSON',
+                        help='按已核验工信部车型身份增量建档 ADS 车型，不修改默认品牌桥接')
+    parser.add_argument('--refresh-city-tiers', metavar='REPORT_JSON', help='按第一财经2025完整名单更新城市分级，未上榜为其他')
+    parser.add_argument('--load-reviewed-county-areas', metavar='REPORT_JSON')
     args = parser.parse_args(argv)
+    if args.load_reviewed_county_areas:
+        others=vars(args).copy()
+        others.pop('load_reviewed_county_areas')
+        if any(others.values()): parser.error('--load-reviewed-county-areas 需要单独运行')
+        from scheduler.county_areas import run
+        print(json.dumps(run(args.load_reviewed_county_areas),ensure_ascii=False,default=str))
+        return 0
+    if args.refresh_city_tiers:
+        others=vars(args).copy()
+        others.pop('refresh_city_tiers')
+        if any(others.values()):
+            parser.error('--refresh-city-tiers 需要单独运行')
+        from scheduler.area_tiers import run
+        report=run(args.refresh_city_tiers)
+        print(json.dumps({'verified':report['verified'],'updated':report['updated']}))
+        return 0
+    if args.seed_reviewed_ads_models:
+        others = vars(args).copy()
+        others.pop('seed_reviewed_ads_models')
+        if any(others.values()):
+            parser.error('--seed-reviewed-ads-models 需要单独运行')
+        from scheduler.reviewed_ads_catalog import run
+        try:
+            report = run(args.seed_reviewed_ads_models)
+            print(json.dumps(report, ensure_ascii=False, default=str))
+            return 0
+        except Exception:
+            import logging
+            logging.getLogger(__name__).exception('已核验 ADS 车型建档失败')
+            return 1
+    if args.restore_city_history:
+        others = vars(args).copy()
+        others.pop('restore_city_history')
+        others.pop('period')
+        if any(others.values()):
+            parser.error('--restore-city-history 需要单独运行')
+        if args.period is not None:
+            try:
+                if len(args.period) != 7:
+                    raise ValueError('month format')
+                datetime.strptime(args.period + '-01', '%Y-%m-%d')
+            except ValueError:
+                parser.error('--restore-city-history --period 需要 YYYY-MM')
+        from base_infra.config import get_settings
+        if get_settings().DB_USER.strip().casefold() in {'', 'root', 'admin', 'administrator'}:
+            parser.error('请配置独立 ETL 账号')
+        from scheduler.city_history import run
+        try:
+            report = run(args.restore_city_history, period=args.period)
+            return 0 if report['complete'] else 1
+        except Exception:
+            import logging
+            logging.getLogger(__name__).exception('保留 ODS 城市数仓恢复失败')
+            return 1
+    if args.repair_futures_history:
+        others = vars(args).copy()
+        others.pop('repair_futures_history')
+        if any(others.values()):
+            parser.error('--repair-futures-history 需要单独运行')
+        from base_infra.config import get_settings
+        if get_settings().DB_USER.strip().casefold() in {'', 'root', 'admin', 'administrator'}:
+            parser.error('请配置独立 ETL 账号')
+        from scheduler.futures_repair import run
+        from scheduler.workflow import State
+        try:
+            with State().lock('load_futures_daily', timeout=10), State().lock('warehouse', timeout=120):
+                report = run(args.repair_futures_history)
+            print(json.dumps(report, ensure_ascii=False, default=str))
+            return 0
+        except Exception:
+            import logging
+            logging.getLogger(__name__).exception('期货历史证据修复失败')
+            return 1
+    if args.restore_national_history:
+        others = vars(args).copy()
+        others.pop('restore_national_history')
+        if any(others.values()):
+            parser.error('--restore-national-history 需要单独运行')
+        from base_infra.config import get_settings
+        if get_settings().DB_USER.strip().casefold() in {'', 'root', 'admin', 'administrator'}:
+            parser.error('请配置独立 ETL 账号')
+        from scheduler.national_history import restore
+        from scheduler.workflow import State
+        try:
+            with State().lock('warehouse', timeout=10):
+                report = restore()
+            output = Path(args.restore_national_history)
+            output.parent.mkdir(parents=True, exist_ok=True)
+            output.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding='utf-8')
+            print(json.dumps(report, ensure_ascii=False))
+            return 0
+        except Exception:
+            import logging
+            logging.getLogger(__name__).exception('全国历史对账恢复失败')
+            return 1
     if args.audit_stock_history or args.rebase_stock_history:
         if (args.audit_stock_history and args.rebase_stock_history) or any((args.chain,args.period,args.step,
                 args.tick,args.plan,args.status,args.resume,args.from_csv,args.preview_city_models,

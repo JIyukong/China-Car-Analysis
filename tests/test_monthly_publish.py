@@ -77,6 +77,22 @@ def enable_city_wide(monkeypatch, execute):
     execute("INSERT INTO dim_vehicle_subtype VALUES (1,'SUV',1)")
 
 
+def test_city_replay_skips_unchanged_fact_updates(warehouse, monkeypatch):
+    publish, execute = warehouse
+    enable_city_wide(monkeypatch, execute)
+    add_source(execute, '2026-01', 7, 'Extra(进口)', city=True)
+    publish.publish_month('city', '2026-01')
+    original = publish._update
+    writes = []
+    def track(conn, table, rows, columns):
+        if table == 'dwd_sales_monthly_city':
+            writes.extend(rows)
+        return original(conn, table, rows, columns)
+    monkeypatch.setattr(publish, '_update', track)
+    publish.publish_month('city', '2026-01')
+    assert writes == []
+
+
 def test_city_wide_publishes_unknown_models_without_national_or_company(warehouse, monkeypatch):
     publish, execute = warehouse
     enable_city_wide(monkeypatch, execute)

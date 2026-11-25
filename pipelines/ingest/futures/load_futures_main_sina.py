@@ -318,7 +318,7 @@ def fetch_single_commodity(commodity_info, config: RuntimeConfig, dry_run=False)
     result["rows_fetched"] = len(df)
 
     rows = transform_daily_data(df, commodity_info)
-    if requested is not None and rows:
+    if rows:
         try:
             rows = valid_price_rows(rows, requested)
         except ValueError as exc:

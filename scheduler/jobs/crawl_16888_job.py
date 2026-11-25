@@ -82,6 +82,19 @@ def _reported_months(page, chain: str) -> list[str]:
     return page.locator(".J_a_date .drop_checked").evaluate_all("els => els.map(el => el.dataset.id)")
 
 
+def _navigate_capture(page, url: str):
+    for attempt in range(3):
+        response = page.goto(url, wait_until="domcontentloaded")
+        if response is not None and response.ok and page.url == url:
+            return response
+        status = getattr(response, 'status', None)
+        if page.url != url or (status is not None and status != 429 and status < 500):
+            break
+        if attempt < 2:
+            time.sleep(5 * (attempt + 1))
+    raise RuntimeError(f"请求 {url} 失败或重定向到 {page.url}，请检查站点响应")
+
+
 def _capture_pages(page, crawler, chain: str, period: str, path: Path) -> None:
     csv_path = path / f"{chain}_{period}.csv"
     page_rows: list[int] = []
@@ -94,10 +107,11 @@ def _capture_pages(page, crawler, chain: str, period: str, path: Path) -> None:
         while True:
             page_number = len(page_rows) + 1
             url = crawler.PAGE_URL_TEMPLATE.format(month=period, ym=period.replace("-", ""), page=page_number)
-            response = page.goto(url, wait_until="domcontentloaded")
-            if response is None or not response.ok or page.url != url:
+            try:
+                _navigate_capture(page, url)
+            except RuntimeError:
                 (path / f"page_{page_number}.html").write_text(page.content(), encoding="utf-8")
-                raise RuntimeError(f"请求 {url} 失败或重定向到 {page.url}，请检查站点响应")
+                raise
             reported_months = _reported_months(page, chain)
             if reported_months != [period] * (2 if chain == "style" else 1):
                 (path / f"page_{page_number}.html").write_text(page.content(), encoding="utf-8")

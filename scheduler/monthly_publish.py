@@ -336,7 +336,19 @@ def _write_dwd(conn, chain, period, source, candidates, *, wide_city=False):
     for business_key, row in expected.items():
         payload = {column: row[column] for column in columns}
         if business_key in previous:
-            updates.append({**payload, 'id': previous[business_key]['id']})
+            stored = previous[business_key]
+            changed = False
+            for column, value in payload.items():
+                actual = stored[column]
+                if column in ('price_min', 'price_max'):
+                    actual, value = _numeric(actual), _numeric(value)
+                    if value is not None:
+                        value = value.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+                if actual != value:
+                    changed = True
+                    break
+            if changed:
+                updates.append({**payload, 'id': stored['id']})
         else:
             inserts.append(payload)
     _update(conn, table, updates, columns)

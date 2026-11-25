@@ -3,6 +3,22 @@ from datetime import date
 import pytest
 
 
+def test_monthly_tick_collects_latest_before_historical_backlog(tmp_path, monkeypatch):
+    from scheduler import runner, workflow
+
+    store = workflow.State(tmp_path)
+    store.save('city', '2023-01', 'source_error')
+    store.save('city', '2026-09', 'source_error')
+    visited = []
+    monkeypatch.setattr(workflow, 'State', lambda: store)
+    monkeypatch.setattr(runner, 'business_period', lambda *args: '2026-10')
+    monkeypatch.setattr(workflow, 'process_month',
+                        lambda state, chain, period, **kwargs: visited.append(period) or True)
+    assert runner.run_tick('city')
+    assert visited[0] == '2026-10'
+    assert '2023-01' in visited and '2026-09' in visited
+
+
 def test_validated_source_survives_interruption_and_resumes_without_crawling(tmp_path, monkeypatch):
     from scheduler import workflow
 

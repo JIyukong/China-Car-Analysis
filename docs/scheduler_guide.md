@@ -34,6 +34,48 @@ python -m scheduler.runner --chain daily --period 2026-07-03 --step load_index_d
 
 ## 飞书补录
 
+### 已保留历史的对账恢复
+
+`python -m scheduler.runner --refresh-city-tiers REPORT_JSON` 按第一财经 2025 年完整
+337 城榜单增量更新 `city_tier`，未上榜地区标为“其他”。2026 年起第一财经不再发布分级，
+因此仍使用最后公布的 2025 年分级；不把这一口径冒充 2026 年榜单。`city_level` 继续表示
+行政区类型，不写入一线、二线等商业分级。正式库须已由管理员部署 `city_tier VARCHAR(50)`。
+
+`python -m scheduler.runner --load-reviewed-county-areas REPORT_JSON` 从本地已审核的
+`logs/etl/area-enrichment-20261125/county-areas-prepared.csv` 补录石河子、琼海。该凭据与
+其他核验材料需要随运行目录备份，不提交业务产物到仓库。执行前要求管理员已将
+`city_level` 枚举扩展为支持“县级市”；命令仅新增维度，不运行结构升级。完成后用
+`--restore-city-history REPORT_JSON --period YYYY-MM` 恢复受影响月份。
+
+`python -m scheduler.runner --seed-reviewed-ads-models REPORT_JSON` 仅按代码中已核验的
+工信部生产身份清单补充 ADS 车型、品牌及其能源/车型分类。执行前验证保存的官方证据，
+已有身份或分类冲突即回滚；保持默认主机厂品牌桥接及销量事实不变，不伪造首次销量月份。
+随后运行 `python -m scheduler.runner --tick ads` 由权威 ADS 表更新匹配和拉链，最终以独立
+回读结果确认匹配，不能把因锁超时跳过的 tick 退出码当作已完成。
+
+`python -m scheduler.runner --restore-national-history REPORT_JSON` 按已有全国 ODS
+逐键核对保留的 DWD 后，恢复全部月份的公司、品牌 DWS 当前分组。缺失车型只有在
+已有主机厂及唯一品牌桥接可确定时才新增；历史未知公司保留在 OTHER 分组，并在报告
+单列数量和销量。任一业务键或销量不一致会回滚，不将历史未知归属推断成当前归属。
+
+`python -m scheduler.runner --repair-futures-history EVIDENCE_JSON` 使用已保存的上期所
+原始日行情及日历证据修复已核实异常。写入前核对原 OHLC、成交量、持仓量，写入后在
+事务中回读；原值、修正值及来源保存在本地修正档案。该命令不推断没有官方证据的日历。
+
+`python -m scheduler.runner --restore-city-history REPORT_JSON` 将保留的城市 ODS 历史
+按月对账后发布到独立城市明细表，检查已有明细及回读结果的业务键、销量。旧城市表保留。
+报告明确标记来源为已保留 ODS；该操作不接受新版网站榜单，也不修改来源验收状态。
+网站改名、撤回或重复业务键仍需单独核实，不能把数仓恢复报告当作外部来源完整性证明。
+
+`python -m scheduler.runner --seed-reviewed-ads-models REPORT_JSON` 仅按已核验的工信部
+生产企业、商标及车型证据增量建立指定 ADS 车型。明确的车型品牌可以与生产企业的默认
+销量品牌不同；不修改主机厂默认桥接，不创建销量记录，不填写没有销量依据的销售月份。
+已有身份冲突时回滚；完成后再用 `--tick ads` 同步权威 ADS 记录。车型品牌一致性检查仅对
+已核验的精确车型、品牌、主机厂组合允许例外，其他错配仍会报错。
+
+月链定时检查优先处理最新应到月份，再处理历史积压。城市来源 HTTP 429 或服务器
+错误最多重试三次；所有分页与业务键验收仍然必须通过。无变化的 DWD 明细不重复更新。
+
 在飞书建一张限定维护人员可编辑的多维表格，使用普通文本字段 `任务键`、`维度类型`、`业务键`、`月份`、`缺失信息`、`补录数据`、`处理结果`，以及包含「待补录」「已提交」「校验退回」「已应用」的单选字段 `状态`。给自建应用开通并发布多维表格读写权限，把应用加入该表格。在服务的 `.env` 设置 `FEISHU_APP_ID`、`FEISHU_APP_SECRET`、`FEISHU_BASE_TOKEN`、`FEISHU_TABLE_ID`、`FEISHU_TABLE_URL` 和 `ALERT_WEBHOOK_URL`，并保持 `ALERT_WEBHOOK_TYPE=feishu`。群机器人可使用关键词 `CarApp调度器`。
 
 使用飞书 CLI 部署时，设置 `FEISHU_CLI_PATH` 为可执行文件的绝对路径，补录通过 CLI 的应用身份调用 Base v3。常驻任务需以持有该 CLI 配置及系统密钥的 Windows 用户运行。应用机器人加入通知群后，用 `FEISHU_ALERT_CHAT_ID` 指定群 ID。启用群 ID 后，群消息发送失败会记录失败并按原策略重试。

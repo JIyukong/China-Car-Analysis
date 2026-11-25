@@ -69,7 +69,7 @@ def discover_city_models(conn, period, rows):
                            first_seen_month=None, last_seen_month=None, is_active=0)
             columns = ', '.join(payload)
             conn.execute(text(f"INSERT INTO dim_city_model ({columns}) VALUES ({', '.join(':' + k for k in payload)})"), payload)
-        else:
+        elif json.loads(existing[name]['national_candidates'] or '[]') != candidates:
             # Never overwrite reviewed attributes, including import status.
             conn.execute(text('''UPDATE dim_city_model SET national_candidates=:national_candidates
                 WHERE source=:source AND source_model_name=:source_model_name'''), payload)
