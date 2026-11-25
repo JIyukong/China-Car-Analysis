@@ -7,23 +7,18 @@ from uuid import UUID
 
 from filelock import Timeout
 
-from scheduler.workflow import State, timestamp
+from scheduler.ticket_store import TicketRepository
+from scheduler.workflow import State
 
 logger = logging.getLogger(__name__)
 
 
 def _tickets(state: State) -> list[dict]:
-    with state.transaction() as conn:
-        return [dict(row) for row in conn.execute("SELECT * FROM feishu_ticket WHERE kind <> 'ads' ORDER BY kind, entity")]
+    return TicketRepository(state).list()
 
 
 def _bind(state: State, gap: dict, record_id: str) -> None:
-    with state.transaction() as conn:
-        conn.execute("""
-            INSERT INTO feishu_ticket (kind, entity, record_id, expected) VALUES (?, ?, ?, ?)
-            ON CONFLICT(kind,entity) DO UPDATE SET record_id=excluded.record_id, expected=excluded.expected,
-                notified=CASE WHEN record_id=excluded.record_id THEN notified END
-        """, (gap["kind"], gap["key"], record_id, json.dumps(gap["fields"], ensure_ascii=False)))
+    TicketRepository(state).bind(gap["kind"], gap["key"], record_id, gap["fields"])
 
 
 def _submit(state: State, client, ticket: dict, record: dict) -> None:
@@ -51,10 +46,7 @@ def _submit(state: State, client, ticket: dict, record: dict) -> None:
                     state.enqueue(chain, period)
                 result = "not_applicable" if change.not_applicable else "applied"
                 reason = "已确认不适用" if change.not_applicable else "已写入维度，受影响批次将自动复核"
-            with state.transaction() as conn:
-                conn.execute("""
-                    UPDATE feishu_ticket SET revision=?, result=?, reason=? WHERE kind=? AND entity=?
-                """, (revision, result, reason, kind, key))
+            TicketRepository(state).save_result(kind, key, revision, result, reason)
     latest = client.get(record_id)["fields"]
     if feishu.cell_text(latest, feishu.STATUS) == feishu.SUBMITTED and submitted == [
         feishu.cell_text(latest, name) for name in editable
@@ -149,11 +141,7 @@ def _sync(state: State, client, table_url: str, *, notify: bool = True) -> bool:
             deduplicate=False,
         )
         if sent:
-            with state.transaction() as conn:
-                conn.executemany(
-                    "UPDATE feishu_ticket SET notified=? WHERE record_id=?",
-                    [(timestamp(), row["record_id"]) for row in unnotified],
-                )
+            TicketRepository(state).mark_notified([row["record_id"] for row in unnotified])
         ok = ok and sent
     return ok
 

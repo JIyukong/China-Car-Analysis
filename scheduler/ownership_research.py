@@ -5,6 +5,7 @@ from sqlalchemy import text
 from base_infra.config import get_settings
 from pipelines.dim.manual_refresh import apply_feishu_dimension
 from scheduler.monthly_publish import _publication_transaction
+from scheduler.ticket_store import TicketRepository
 from scheduler import feishu
 
 def run(state):
@@ -42,9 +43,8 @@ def run(state):
                     receipts.append((item,'not_applicable'))
                 updates[item['record_id']]=fields
         client.batch_update(updates)
-        with state.transaction() as conn:
-            for item,result in receipts:
-                conn.execute('UPDATE feishu_ticket SET result=?,reason=? WHERE record_id=? AND kind=? AND entity=?',
-                    (result,item['evidence'],item['record_id'],'ownership',item['key']))
+        tickets = TicketRepository(state)
+        for item, result in receipts:
+            tickets.save_research_receipt(item['record_id'], 'ownership', item['key'], result, item['evidence'])
         print(json.dumps({'updated':len(updates),'resolved':len(receipts),'researched_pending':len(updates)-len(receipts)}))
     return True
