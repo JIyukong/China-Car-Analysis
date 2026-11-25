@@ -31,6 +31,7 @@ def test_city_model_review_accepts_import_but_rejects_domestic_or_company():
 def test_city_model_submission_is_gated_before_writes(monkeypatch):
     from base_infra.config import get_settings
     monkeypatch.setattr(get_settings(), 'ETL_CITY_WIDE_ENABLED', False)
+    monkeypatch.setattr(get_settings(), 'ETL_CITY_MODEL_SYNC_ENABLED', False)
     conn = MagicMock()
     with pytest.raises(ValueError, match='尚未启用'):
         manual_refresh.apply_feishu_dimension(conn, 'city_model', 'Model', {})

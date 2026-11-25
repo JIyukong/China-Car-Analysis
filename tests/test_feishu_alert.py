@@ -43,6 +43,16 @@ def test_feishu_group_request_uses_app_token_and_chat_id(monkeypatch):
     )
 
 
+def test_cli_batch_update_uses_documented_matrix_api(monkeypatch):
+    from scheduler import feishu
+    cli = feishu.FeishuCliClient('lark-cli.exe', 'base', 'tbl_test')
+    call = Mock(return_value={})
+    monkeypatch.setattr(cli, '_call', call)
+    cli.batch_update({'rec_test': {feishu.STATUS: feishu.APPLIED}})
+    call.assert_called_once_with('POST', '/batch_update', body={
+        'update_records': {'rec_test': {feishu.STATUS: [feishu.APPLIED]}}})
+
+
 def test_cli_reads_and_updates_base_v3_fields_without_exporting_a_secret(monkeypatch):
     import json
     from subprocess import CompletedProcess

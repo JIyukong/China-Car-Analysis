@@ -259,6 +259,14 @@ class FeishuCliClient(FeishuClient):
     def update(self, record_id: str, fields: dict) -> None:
         self._call("PATCH", f"/{quote(record_id, safe='')}", body=self._cells(fields))
 
+    def batch_update(self, records: dict[str, dict]) -> None:
+        items = list(records.items())
+        for offset in range(0, len(items), 200):
+            result = self._call('POST', '/batch_update', body={'update_records': {
+                key: self._cells(fields) for key, fields in items[offset:offset + 200]}})
+            if result.get('ignored_fields'):
+                raise FeishuError('飞书批量更新存在未应用字段')
+
 
 def client_from_settings(settings, *, table_id: str | None = None) -> FeishuClient:
     table_id = settings.FEISHU_TABLE_ID if table_id is None else table_id

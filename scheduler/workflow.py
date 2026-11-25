@@ -127,6 +127,15 @@ class State:
                 item["periods"].add(row["period"])
                 if gap.get('context'):
                     item.setdefault('contexts', {})[row['period']] = gap['context']
+        with self.transaction() as conn:
+            queue = conn.execute("SELECT message FROM service_status WHERE task='city_model_gaps'").fetchone()
+        if queue:
+            grouped = {identity: item for identity, item in grouped.items() if identity[0] != 'city_model'}
+        for gap in json.loads(queue['message']) if queue else []:
+            item = grouped.setdefault((gap['kind'], gap['key']), {'fields': set(), 'periods': set()})
+            item['fields'].update(gap['fields'])
+            item['periods'].update(gap['periods'])
+            item.setdefault('contexts', {}).update(gap.get('contexts', {}))
         return [
             {"kind": kind, "key": key, "fields": sorted(item["fields"]), "periods": sorted(item["periods"]),
              **({'contexts': item['contexts']} if 'contexts' in item else {})}

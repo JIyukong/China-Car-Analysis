@@ -111,6 +111,22 @@ def _sync(state: State, client, table_url: str, *, notify: bool = True) -> bool:
             logger.exception("Feishu ticket synchronization failed for %s", identity)
             ok = False
     tickets = _tickets(state)
+    auto_updates = {
+        ticket['record_id']: {feishu.STATUS: feishu.APPLIED, feishu.FEEDBACK: ticket['reason']}
+        for ticket in tickets if ticket['kind'] == 'city_model' and ticket['result'] == 'auto_confirmed'
+        and ticket['record_id'] in records
+        and feishu.cell_text(records[ticket['record_id']]['fields'], feishu.STATUS) == feishu.PENDING
+    }
+    if auto_updates:
+        try:
+            if isinstance(client, feishu.FeishuCliClient):
+                client.batch_update(auto_updates)
+            else:
+                for record_id, fields in auto_updates.items():
+                    client.update(record_id, fields)
+        except Exception:
+            logger.exception('Feishu automatic resolution receipts failed')
+            ok = False
     for ticket in tickets:
         record = records.get(ticket["record_id"])
         if record:

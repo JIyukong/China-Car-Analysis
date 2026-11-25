@@ -13,7 +13,7 @@ from scheduler.task_config import CHAINS, DAILY_TIMES, MONTHLY_CRON
 
 ROOT = Path(__file__).resolve().parents[1]
 TIMEZONE = "Asia/Shanghai"
-TICKS = (*MONTHLY_CRON, *DAILY_TIMES, "manual", "resume", "ads")
+TICKS = (*MONTHLY_CRON, *DAILY_TIMES, "manual", "resume", "ads", "city-models", "ownership-research")
 
 
 def print_plan(chain: str | None = None, period: str | None = None, *, from_csv=False, step=None, resume=False) -> None:
@@ -81,6 +81,14 @@ def run_tick(task: str) -> bool:
 
     state = State()
     now = datetime.now(ZoneInfo(TIMEZONE))
+    if task == 'ownership-research':
+        from scheduler.ownership_research import run
+        return run(state)
+    if task == 'city-models':
+        from scheduler.city_model_sync import run
+        from scheduler.manual_workflow import poll
+
+        return run(state) and poll(state)
     if task in MONTHLY_CRON:
         periods = target_months(state, task, now.date())
         last = business_period(task, None)
@@ -95,9 +103,12 @@ def run_tick(task: str) -> bool:
         from scheduler.ads_workflow import poll as poll_ads
         from scheduler.manual_workflow import poll
 
+        from scheduler.city_model_sync import run
+        from base_infra.config import get_settings
+        city_ok = run(state) if get_settings().ETL_CITY_MODEL_SYNC_ENABLED else True
         manual_ok = poll(state)
         ads_ok = poll_ads(state)
-        return manual_ok and ads_ok
+        return city_ok and manual_ok and ads_ok
     if task == "ads":
         from scheduler.ads_workflow import poll
 

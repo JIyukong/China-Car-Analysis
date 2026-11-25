@@ -12,7 +12,7 @@ def warehouse(monkeypatch):
     schema = [
         'dim_company (id INTEGER PRIMARY KEY, company_code TEXT, company_name TEXT)',
         'dim_brand (id INTEGER PRIMARY KEY, brand_code TEXT, brand_name TEXT)',
-        'dim_oem (id INTEGER PRIMARY KEY, oem_name TEXT, company_id INTEGER, aliases TEXT, first_seen_month TEXT, last_seen_month TEXT, is_active INTEGER DEFAULT 1)',
+        'dim_oem (id INTEGER PRIMARY KEY, oem_name TEXT, oem_code TEXT, company_id INTEGER, aliases TEXT, first_seen_month TEXT, last_seen_month TEXT, is_active INTEGER DEFAULT 1)',
         'bridge_brand_oem (oem_id INTEGER, brand_id INTEGER, is_current INTEGER, effective_end_date TEXT, company_id INTEGER, effective_start_date TEXT)',
         'dim_model (id INTEGER PRIMARY KEY, model_code TEXT UNIQUE, model_name TEXT, brand_id INTEGER, brand_name TEXT, oem_id INTEGER, oem_name TEXT, energy_type TEXT, vehicle_type TEXT, ads_id INTEGER, ads_supplier_name TEXT, first_seen_month TEXT, last_seen_month TEXT, is_active INTEGER DEFAULT 1)',
         'dim_energy_vehicle (model_name TEXT, energy_type TEXT, vehicle_type TEXT)',
@@ -138,7 +138,7 @@ def test_city_wide_national_hints_are_not_confirmed_ownership(warehouse, monkeyp
     assert (status, oem) == ('pending', None)
     # No company table or national model table is needed by the new city path.
     execute('ALTER TABLE dim_company RENAME TO unused_company')
-    execute('ALTER TABLE dim_model RENAME TO unused_model')
+    # dim_model is now an explicit reference dependency.
     publish.publish_month('city', '2026-01')
     assert execute('SELECT SUM(sales_volume) FROM dwd_sales_monthly_city') == [(7,)]
 
@@ -345,3 +345,31 @@ def test_ownership_affected_months_covers_both_dimension_and_raw_models(warehous
     assert publish.affected_months('ownership', 'OEM') == [
         ('city', '2025-12'), ('city', '2026-01'), ('city', '2026-02'), ('style', '2026-01'),
     ]
+
+
+def test_city_model_auto_reference_is_unique_complete_and_idempotent(warehouse, monkeypatch):
+    publish, execute = warehouse
+    enable_city_wide(monkeypatch, execute)
+    execute("UPDATE dim_oem SET oem_code='OEM_CODE'")
+    execute("INSERT INTO dim_model (id,model_code,model_name,brand_id,oem_id,energy_type,vehicle_type) VALUES (1,'M','Model',1,1,'燃油','SUV')")
+    add_source(execute, '2026-01', 7, city=True)
+    assert publish.publish_month('city', '2026-01') == []
+    assert execute('SELECT brand_code,oem_code,energy_type,review_status,production_type FROM dim_city_model') == [('B','OEM_CODE','燃油','confirmed','unknown')]
+    execute("UPDATE dim_model SET energy_type='新能源'")
+    publish.publish_month('city', '2026-01')
+    assert execute('SELECT energy_type FROM dim_city_model') == [('燃油',)]
+
+
+@pytest.mark.parametrize('ambiguous', [False, True])
+def test_city_model_reference_incomplete_or_ambiguous_stays_in_feishu_gaps(warehouse, monkeypatch, ambiguous):
+    publish, execute = warehouse
+    enable_city_wide(monkeypatch, execute)
+    execute("UPDATE dim_oem SET oem_code='OEM_CODE'")
+    execute("INSERT INTO dim_model (id,model_code,model_name,brand_id,oem_id,energy_type,vehicle_type) VALUES (1,'M','Model',1,1,'占位','SUV')")
+    if ambiguous:
+        execute("UPDATE dim_model SET energy_type='燃油'")
+        execute("INSERT INTO dim_model (id,model_code,model_name,brand_id,oem_id,energy_type,vehicle_type) VALUES (2,'M2','Model',2,1,'燃油','SUV')")
+    add_source(execute, '2026-01', 7, city=True)
+    gaps = publish.publish_month('city', '2026-01')
+    assert [(g['kind'],g['key']) for g in gaps] == [('city_model','Model')]
+    assert execute('SELECT review_status FROM dim_city_model') == [('conflict' if ambiguous else 'pending',)]

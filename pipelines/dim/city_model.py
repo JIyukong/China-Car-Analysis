@@ -18,7 +18,9 @@ def is_imported(name):
 
 
 def discover_city_models(conn, period, rows):
-    """Source names are identities; national ODS supplies unconfirmed hints only."""
+    """Discover identities and fill unique, complete dim_model references."""
+    if not rows:
+        return {}
     names = sorted({row['model_name'].strip() for row in rows})
     # Only read national models actually present in this city batch. This does
     # not require the national DWD or a successful national publication.
@@ -37,6 +39,19 @@ def discover_city_models(conn, period, rows):
     hints = defaultdict(list)
     for row in conn.execute(query, {'month': period + '-01', 'names': names}).mappings():
         hints[row['model_name']].append({key: row[key] for key in ('oem_name', 'brand_code', 'brand_name')})
+    reference_query = text('''
+        SELECT m.id, m.model_name, b.brand_code, b.brand_name,
+               o.oem_code, o.oem_name, m.energy_type, m.vehicle_type
+        FROM dim_model m
+        LEFT JOIN dim_brand b ON b.id=m.brand_id
+        LEFT JOIN dim_oem o ON o.id=m.oem_id
+        WHERE m.model_name IN :names
+    ''').bindparams(bindparam('names', expanding=True))
+    references = defaultdict(list)
+    for row in conn.execute(reference_query, {'names': names}).mappings():
+        # Python comparison preserves import markers/case even under a lax DB collation.
+        if row['model_name'] in names:
+            references[row['model_name']].append(dict(row))
     existing = {
         row['source_model_name']: dict(row) for row in conn.execute(text(
             "SELECT * FROM dim_city_model WHERE source = '16888_city'"
@@ -58,6 +73,35 @@ def discover_city_models(conn, period, rows):
             # Never overwrite reviewed attributes, including import status.
             conn.execute(text('''UPDATE dim_city_model SET national_candidates=:national_candidates
                 WHERE source=:source AND source_model_name=:source_model_name'''), payload)
+    for name in names:
+        if existing.get(name, {}).get('review_status') == 'confirmed':
+            continue
+        matches = references[name]
+        if len(matches) > 1:
+            conn.execute(text("UPDATE dim_city_model SET review_status='conflict' WHERE source='16888_city' AND source_model_name=:name AND review_status<>'confirmed'"), {'name': name})
+            continue
+        if len(matches) != 1:
+            continue
+        match = matches[0]
+        if len(hints[name]) > 1 or any(
+            hint['oem_name'] != match['oem_name'] or
+            (hint['brand_code'] and hint['brand_code'] != match['brand_code'])
+            for hint in hints[name]
+        ):
+            continue
+        values = {field: match[field] for field in
+                  ('brand_code', 'brand_name', 'oem_code', 'oem_name', 'energy_type', 'vehicle_type')}
+        if (match['energy_type'] not in {'燃油', '新能源', '其他'} or
+                match['vehicle_type'] not in {'轿车', 'SUV', 'MPV', '其他'}):
+            continue
+        values.update(production_type='imported' if is_imported(name) else 'unknown',
+                      import_channel='unknown', evidence=f"dim_model id={match['id']}; exact source name={name}; brand/oem via dimension IDs")
+        try:
+            validate_city_model_review(name, values)
+            apply_city_model_review(conn, name, values)
+        except ValueError:
+            # A reviewed city code/name collision also requires a Feishu review.
+            continue
     return {
         row['source_model_name']: dict(row) for row in conn.execute(text(
             "SELECT * FROM dim_city_model WHERE source = '16888_city'"

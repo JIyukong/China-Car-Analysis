@@ -390,7 +390,7 @@ def apply_feishu_dimension(conn: Connection, kind: str, key: str, values: dict) 
         from base_infra.config import get_settings
         from pipelines.dim.city_model import apply_city_model_review
 
-        if not get_settings().ETL_CITY_WIDE_ENABLED:
+        if not (get_settings().ETL_CITY_WIDE_ENABLED or get_settings().ETL_CITY_MODEL_SYNC_ENABLED):
             raise ValueError('城市宽维表尚未启用，不能应用城市车型审核')
         apply_city_model_review(conn, key, values)
         return
