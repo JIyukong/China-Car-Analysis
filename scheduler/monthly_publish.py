@@ -208,7 +208,7 @@ def _derive_models(conn, rows, dimensions):
         model, oem = _name(row['model_name']), dim['oem_name']
         if dim['model_id'] is None:
             # The existing DIM business key is (model_name, oem_id).
-            code = hashlib.md5(f'{model}|{oem}'.encode('utf-8')).hexdigest()[:10].upper()
+            code = hashlib.md5(f'{model}|{oem}'.encode()).hexdigest()[:10].upper()
             inserts.append({
                 'model_code': f'MODEL_{code}', 'model_name': model,
                 'brand_id': dim['derived_brand_id'], 'brand_name': dim['derived_brand_name'],

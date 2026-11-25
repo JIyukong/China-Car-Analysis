@@ -9,6 +9,7 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 
 from scheduler.runtime import business_period, chain_steps
+from scheduler.status import BatchStatus
 from scheduler.task_config import CHAINS, DAILY_TIMES, MONTHLY_CRON
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -98,7 +99,7 @@ def run_tick(task: str) -> bool:
         ordered = [last, *(period for period in periods if period != last)]
         for period in ordered:
             batch = state.batch(task, period)
-            if period != last and batch.get("digest") and batch["status"] == "waiting_manual":
+            if period != last and batch.get("digest") and batch["status"] == BatchStatus.WAITING_MANUAL:
                 continue
             results.append(process_month(state, task, period, prefer_resume=True))
         return all(results)
@@ -413,7 +414,9 @@ def main(argv: list[str] | None = None) -> int:
             if args.chain in MONTHLY_CRON:
                 if args.resume:
                     batch = state.batch(args.chain, period)
-                    if not batch.get("digest") or batch["status"] in {"collecting", "waiting_source", "source_error"}:
+                    if not batch.get("digest") or batch["status"] in {
+                        BatchStatus.COLLECTING, BatchStatus.WAITING_SOURCE, BatchStatus.SOURCE_ERROR,
+                    }:
                         logger.error("%s %s 缺少当前可用的来源验收版本，请先运行采集", args.chain, period)
                         return 1
                     state.enqueue(args.chain, period)

@@ -439,7 +439,8 @@ def fetch_single_stock(stock_info, config: RuntimeConfig, dry_run=False):
                     source_symbol = convert_hk_stock_code(stock_code)
                 rows, used = fetch_requested_prices(
                     [(name, lambda fetch=fetch: fetch(stock_code, start_date)) for name, fetch in providers],
-                    lambda frame: transform_daily_data(frame, stock_info, source_symbol=source_symbol),
+                    lambda frame, symbol=source_symbol: transform_daily_data(
+                        frame, stock_info, source_symbol=symbol),
                     requested, config,
                 )
                 if any(name != "em" for name in used):

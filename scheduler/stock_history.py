@@ -355,6 +355,7 @@ def recover(snapshot, directory):
 
 
 def run(*, last, rebase=False, requested=None, directory=ROOT, state=None):
+    from scheduler.status import BatchStatus
     from scheduler.workflow import State
     from scheduler.stock_hfq_cache import prepare
     state = state or State()
@@ -370,10 +371,12 @@ def run(*, last, rebase=False, requested=None, directory=ROOT, state=None):
             logger.error('Stock history blocked: %s',summarize(report))
             return False
         if not rebase and (manifest.get('adjust') != 'hfq' or manifest.get('basis')!=BASIS):
-            state.save('load_stock_daily', last.isoformat(), 'waiting_rebase', message='须先完成新浪单源后复权初始化切换')
+            state.save('load_stock_daily', last.isoformat(), BatchStatus.WAITING_REBASE,
+                       message='须先完成新浪单源后复权初始化切换')
             return False
         if not report['expected']:
-            state.save('load_stock_daily', last.isoformat(), 'closed', message='无有效存续期内应采行情')
+            state.save('load_stock_daily', last.isoformat(), BatchStatus.CLOSED,
+                       message='无有效存续期内应采行情')
             state.service('load_stock_daily', 'ok')
             return True
         # Only fetch symbols with gaps/unaccepted rows, recent revisions, or weekly audit.
@@ -426,7 +429,8 @@ def run(*, last, rebase=False, requested=None, directory=ROOT, state=None):
                 issues[code] = {'reason':'incomplete_verified_series'}
         save_json(run_dir / 'validation.json', {'issues': issues, 'payload': payload})
         if issues:
-            state.save('load_stock_daily', last.isoformat(), 'waiting_source', message='原始行情或后复权因子证据不足；详见 stock_history/runs')
+            state.save('load_stock_daily', last.isoformat(), BatchStatus.WAITING_SOURCE,
+                       message='原始行情或后复权因子证据不足；详见 stock_history/runs')
             state.service('load_stock_daily', 'incomplete')
             reasons=[reason for detail in issues.values() for reason in detail.get('dates',{}).values()]
             result={'complete':False,'issues':issues,'waiting_source':reasons.count('waiting_source'),
@@ -446,7 +450,8 @@ def run(*, last, rebase=False, requested=None, directory=ROOT, state=None):
                               factor_snapshots=factor_snapshots)
             except Exception as exc:
                 save_json(directory/'result.json', {'complete':False,'publication_errors':1,'reason':str(exc)})
-                state.save('load_stock_daily',last.isoformat(),'publish_error',message=type(exc).__name__)
+                state.save('load_stock_daily', last.isoformat(), BatchStatus.PUBLISH_ERROR,
+                           message=type(exc).__name__)
                 raise
         _, final, _ = audit(START, last, directory)
         stats.update(factor_affected=factor_affected,raw_changed=raw_changed,raw_fetches=raw_fetches)
@@ -456,7 +461,8 @@ def run(*, last, rebase=False, requested=None, directory=ROOT, state=None):
             state.service('load_stock_daily', 'incomplete')
             return False
         for day in sorted(processed_days):
-            state.save('load_stock_daily', day.isoformat(), 'published', message='新浪原价/因子证据及 ODS/DWD 回读验收')
+            state.save('load_stock_daily', day.isoformat(), BatchStatus.PUBLISHED,
+                       message='新浪原价/因子证据及 ODS/DWD 回读验收')
         state.service('load_stock_daily', 'ok')
         state.export()
         return True

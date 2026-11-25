@@ -7,6 +7,7 @@ from importlib import import_module
 from filelock import Timeout
 
 from pipelines.ingest.stock.network_runtime import DailyFetch
+from scheduler.status import BatchStatus
 from scheduler.workflow import State
 
 logger = logging.getLogger(__name__)
@@ -141,9 +142,9 @@ def _dates(state: State, task: str, day: date, catch_up: bool) -> list[date]:
     rows = state.batches(task)
     from base_infra.config import get_settings
 
-    terminal = {"published", "closed"}
+    terminal = {BatchStatus.PUBLISHED, BatchStatus.CLOSED}
     if task != STOCK or not get_settings().ETL_STOCK_DWD_ENABLED:
-        terminal.add("ods_accepted")
+        terminal.add(BatchStatus.ODS_ACCEPTED)
     # Stock history no longer uses this state-based window; other assets retain
     # their existing recent-window and explicit unfinished-period behavior.
     start = date.fromisoformat(rows[0]["period"]) if rows else day - timedelta(days=6)
@@ -173,18 +174,19 @@ def _daily(state: State, task: str, dates: list[date]) -> bool:
         failed = source_missing & report.failures.keys()
         ods_missing = expected[day] - source_missing - actual.get(day, set())
         if unknown[day]:
-            state.save(task, period, "waiting_calendar", message="缺交易日历: " + ", ".join(sorted(unknown[day])))
+            state.save(task, period, BatchStatus.WAITING_CALENDAR,
+                       message="缺交易日历: " + ", ".join(sorted(unknown[day])))
         elif not expected[day]:
-            state.save(task, period, "closed", message="休市或无应采标的（含已确认停牌）")
+            state.save(task, period, BatchStatus.CLOSED, message="休市或无应采标的（含已确认停牌）")
             continue
         elif failed or ods_missing:
             failures = [f"{code} ({report.failures[code]})" for code in sorted(failed)[:15]]
             if ods_missing:
                 failures.append("ODS 未查到有效记录 " + ", ".join(sorted(ods_missing)[:15]))
-            state.save(task, period, "source_error", message="采集或入库失败: " + ", ".join(failures))
+            state.save(task, period, BatchStatus.SOURCE_ERROR, message="采集或入库失败: " + ", ".join(failures))
         elif source_missing:
             state.save(
-                task, period, "waiting_source",
+                task, period, BatchStatus.WAITING_SOURCE,
                 message=f"本次源响应缺 {len(source_missing)} 个应采标的: " + ", ".join(sorted(source_missing)[:15]),
             )
         else:
@@ -192,9 +194,9 @@ def _daily(state: State, task: str, dates: list[date]) -> bool:
                 published = publish_daily(task, day, expected[day])
             except Exception as exc:
                 logger.exception("%s %s publication failed", task, day)
-                state.save(task, period, "publish_error", message=type(exc).__name__)
+                state.save(task, period, BatchStatus.PUBLISH_ERROR, message=type(exc).__name__)
             else:
-                status = "published" if published else "ods_accepted"
+                status = BatchStatus.PUBLISHED if published else BatchStatus.ODS_ACCEPTED
                 state.save(task, period, status, message=f"{len(expected[day])} 个应采标的已对账")
                 continue
         complete = False
@@ -221,7 +223,7 @@ def process_market(state: State, task: str, day: date, *, catch_up: bool = False
         logger.exception("Market step %s failed", task)
         state.service(task, "error", type(exc).__name__)
         if task != FINANCE:
-            state.save(task, day.isoformat(), "source_error", message=type(exc).__name__)
+            state.save(task, day.isoformat(), BatchStatus.SOURCE_ERROR, message=type(exc).__name__)
         return False
     finally:
         state.export()

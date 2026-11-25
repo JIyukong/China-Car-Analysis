@@ -14,7 +14,7 @@ GROUPS = {
 
 def classifications():
     result={}
-    for (tier,labels),expected in zip(GROUPS.items(),(4,15,30,70,90,128)):
+    for (tier,labels),expected in zip(GROUPS.items(),(4,15,30,70,90,128), strict=True):
         names=labels.split()
         if len(names)!=expected: raise ValueError(f'{tier}: expected {expected}, got {len(names)}')
         for name in names:

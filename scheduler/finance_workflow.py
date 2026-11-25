@@ -10,6 +10,7 @@ from datetime import date
 from base_infra.config import get_settings
 from pipelines.ingest.stock.load_stock_finance_akshare import CONTENT_FIELDS, collect_finance_reports
 from scheduler.jobs.common import build_scheduler_config
+from scheduler.status import BatchStatus
 from scheduler.workflow import State
 
 logger = logging.getLogger(__name__)
@@ -45,12 +46,15 @@ def process_finance(state: State, day: date) -> bool:
         for period, rows in reports.items():
             digest = _digest(rows)
             previous = tracked.get(period, {})
-            completed = {'published'} if use_dwd else {'published', 'ods_accepted'}
+            completed = (
+                {BatchStatus.PUBLISHED} if use_dwd
+                else {BatchStatus.PUBLISHED, BatchStatus.ODS_ACCEPTED}
+            )
             if digest == previous.get('published_digest') and previous.get('status') in completed:
                 continue
             pending[period] = (digest, {(row['stock_code_raw'], row['report_type']) for row in rows})
             if digest != previous.get('digest'):
-                state.save(_CHAIN, period.isoformat(), 'reconciling', digest=digest)
+                state.save(_CHAIN, period.isoformat(), BatchStatus.RECONCILING, digest=digest)
 
     try:
         verified = collect_finance_reports(config, tracked_periods=set(tracked), on_verified=stage)
@@ -63,21 +67,24 @@ def process_finance(state: State, day: date) -> bool:
     for period, (digest, keys) in sorted(pending.items()):
         label = period.isoformat()
         if not use_dwd:
-            state.save(_CHAIN, label, 'ods_accepted', digest=digest, message=f'财报 ODS 已验证 {len(keys)} 个业务键')
+            state.save(_CHAIN, label, BatchStatus.ODS_ACCEPTED, digest=digest,
+                       message=f'财报 ODS 已验证 {len(keys)} 个业务键')
             continue
-        state.save(_CHAIN, label, 'ready', digest=digest)
+        state.save(_CHAIN, label, BatchStatus.READY, digest=digest)
         try:
             _publish_finance_period(period, keys)
         except Exception as exc:
             logger.exception('财报 DWD 发布失败：%s', period)
-            state.save(_CHAIN, label, 'publish_error', digest=digest, message=str(exc))
+            state.save(_CHAIN, label, BatchStatus.PUBLISH_ERROR, digest=digest, message=str(exc))
             publication_failed = True
             continue
-        state.save(_CHAIN, label, 'published', digest=digest, message=f'财报 DWD 已发布 {len(keys)} 个业务键')
+        state.save(_CHAIN, label, BatchStatus.PUBLISHED, digest=digest,
+                   message=f'财报 DWD 已发布 {len(keys)} 个业务键')
 
     missing = {period for period in tracked if period <= day and period not in verified}
     for period in missing:
-        state.save(_CHAIN, period.isoformat(), 'source_error', message='未找到此前追踪的财报 ODS 记录')
+        state.save(_CHAIN, period.isoformat(), BatchStatus.SOURCE_ERROR,
+                   message='未找到此前追踪的财报 ODS 记录')
     if missing:
         state.service(_CHAIN, 'source_error', f'{day} 缺少 {len(missing)} 个已追踪财报报告期')
     elif publication_failed:

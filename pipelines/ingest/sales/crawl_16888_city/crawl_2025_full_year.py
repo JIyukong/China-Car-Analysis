@@ -54,7 +54,7 @@ def get_local_records(month_id: str) -> int:
     """获取本地已抓取的记录数"""
     csv_file = DATA_DIR / f"city_{month_id}.csv"
     if csv_file.exists():
-        with open(csv_file, "r", encoding="utf-8") as f:
+        with open(csv_file, encoding="utf-8") as f:
             lines = f.readlines()
             return max(0, len(lines) - 1)  # 减去表头
     return 0
@@ -110,11 +110,11 @@ def main():
     target_months = get_target_months()
 
     print(f"\n{'#'*60}")
-    print(f"# 车主之家城市上牌数据 - 全年提取")
-    print(f"# 年份: 2023")
+    print("# 车主之家城市上牌数据 - 全年提取")
+    print("# 年份: 2023")
     print(f"# 总月份数: {len(target_months)}")
     print(f"# 每月份间隔: {REST_MINUTES}分钟")
-    print(f"# 断点续传: 已启用")
+    print("# 断点续传: 已启用")
     print(f"{'#'*60}\n")
 
     # 第一遍：检查并抓取所有月份
@@ -137,7 +137,6 @@ def main():
 
         # 除了最后一个月份，都休息10分钟
         if i < len(target_months):
-            next_month = target_months[i]
             print(f"\n[INFO] 休息{REST_MINUTES}分钟后检查数据完整性...")
             time.sleep(REST_SECONDS)
 
@@ -183,7 +182,7 @@ def main():
 
     # 最终汇总
     print(f"\n{'#'*60}")
-    print(f"# 最终数据检查")
+    print("# 最终数据检查")
     print(f"{'#'*60}")
 
     total_records = 0
@@ -205,7 +204,7 @@ def main():
         print(f"  {month_id}: {local:,} 条 {status}")
 
     print(f"\n{'#'*60}")
-    print(f"# 抓取汇总")
+    print("# 抓取汇总")
     print(f"# 总记录数: {total_records:,} 条")
     print(f"# 完成月份: {complete_count}/{len(target_months)}")
     print(f"# 完成时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")

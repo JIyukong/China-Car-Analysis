@@ -120,8 +120,8 @@ def find_latest_json() -> Path:
         reverse=True,                                               # 最新的在前
     )
     if not json_files:
-        print(f"[ERROR] data 目录下未找到任何 autohome_sales_*.json 文件。")
-        print(f"         请先运行 crawl_sales.py 抓取数据。")
+        print("[ERROR] data 目录下未找到任何 autohome_sales_*.json 文件。")
+        print("         请先运行 crawl_sales.py 抓取数据。")
         raise SystemExit(1)
     return json_files[0]
 
