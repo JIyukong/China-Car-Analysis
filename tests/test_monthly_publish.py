@@ -258,6 +258,36 @@ def test_style_revisions_update_business_key_and_future_rates(warehouse):
     ]
 
 
+def test_reviewed_source_rename_preserves_existing_dimension_identity(warehouse):
+    publish, execute = warehouse
+    execute("UPDATE dim_oem SET oem_name='长城汽车' WHERE id=1")
+    execute("INSERT INTO dim_model (id,model_name,oem_id,brand_id) VALUES (10,'哈弗大狗',1,1)")
+    execute("INSERT INTO dim_energy_vehicle VALUES ('哈弗大狗','燃油','SUV')")
+    add_source(execute, '2026-07', 5760, name='哈弗大狗')
+    execute("UPDATE ods_sales_monthly_model SET manufacturer_name_raw='长城汽车'")
+    publish.publish_month('style', '2026-07')
+    original_id = execute('SELECT id FROM dwd_sales_monthly_model')[0][0]
+    execute("UPDATE ods_sales_monthly_model SET model_name_raw='长城大狗',row_hash='renamed-source'")
+    publish.publish_month('style', '2026-07')
+    assert execute('SELECT id,model_name,model_name_raw FROM dwd_sales_monthly_model') == [(original_id, '哈弗大狗', '长城大狗')]
+    assert execute('SELECT model_id,oem_id,sales_volume FROM dwd_sales_monthly_model') == [(10, 1, 5760)]
+    assert execute('SELECT COUNT(*) FROM dim_model') == [(1,)]
+    from datetime import date
+    with publish.engine.connect() as conn:
+        matches = publish._dimensions(conn, 'style', date(2026, 7, 1))
+    assert next(iter(matches.values()))[0]['energy_type'] == '燃油'
+
+
+def test_reviewed_rename_derives_missing_dim_with_canonical_name(warehouse):
+    publish, execute = warehouse
+    execute("UPDATE dim_oem SET oem_name='长城汽车' WHERE id=1")
+    add_source(execute, '2026-07', 5760, name='长城大狗')
+    execute("UPDATE ods_sales_monthly_model SET manufacturer_name_raw='长城汽车'")
+    publish.publish_month('style', '2026-07')
+    assert execute('SELECT model_name FROM dim_model') == [('哈弗大狗',)]
+    assert execute('SELECT sales_volume FROM dwd_sales_monthly_model') == [(5760,)]
+
+
 def test_missing_dimensions_leave_last_good_publication_and_city_has_own_gates(warehouse):
     publish, execute = warehouse
     execute("INSERT INTO dim_energy_vehicle VALUES ('Model','新能源','SUV')")
