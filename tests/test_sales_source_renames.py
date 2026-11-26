@@ -50,6 +50,18 @@ def test_city_rename_keeps_exact_city_and_has_no_national_ownership_dependency()
     assert rename_plan({('未知', '上海'): (1,)}, {new: (1,)}, 'city') == []
 
 
+def test_city_followup_mapping_has_source_link_and_city_month_matches():
+    import json
+    from pathlib import Path
+    from scheduler.sales_source_renames import CITY_RENAMES
+    path = Path(__file__).resolve().parents[1] / 'docs/evidence/city-backlog-renames-2026-11-26.json'
+    for row in json.loads(path.read_text(encoding='utf-8'))['records']:
+        assert CITY_RENAMES[row['old_model']] == row['new_model']
+        assert len(row['source_model_links']) == 1
+        assert row['matching_key_months'] > 0
+        assert row['examples']
+
+
 @pytest.mark.parametrize('unexplained', [False, True])
 def test_ods_rekey_is_transactional_and_keeps_row_identity(monkeypatch, unexplained):
     from types import SimpleNamespace
