@@ -72,4 +72,6 @@ def build_parser() -> argparse.ArgumentParser:
         help='按第一财经2025完整名单更新城市分级，未上榜为其他',
     )
     parser.add_argument('--load-reviewed-county-areas', metavar='REPORT_JSON')
+    parser.add_argument('--seed-reviewed-private-companies', metavar='REPORT_JSON',
+                        help='按已核实独立经营法人增量补公司归属，不发送飞书消息')
     return parser
