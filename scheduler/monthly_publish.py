@@ -320,7 +320,8 @@ def _write_dwd(conn, chain, period, source, candidates, *, wide_city=False):
 
     def key(row):
         if wide_city:
-            return _name(row['model_name_raw']).casefold(), _name(row['city_name_raw']).casefold()
+            from scheduler.sales_source_renames import canonical_city_name
+            return canonical_city_name(_name(row['model_name_raw'])).casefold(), _name(row['city_name_raw']).casefold()
         if chain == 'style':
             return _name(row['model_name']).casefold(), row['oem_id']
         return _natural_key(chain, row)
