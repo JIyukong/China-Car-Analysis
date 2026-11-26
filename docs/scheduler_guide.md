@@ -142,9 +142,18 @@ JSON 可包含 `listings`（`code, listed_date, delisted_date?, source_ref`）�
 CREATE USER 'carapp_etl'@'<etl-host>' IDENTIFIED BY '<generated-password>';
 GRANT SELECT, INSERT, UPDATE, CREATE TEMPORARY TABLES
     ON `dw_auto_stock`.* TO 'carapp_etl'@'<etl-host>';
-GRANT EXECUTE ON PROCEDURE `dw_auto_stock`.sp_refresh_dim_model_ads_all TO 'carapp_etl'@'<etl-host>';
+-- 仅授予应用代码实际 CALL 的 01~04 号 ETL 存储过程
+GRANT EXECUTE ON PROCEDURE `dw_auto_stock`.sp_etl_build_sales_dimensions TO 'carapp_etl'@'<etl-host>';
+GRANT EXECUTE ON PROCEDURE `dw_auto_stock`.sp_etl_clean_sales_dwd TO 'carapp_etl'@'<etl-host>';
+GRANT EXECUTE ON PROCEDURE `dw_auto_stock`.sp_etl_update_lifecycle TO 'carapp_etl'@'<etl-host>';
+GRANT EXECUTE ON PROCEDURE `dw_auto_stock`.sp_etl_agg_sales_monthly TO 'carapp_etl'@'<etl-host>';
 SHOW GRANTS FOR 'carapp_etl'@'<etl-host>';
 ```
+
+> 注意：`sp_refresh_dim_model_ads_*`（`db/procedures/05~07`）及配套事件
+> （`db/events/01`）是早期纯 SQL ADS 刷新管线的遗留对象，应用代码已改用
+> `pipelines/dim/refresh_dim_model_ads.py`，全仓不再 CALL，因此**不要**给 ETL
+> 账号授予这些过程的 EXECUTE 权限；待 DBA 确认线上无依赖后再下线。
 
 同时核对账号没有通过角色、全局授权或其他授权路径取得 `DROP`、`ALTER`、`DELETE`、永久建表或管理权限。MySQL 的 `TRUNCATE TABLE` 需要 `DROP` 权限。上线前核对已部署过程的定义和安全上下文，特别是以定义者权限执行的例程，以及触发器。保留 Power BI 只读账号。涉及数据库维护时，由管理员先确认可恢复备份。
 
