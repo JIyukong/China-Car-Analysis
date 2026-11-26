@@ -1,0 +1,86 @@
+{
+  "records": [
+    {
+      "old_model": "e爱丽舍",
+      "old_manufacturer": "东风新能源",
+      "model_name": "e爱丽舍",
+      "manufacturer": "神龙汽车",
+      "model_url": "/s/129102/",
+      "manufacturer_url": "/f/128263/",
+      "url": "https://xl.16888.com/style-202606-202606-6.html",
+      "history_checks": [
+        {
+          "month": "2026-06",
+          "old_sales": 1003,
+          "source_sales": 1003
+        },
+        {
+          "month": "2026-05",
+          "old_sales": 887,
+          "source_sales": 887
+        },
+        {
+          "month": "2026-04",
+          "old_sales": 678,
+          "source_sales": 678
+        },
+        {
+          "month": "2026-03",
+          "old_sales": 621,
+          "source_sales": 621
+        },
+        {
+          "month": "2026-02",
+          "old_sales": 147,
+          "source_sales": 147
+        },
+        {
+          "month": "2026-01",
+          "old_sales": 460,
+          "source_sales": 460
+        }
+      ]
+    },
+    {
+      "old_model": "红旗国耀",
+      "old_manufacturer": "一汽红旗",
+      "model_name": "红旗金葵花国耀",
+      "manufacturer": "一汽红旗",
+      "model_url": "/s/129439/",
+      "manufacturer_url": "/f/57585/",
+      "url": "https://xl.16888.com/style-202606-202606-12.html",
+      "history_checks": [
+        {
+          "month": "2026-06",
+          "old_sales": 8,
+          "source_sales": 8
+        },
+        {
+          "month": "2026-05",
+          "old_sales": 3,
+          "source_sales": 3
+        },
+        {
+          "month": "2026-04",
+          "old_sales": 4,
+          "source_sales": 4
+        },
+        {
+          "month": "2026-03",
+          "old_sales": 3,
+          "source_sales": 3
+        },
+        {
+          "month": "2026-02",
+          "old_sales": 3,
+          "source_sales": 3
+        },
+        {
+          "month": "2026-01",
+          "old_sales": 5,
+          "source_sales": 5
+        }
+      ]
+    }
+  ]
+}
