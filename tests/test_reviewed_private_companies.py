@@ -54,9 +54,9 @@ def test_job_commits_all_entities_or_rolls_back_without_success_receipt(tmp_path
             assert conn.execute(text('SELECT COUNT(*) FROM dim_company')).scalar_one() == 0
             assert conn.execute(text('SELECT COUNT(*) FROM dim_oem WHERE company_id IS NOT NULL')).scalar_one() == 0
     else:
-        assert job.run(receipt)['companies_created'] == 3
+        assert job.run(receipt)['companies_created'] == len(job.COMPANIES)
         assert job.run(receipt)['companies_created'] == 0
         assert receipt.exists()
         with db.connect() as conn:
-            assert conn.execute(text('SELECT COUNT(*) FROM dim_oem WHERE company_id IS NOT NULL')).scalar_one() == 3
+            assert conn.execute(text('SELECT COUNT(*) FROM dim_oem WHERE company_id IS NOT NULL')).scalar_one() == len(job.COMPANIES)
     db.dispose()
