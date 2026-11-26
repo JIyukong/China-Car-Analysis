@@ -95,12 +95,54 @@ def _navigate_capture(page, url: str):
     raise RuntimeError(f"请求 {url} 失败或重定向到 {page.url}，请检查站点响应")
 
 
+def _duplicate_pages(pages: list[list[dict]], chain: str) -> set[int]:
+    seen = {}
+    duplicate_pages = set()
+    column = 'manufacturer' if chain == 'style' else 'city'
+    for number, records in enumerate(pages, 1):
+        for record in records:
+            key = (record.get('model_name', '').strip(), record.get(column, '').strip())
+            if not all(key):
+                raise ValueError('来源业务键缺失，不能局部修复')
+            # Rank can change when tied rows move between adjacent pages.
+            content = {k: v for k, v in record.items() if k not in ('rank', 'month')}
+            if key in seen:
+                previous_page, previous = seen[key]
+                if previous != content:
+                    raise ValueError(f'来源重复业务键内容冲突: {key!r}')
+                duplicate_pages.update((previous_page, number))
+            else:
+                seen[key] = (number, content)
+    return duplicate_pages
+
+
+def _replace_duplicate_pages(pages, chain, fetch, source_total):
+    candidate = [list(records) for records in pages]
+    for _ in range(2):
+        affected = _duplicate_pages(candidate, chain)
+        if not affected:
+            break
+        if len(affected) > 6:
+            raise ValueError('重复涉及超过六页，拒绝扩大局部重抓')
+        for number in sorted(affected):
+            records = fetch(number)
+            if len(records) != len(candidate[number - 1]):
+                raise ValueError('局部重抓行数变化，必须重新完整验收')
+            candidate[number - 1] = records
+    if _duplicate_pages(candidate, chain):
+        raise ValueError('局部重抓两轮后仍有重复业务键，来源分页不稳定')
+    if sum(map(len, candidate)) != source_total:
+        raise ValueError('局部重抓后唯一业务键覆盖不足')
+    return candidate
+
+
 def _capture_pages(page, crawler, chain: str, period: str, path: Path) -> None:
     csv_path = path / f"{chain}_{period}.csv"
     page_rows: list[int] = []
     status = "published"
     source_total = None
     observed = 0
+    captured_pages = []
     with csv_path.open("w", encoding="utf-8-sig", newline="") as handle:
         writer = csv.DictWriter(handle, fieldnames=crawler.CSV_COLUMNS)
         writer.writeheader()
@@ -129,6 +171,7 @@ def _capture_pages(page, crawler, chain: str, period: str, path: Path) -> None:
             writer.writerows({**row, "month": period} for row in records)
             handle.flush()
             page_rows.append(len(records))
+            captured_pages.append(records)
             if page_number == 1:
                 source_total = total
             if not records or source_total is None or source_total <= 0 or total != source_total:
@@ -148,6 +191,35 @@ def _capture_pages(page, crawler, chain: str, period: str, path: Path) -> None:
             if not has_next:
                 break
             time.sleep(random.uniform(crawler.PAGE_SLEEP_MIN, crawler.PAGE_SLEEP_MAX))
+
+    if status == 'published' and _duplicate_pages(captured_pages, chain):
+        affected = sorted(_duplicate_pages(captured_pages, chain))
+        if len(affected) > 6:
+            raise ValueError('重复涉及超过六页，拒绝扩大局部重抓')
+        # Compact original evidence only; successful pages never produce HTML.
+        (path / 'page_retry.json').write_text(json.dumps({
+            'chain': chain, 'period': period, 'affected_pages': affected,
+            'original_rows': {str(n): captured_pages[n - 1] for n in affected},
+        }, ensure_ascii=False, indent=2), encoding='utf-8')
+
+        def refetch(number):
+            time.sleep(random.uniform(crawler.PAGE_SLEEP_MIN, crawler.PAGE_SLEEP_MAX))
+            url = crawler.PAGE_URL_TEMPLATE.format(month=period, ym=period.replace('-', ''), page=number)
+            _navigate_capture(page, url)
+            if _reported_months(page, chain) != [period] * (2 if chain == 'style' else 1):
+                raise ValueError('局部重抓月份变化')
+            pager = page.locator(crawler.PAGER_CONTAINER).first
+            if ([v.strip() for v in pager.locator('.curr').all_text_contents()] != [str(number)]
+                    or crawler.get_total_count(page) != source_total
+                    or (pager.locator('.next').count() > 0) != (number < len(captured_pages))):
+                raise ValueError('局部重抓分页或来源总数变化')
+            return crawler.extract_table_rows(page)
+
+        repaired = _replace_duplicate_pages(captured_pages, chain, refetch, source_total)
+        with csv_path.open('w', encoding='utf-8-sig', newline='') as handle:
+            writer = csv.DictWriter(handle, fieldnames=crawler.CSV_COLUMNS)
+            writer.writeheader()
+            writer.writerows({**row, 'month': period} for records in repaired for row in records)
 
     (path / "manifest.json").write_text(json.dumps({
         "chain": chain,
