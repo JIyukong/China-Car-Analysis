@@ -1,30 +1,30 @@
 """解析并写入已验收的 16888 车型月销量。
 
+共用的读取、哈希与 UPSERT 流程见 ods_loader_base.OdsLoader；
+本模块只保留 style 链的数据目录、月份解析与单行字段映射。
+
 重放命令：python -m scheduler.runner --chain style --period YYYY-MM --from-csv
 """
 
 from __future__ import annotations
 
-import csv
-import hashlib
-from collections.abc import Iterable
-from contextlib import nullcontext
+import sys
 from datetime import datetime
-from io import StringIO
 from pathlib import Path
 
-from sqlalchemy import text
-from sqlalchemy.engine import Connection
-
-from base_infra.db import engine
+from base_infra.db import engine  # noqa: F401  模块属性，供 monthly_source 与测试 monkeypatch 使用
+from pipelines.ingest.sales.ods_loader_base import OdsLoader, parse_int
 
 SOURCE_TAG = "16888_style"
 SOURCE_URL = "https://xl.16888.com/style.html"
 
+_THIS_MODULE = sys.modules[__name__]
+_DATA_DIR = Path(__file__).resolve().parent / "crawl_16888_style" / "data"
+
 
 def data_dir() -> Path:
     """返回 style 数据目录。"""
-    return Path(__file__).resolve().parents[0] / "crawl_16888_style" / "data"
+    return _DATA_DIR
 
 
 def parse_month(month_text: str) -> datetime.date:
@@ -32,71 +32,36 @@ def parse_month(month_text: str) -> datetime.date:
     return datetime.strptime(month_text.strip(), "%Y-%m").date().replace(day=1)
 
 
-def parse_int(value: str | None) -> int | None:
-    """解析整数文本；空值返回 None。"""
-    if value is None:
-        return None
-    raw = value.strip().replace(",", "")
-    if not raw:
-        return None
-    return int(raw)
+def _build_row(row: dict) -> dict:
+    """把一行原始 CSV 映射为 ods_sales_monthly_model 的内容字段。"""
+    return {
+        "stat_month": parse_month(str(row["month"])),
+        "rank_no": parse_int(row.get("rank")),
+        "model_name_raw": str(row["model_name"]).strip(),
+        "manufacturer_name_raw": str(row["manufacturer"]).strip(),
+        "price_range_raw": str(row.get("price_range") or "").strip() or None,
+        "sales_volume": parse_int(row.get("sales_volume")),
+    }
 
 
-def build_row_hash(month: str, model_name: str, manufacturer_name: str) -> str:
-    """构造 ODS 幂等哈希。"""
-    payload = f"{SOURCE_TAG}|{month}|{model_name}|{manufacturer_name}"
-    return hashlib.md5(payload.encode("utf-8")).hexdigest()
+_loader = OdsLoader(
+    _THIS_MODULE,
+    table="ods_sales_monthly_model",
+    source_tag=SOURCE_TAG,
+    source_url=SOURCE_URL,
+    key_column="manufacturer",
+    build_row=_build_row,
+)
 
 
-def read_rows(csv_file: Path, *, raw_csv: bytes | None = None) -> Iterable[dict[str, object]]:
+def read_rows(csv_file: Path, *, raw_csv: bytes | None = None):
     """读取单个 CSV，转换为入库参数。"""
-    fetch_time = datetime.fromtimestamp(csv_file.stat().st_mtime)
-    with (csv_file.open("r", encoding="utf-8-sig", newline="") if raw_csv is None
-          else StringIO(raw_csv.decode("utf-8-sig"), newline="")) as handle:
-        reader = csv.DictReader(handle)
-        for row in reader:
-            month = str(row["month"]).strip()
-            model_name = str(row["model_name"]).strip()
-            manufacturer_name = str(row["manufacturer"]).strip()
-            yield {
-                "source": SOURCE_TAG,
-                "stat_month": parse_month(month),
-                "rank_no": parse_int(row.get("rank")),
-                "model_name_raw": model_name,
-                "manufacturer_name_raw": manufacturer_name,
-                "price_range_raw": str(row.get("price_range") or "").strip() or None,
-                "sales_volume": parse_int(row.get("sales_volume")),
-                "source_file": str(csv_file),
-                "source_url": SOURCE_URL,
-                "row_hash": build_row_hash(month, model_name, manufacturer_name),
-                "fetch_time": fetch_time,
-            }
+    return _loader.read_rows(csv_file, raw_csv=raw_csv)
 
 
-def upsert_rows(rows: list[dict[str, object]], *, connection: Connection | None = None) -> int:
+def upsert_rows(rows: list[dict], *, connection=None) -> int:
     """批量 UPSERT 到 ods_sales_monthly_model。"""
-    if not rows:
-        return 0
-
-    sql = text("""
-        INSERT INTO ods_sales_monthly_model
-            (source, stat_month, rank_no, model_name_raw, manufacturer_name_raw,
-             price_range_raw, sales_volume, source_file, source_url, row_hash, fetch_time)
-        VALUES
-            (:source, :stat_month, :rank_no, :model_name_raw, :manufacturer_name_raw,
-             :price_range_raw, :sales_volume, :source_file, :source_url, :row_hash, :fetch_time)
-        ON DUPLICATE KEY UPDATE
-            rank_no               = VALUES(rank_no),
-            price_range_raw       = VALUES(price_range_raw),
-            sales_volume          = VALUES(sales_volume),
-            source_file           = VALUES(source_file),
-            source_url            = VALUES(source_url),
-            row_hash              = VALUES(row_hash),
-            fetch_time            = VALUES(fetch_time)
-    """)
-    with (engine.begin() if connection is None else nullcontext(connection)) as conn:
-        conn.execute(sql, rows)
-    return len(rows)
+    return _loader.upsert_rows(rows, connection=connection)
 
 
 if __name__ == "__main__":

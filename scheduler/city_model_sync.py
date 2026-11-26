@@ -9,6 +9,7 @@ from sqlalchemy import text
 
 from pipelines.dim.city_model import REVIEW_FIELDS, discover_city_models, apply_city_model_review, validate_city_model_review
 from scheduler.monthly_publish import _publication_transaction
+from scheduler.ticket_store import TicketRepository
 
 
 def run(state):
@@ -37,9 +38,8 @@ def run(state):
             conn.execute("INSERT INTO service_status(task,status,updated_at,message) VALUES ('city_model_gaps','ok',?,?) "
                          "ON CONFLICT(task) DO UPDATE SET status=excluded.status, updated_at=excluded.updated_at,message=excluded.message",
                          (datetime.now(ZoneInfo('Asia/Shanghai')).isoformat(), json.dumps(gaps, ensure_ascii=False)))
-            for name, model in models.items():
-                if model['review_status'] == 'confirmed':
-                    conn.execute("UPDATE feishu_ticket SET result='auto_confirmed',reason=? WHERE kind='city_model' AND entity=? AND (result IS NULL OR result='auto_confirmed')",
-                                 (model.get('evidence', ''), name))
+        for name, model in models.items():
+            if model['review_status'] == 'confirmed':
+                TicketRepository(state).mark_auto_confirmed(name, model.get('evidence', ''))
         print(json.dumps({'city_models': len(models), 'confirmed': len(models)-len(gaps), 'unresolved': len(gaps)}))
     return True

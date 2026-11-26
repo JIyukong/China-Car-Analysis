@@ -116,13 +116,10 @@ class State:
             ))
 
     def gaps(self) -> list[dict]:
+        from scheduler.ticket_store import TicketRepository
+
         grouped = {}
-        with self.transaction() as conn:
-            resolved = {
-                (row["kind"], row["entity"]) for row in conn.execute(
-                    "SELECT kind, entity FROM feishu_ticket WHERE result='not_applicable'"
-                )
-            }
+        resolved = TicketRepository(self).not_applicable_keys()
         for row in self.batches():
             for gap in json.loads(row["gaps"]):
                 kind, key = gap["kind"], gap["key"]

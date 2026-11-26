@@ -57,7 +57,6 @@ from __future__ import annotations
 
 import argparse
 import csv
-import json
 import random
 import re
 import sys
@@ -65,6 +64,8 @@ import time
 from datetime import datetime
 from pathlib import Path
 from typing import Any
+
+from pipelines.ingest.sales.crawl_16888_base.storage import CrawlStorage
 
 if not __package__:
     # 保留直接运行入口，同时避免本目录的 selectors.py 遮蔽标准库。
@@ -411,70 +412,33 @@ def _data_dir() -> Path:
     return d
 
 
+# 断点续传与月份文件落地统一收口到双爬虫共享的 CrawlStorage
+_storage = CrawlStorage(_data_dir(), "style", CSV_COLUMNS)
+
+
 def _progress_path() -> Path:
     """返回断点续传进度文件路径。"""
     return _data_dir() / "progress.json"
 
 
 def _is_month_locally_complete(month_id: str) -> bool:
-    """检查本地是否已有该月份的完整数据（CSV + JSON 双文件均存在）。
-
-    用于断点续传的双校验: 即使 progress.json 被覆盖丢失，只要本地
-    CSV + JSON 文件都在，就视为已完成，避免重复抓取。
-
-    :param month_id: 月份 ID，如 "2024-01"
-    :returns: 完整返回 True
-    """
-    csv_path = _data_dir() / f"style_{month_id}.csv"
-    json_path = _data_dir() / f"style_{month_id}.json"
-    return csv_path.exists() and json_path.exists()
+    """检查本地是否已有该月份的完整数据（CSV + JSON 双文件均存在）。"""
+    return _storage.is_month_locally_complete(month_id)
 
 
 def load_progress() -> dict[str, Any]:
-    """读取断点续传进度文件。
-
-    :returns: 进度字典，不存在时返回空结构
-    """
-    p = _progress_path()
-    if p.exists():
-        try:
-            return json.loads(p.read_text(encoding="utf-8"))
-        except (json.JSONDecodeError, OSError):
-            print("[WARN] progress.json 解析失败，从头开始。")
-    return {"completed_months": [], "months_in_progress": {}}
+    """读取断点续传进度文件，不存在时返回空结构。"""
+    return _storage.load_progress()
 
 
 def save_progress(progress: dict[str, Any]) -> None:
-    """落地断点续传进度文件（覆盖写）。
-
-    :param progress: 进度字典
-    """
-    progress["last_run"] = datetime.now().isoformat(timespec="seconds")
-    _progress_path().write_text(
-        json.dumps(progress, ensure_ascii=False, indent=2),
-        encoding="utf-8",
-    )
+    """落地断点续传进度文件（覆盖写）。"""
+    _storage.save_progress(progress)
 
 
 def append_month_csv(month_id: str, records: list[dict[str, Any]]) -> Path:
-    """将本月本页数据追加写入月份 CSV 文件。
-
-    文件名: ``data/style_<YYYY-MM>.csv``，断点续传时追加不覆盖。
-
-    :param month_id: 月份 ID，如 "2024-01"
-    :param records:  本页记录列表
-    :returns: CSV 文件路径
-    """
-    csv_path = _data_dir() / f"style_{month_id}.csv"
-    # 文件不存在时写表头                                           # 断点续传追加时不重复写表头
-    write_header = not csv_path.exists()
-    with csv_path.open("a", newline="", encoding="utf-8-sig") as f:   # utf-8-sig 兼容 Excel
-        writer = csv.DictWriter(f, fieldnames=CSV_COLUMNS)
-        if write_header:
-            writer.writeheader()
-        for rec in records:
-            writer.writerow({**rec, "month": month_id})
-    return csv_path
+    """将本月本页数据追加写入月份 CSV 文件，返回 CSV 文件路径。"""
+    return _storage.append_month_csv(month_id, records)
 
 
 def save_month_json(
@@ -483,28 +447,8 @@ def save_month_json(
     total_count: int | None,
     page_count: int,
 ) -> Path:
-    """将月份数据写入 JSON 文件（覆盖写，月份完成后调用）。
-
-    :param month_id:    月份 ID
-    :param records:     全部记录
-    :param total_count: 页面显示的总数据量
-    :param page_count:  实际翻页数
-    :returns: JSON 文件路径
-    """
-    json_path = _data_dir() / f"style_{month_id}.json"
-    payload = {
-        "month": month_id,
-        "total_count": total_count,
-        "page_count": page_count,
-        "record_count": len(records),
-        "crawl_time": datetime.now().isoformat(timespec="seconds"),
-        "records": records,
-    }
-    json_path.write_text(
-        json.dumps(payload, ensure_ascii=False, indent=2),
-        encoding="utf-8",
-    )
-    return json_path
+    """将月份数据写入 JSON 文件（覆盖写，月份完成后调用）。"""
+    return _storage.save_month_json(month_id, records, total_count, page_count)
 
 
 # ============================================================================
@@ -834,24 +778,8 @@ def crawl(
 
 
 def _save_summary(months_summary: list[dict[str, Any]]) -> None:
-    """保存本次运行汇总信息（含全部月份的记录数统计）。
-
-    :param months_summary: 月份维度汇总列表
-    """
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    data_dir = _data_dir()
-    summary_path = data_dir / f"style_summary_{timestamp}.json"
-    payload = {
-        "crawl_time": datetime.now().isoformat(timespec="seconds"),
-        "source_url": STYLE_URL,
-        "months": months_summary,
-        "total_records": sum(m["record_count"] for m in months_summary),
-    }
-    summary_path.write_text(
-        json.dumps(payload, ensure_ascii=False, indent=2),
-        encoding="utf-8",
-    )
-    print(f"  → 汇总: {summary_path}")
+    """保存本次运行汇总信息（含全部月份的记录数统计）。"""
+    _storage.save_summary(STYLE_URL, months_summary)
 
 
 # ============================================================================
