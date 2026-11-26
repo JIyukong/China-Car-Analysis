@@ -1,0 +1,287 @@
+{
+  "records": [
+    {
+      "old_model": "星瑞L",
+      "new_model": "星瑞L PLUS",
+      "url": "https://xl.16888.com/city-2024-04-0-0-0-0-0-189.html",
+      "source_model_links": [
+        "//www.16888.com/130108/"
+      ],
+      "matching_key_months": 84,
+      "matching_months": [
+        "2024-02",
+        "2024-04",
+        "2024-05",
+        "2024-06",
+        "2024-07",
+        "2024-09",
+        "2024-10",
+        "2024-11",
+        "2024-12",
+        "2025-01",
+        "2025-02",
+        "2025-03"
+      ],
+      "examples": [
+        {
+          "period": "2024-02",
+          "city": "重庆",
+          "sales": 25
+        },
+        {
+          "period": "2024-02",
+          "city": "贵阳",
+          "sales": 24
+        },
+        {
+          "period": "2024-02",
+          "city": "成都",
+          "sales": 23
+        },
+        {
+          "period": "2024-02",
+          "city": "郑州",
+          "sales": 17
+        },
+        {
+          "period": "2024-02",
+          "city": "商丘",
+          "sales": 16
+        },
+        {
+          "period": "2024-02",
+          "city": "阜阳",
+          "sales": 16
+        },
+        {
+          "period": "2024-02",
+          "city": "西安",
+          "sales": 14
+        },
+        {
+          "period": "2024-02",
+          "city": "昆明",
+          "sales": 14
+        }
+      ]
+    },
+    {
+      "old_model": "瑞虎9 C-DM",
+      "new_model": "瑞虎9新能源",
+      "url": "https://xl.16888.com/city-2024-10-0-0-0-0-0-338.html",
+      "source_model_links": [
+        "//www.16888.com/130723/"
+      ],
+      "matching_key_months": 33,
+      "matching_months": [
+        "2024-09",
+        "2024-10",
+        "2025-02"
+      ],
+      "examples": [
+        {
+          "period": "2024-09",
+          "city": "铜陵",
+          "sales": 19
+        },
+        {
+          "period": "2024-10",
+          "city": "东莞",
+          "sales": 14
+        },
+        {
+          "period": "2024-10",
+          "city": "临沂",
+          "sales": 11
+        },
+        {
+          "period": "2024-10",
+          "city": "亳州",
+          "sales": 11
+        },
+        {
+          "period": "2024-10",
+          "city": "包头",
+          "sales": 24
+        },
+        {
+          "period": "2024-10",
+          "city": "北京",
+          "sales": 30
+        },
+        {
+          "period": "2024-10",
+          "city": "台州",
+          "sales": 11
+        },
+        {
+          "period": "2024-10",
+          "city": "合肥",
+          "sales": 16
+        }
+      ]
+    },
+    {
+      "old_model": "红旗国耀",
+      "new_model": "红旗金葵花国耀",
+      "url": "https://xl.16888.com/city-2025-01-0-0-0-0-0-248.html",
+      "source_model_links": [
+        "//www.16888.com/129439/"
+      ],
+      "matching_key_months": 1,
+      "matching_months": [
+        "2025-01"
+      ],
+      "examples": [
+        {
+          "period": "2025-01",
+          "city": "成都",
+          "sales": 34
+        }
+      ]
+    },
+    {
+      "old_model": "星纪元 ES",
+      "new_model": "星途ES",
+      "url": "https://xl.16888.com/city-2025-03-0-0-0-0-0-36.html",
+      "source_model_links": [
+        "//www.16888.com/129867/"
+      ],
+      "matching_key_months": 146,
+      "matching_months": [
+        "2025-01",
+        "2025-02",
+        "2025-03",
+        "2025-04",
+        "2025-09",
+        "2025-12",
+        "2026-01",
+        "2026-02",
+        "2026-03",
+        "2026-04",
+        "2026-05"
+      ],
+      "examples": [
+        {
+          "period": "2025-01",
+          "city": "芜湖",
+          "sales": 22
+        },
+        {
+          "period": "2025-02",
+          "city": "铜陵",
+          "sales": 160
+        },
+        {
+          "period": "2025-02",
+          "city": "芜湖",
+          "sales": 20
+        },
+        {
+          "period": "2025-02",
+          "city": "杭州",
+          "sales": 14
+        },
+        {
+          "period": "2025-03",
+          "city": "芜湖",
+          "sales": 162
+        },
+        {
+          "period": "2025-03",
+          "city": "合肥",
+          "sales": 103
+        },
+        {
+          "period": "2025-03",
+          "city": "广州",
+          "sales": 56
+        },
+        {
+          "period": "2025-03",
+          "city": "成都",
+          "sales": 55
+        }
+      ]
+    },
+    {
+      "old_model": "鑫源向上V6",
+      "new_model": "鑫源向上V6 新能源",
+      "url": "https://xl.16888.com/city-2026-05-0-0-0-0-0-182.html",
+      "source_model_links": [
+        "//www.16888.com/131091/"
+      ],
+      "matching_key_months": 4,
+      "matching_months": [
+        "2026-04",
+        "2026-05"
+      ],
+      "examples": [
+        {
+          "period": "2026-04",
+          "city": "重庆",
+          "sales": 18
+        },
+        {
+          "period": "2026-05",
+          "city": "重庆",
+          "sales": 34
+        },
+        {
+          "period": "2026-05",
+          "city": "成都",
+          "sales": 13
+        },
+        {
+          "period": "2026-05",
+          "city": "武汉",
+          "sales": 11
+        }
+      ]
+    },
+    {
+      "old_model": "五菱星光L",
+      "new_model": "星光L",
+      "url": "https://xl.16888.com/city-2026-05-0-0-0-0-0-311.html",
+      "source_model_links": [
+        "//www.16888.com/131020/"
+      ],
+      "matching_key_months": 6,
+      "matching_months": [
+        "2026-05"
+      ],
+      "examples": [
+        {
+          "period": "2026-05",
+          "city": "天津",
+          "sales": 19
+        },
+        {
+          "period": "2026-05",
+          "city": "重庆",
+          "sales": 13
+        },
+        {
+          "period": "2026-05",
+          "city": "西安",
+          "sales": 12
+        },
+        {
+          "period": "2026-05",
+          "city": "临沂",
+          "sales": 12
+        },
+        {
+          "period": "2026-05",
+          "city": "成都",
+          "sales": 12
+        },
+        {
+          "period": "2026-05",
+          "city": "武汉",
+          "sales": 11
+        }
+      ]
+    }
+  ]
+}
