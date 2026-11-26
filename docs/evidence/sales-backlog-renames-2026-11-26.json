@@ -1,0 +1,1533 @@
+{
+  "records": [
+    {
+      "old": [
+        "传祺GA3S PHEV",
+        "广汽埃安"
+      ],
+      "new": [
+        "传祺GA3S PHEV",
+        "埃安"
+      ],
+      "model_url": "/s/127752/",
+      "url": "https://xl.16888.com/style-201710-201710-9.html",
+      "history_checks": [
+        {
+          "month": "2019-08",
+          "old_sales": 1,
+          "source_sales": 1
+        },
+        {
+          "month": "2019-06",
+          "old_sales": 3,
+          "source_sales": 3
+        },
+        {
+          "month": "2019-04",
+          "old_sales": 5,
+          "source_sales": 5
+        },
+        {
+          "month": "2019-01",
+          "old_sales": 147,
+          "source_sales": 147
+        },
+        {
+          "month": "2018-12",
+          "old_sales": 28,
+          "source_sales": 28
+        },
+        {
+          "month": "2018-11",
+          "old_sales": 51,
+          "source_sales": 51
+        },
+        {
+          "month": "2018-10",
+          "old_sales": 46,
+          "source_sales": 46
+        },
+        {
+          "month": "2018-09",
+          "old_sales": 48,
+          "source_sales": 48
+        },
+        {
+          "month": "2018-05",
+          "old_sales": 1,
+          "source_sales": 1
+        },
+        {
+          "month": "2018-04",
+          "old_sales": 43,
+          "source_sales": 43
+        },
+        {
+          "month": "2018-02",
+          "old_sales": 5,
+          "source_sales": 5
+        },
+        {
+          "month": "2018-01",
+          "old_sales": 34,
+          "source_sales": 34
+        },
+        {
+          "month": "2017-12",
+          "old_sales": 103,
+          "source_sales": 103
+        },
+        {
+          "month": "2017-11",
+          "old_sales": 106,
+          "source_sales": 106
+        },
+        {
+          "month": "2017-10",
+          "old_sales": 193,
+          "source_sales": 193
+        },
+        {
+          "month": "2017-09",
+          "old_sales": 182,
+          "source_sales": 182
+        },
+        {
+          "month": "2017-08",
+          "old_sales": 71,
+          "source_sales": 71
+        },
+        {
+          "month": "2017-07",
+          "old_sales": 31,
+          "source_sales": 31
+        },
+        {
+          "month": "2017-06",
+          "old_sales": 108,
+          "source_sales": 108
+        }
+      ]
+    },
+    {
+      "old": [
+        "传祺GE3",
+        "广汽埃安"
+      ],
+      "new": [
+        "传祺GE3",
+        "埃安"
+      ],
+      "model_url": "/s/127748/",
+      "url": "https://xl.16888.com/style-201811-201811-6.html",
+      "history_checks": [
+        {
+          "month": "2020-11",
+          "old_sales": 76,
+          "source_sales": 76
+        },
+        {
+          "month": "2020-10",
+          "old_sales": 93,
+          "source_sales": 93
+        },
+        {
+          "month": "2020-08",
+          "old_sales": 57,
+          "source_sales": 57
+        },
+        {
+          "month": "2020-07",
+          "old_sales": 15,
+          "source_sales": 15
+        },
+        {
+          "month": "2020-06",
+          "old_sales": 13,
+          "source_sales": 13
+        },
+        {
+          "month": "2020-05",
+          "old_sales": 16,
+          "source_sales": 16
+        },
+        {
+          "month": "2020-04",
+          "old_sales": 56,
+          "source_sales": 56
+        },
+        {
+          "month": "2020-03",
+          "old_sales": 45,
+          "source_sales": 45
+        },
+        {
+          "month": "2020-02",
+          "old_sales": 36,
+          "source_sales": 36
+        },
+        {
+          "month": "2020-01",
+          "old_sales": 53,
+          "source_sales": 53
+        },
+        {
+          "month": "2019-12",
+          "old_sales": 729,
+          "source_sales": 729
+        },
+        {
+          "month": "2019-11",
+          "old_sales": 2,
+          "source_sales": 2
+        },
+        {
+          "month": "2019-09",
+          "old_sales": 4,
+          "source_sales": 4
+        },
+        {
+          "month": "2019-06",
+          "old_sales": 784,
+          "source_sales": 784
+        },
+        {
+          "month": "2019-05",
+          "old_sales": 1171,
+          "source_sales": 1171
+        },
+        {
+          "month": "2019-04",
+          "old_sales": 1073,
+          "source_sales": 1073
+        },
+        {
+          "month": "2019-03",
+          "old_sales": 1080,
+          "source_sales": 1080
+        },
+        {
+          "month": "2019-02",
+          "old_sales": 504,
+          "source_sales": 504
+        },
+        {
+          "month": "2019-01",
+          "old_sales": 1683,
+          "source_sales": 1683
+        },
+        {
+          "month": "2018-12",
+          "old_sales": 1291,
+          "source_sales": 1291
+        },
+        {
+          "month": "2018-11",
+          "old_sales": 1749,
+          "source_sales": 1749
+        },
+        {
+          "month": "2018-10",
+          "old_sales": 1592,
+          "source_sales": 1592
+        },
+        {
+          "month": "2018-09",
+          "old_sales": 1227,
+          "source_sales": 1227
+        },
+        {
+          "month": "2018-08",
+          "old_sales": 176,
+          "source_sales": 176
+        },
+        {
+          "month": "2018-07",
+          "old_sales": 280,
+          "source_sales": 280
+        },
+        {
+          "month": "2018-06",
+          "old_sales": 337,
+          "source_sales": 337
+        },
+        {
+          "month": "2018-05",
+          "old_sales": 371,
+          "source_sales": 371
+        },
+        {
+          "month": "2018-04",
+          "old_sales": 422,
+          "source_sales": 422
+        },
+        {
+          "month": "2018-03",
+          "old_sales": 429,
+          "source_sales": 429
+        },
+        {
+          "month": "2018-02",
+          "old_sales": 442,
+          "source_sales": 442
+        },
+        {
+          "month": "2018-01",
+          "old_sales": 536,
+          "source_sales": 536
+        },
+        {
+          "month": "2017-12",
+          "old_sales": 435,
+          "source_sales": 435
+        },
+        {
+          "month": "2017-11",
+          "old_sales": 215,
+          "source_sales": 215
+        }
+      ]
+    },
+    {
+      "old": [
+        "欧拉iQ",
+        "长城新能源"
+      ],
+      "new": [
+        "欧拉iQ",
+        "长城汽车"
+      ],
+      "model_url": "/s/128188/",
+      "url": "https://xl.16888.com/style-201903-201903-4.html",
+      "history_checks": [
+        {
+          "month": "2020-11",
+          "old_sales": 75,
+          "source_sales": 75
+        },
+        {
+          "month": "2020-10",
+          "old_sales": 91,
+          "source_sales": 91
+        },
+        {
+          "month": "2020-09",
+          "old_sales": 563,
+          "source_sales": 563
+        },
+        {
+          "month": "2020-08",
+          "old_sales": 11,
+          "source_sales": 11
+        },
+        {
+          "month": "2020-07",
+          "old_sales": 16,
+          "source_sales": 16
+        },
+        {
+          "month": "2020-06",
+          "old_sales": 34,
+          "source_sales": 34
+        },
+        {
+          "month": "2020-05",
+          "old_sales": 7,
+          "source_sales": 7
+        },
+        {
+          "month": "2020-04",
+          "old_sales": 5,
+          "source_sales": 5
+        },
+        {
+          "month": "2020-03",
+          "old_sales": 9,
+          "source_sales": 9
+        },
+        {
+          "month": "2020-02",
+          "old_sales": 4,
+          "source_sales": 4
+        },
+        {
+          "month": "2020-01",
+          "old_sales": 5,
+          "source_sales": 5
+        },
+        {
+          "month": "2019-12",
+          "old_sales": 350,
+          "source_sales": 350
+        },
+        {
+          "month": "2019-11",
+          "old_sales": 251,
+          "source_sales": 251
+        },
+        {
+          "month": "2019-10",
+          "old_sales": 156,
+          "source_sales": 156
+        },
+        {
+          "month": "2019-09",
+          "old_sales": 167,
+          "source_sales": 167
+        },
+        {
+          "month": "2019-08",
+          "old_sales": 117,
+          "source_sales": 117
+        },
+        {
+          "month": "2019-07",
+          "old_sales": 394,
+          "source_sales": 394
+        },
+        {
+          "month": "2019-06",
+          "old_sales": 564,
+          "source_sales": 564
+        },
+        {
+          "month": "2019-05",
+          "old_sales": 751,
+          "source_sales": 751
+        },
+        {
+          "month": "2019-04",
+          "old_sales": 1109,
+          "source_sales": 1109
+        },
+        {
+          "month": "2019-03",
+          "old_sales": 3029,
+          "source_sales": 3029
+        },
+        {
+          "month": "2019-02",
+          "old_sales": 1443,
+          "source_sales": 1443
+        },
+        {
+          "month": "2019-01",
+          "old_sales": 2036,
+          "source_sales": 2036
+        },
+        {
+          "month": "2018-12",
+          "old_sales": 1055,
+          "source_sales": 1055
+        },
+        {
+          "month": "2018-11",
+          "old_sales": 1043,
+          "source_sales": 1043
+        },
+        {
+          "month": "2018-10",
+          "old_sales": 710,
+          "source_sales": 710
+        },
+        {
+          "month": "2018-09",
+          "old_sales": 707,
+          "source_sales": 707
+        }
+      ]
+    },
+    {
+      "old": [
+        "欧拉黑猫",
+        "长城新能源"
+      ],
+      "new": [
+        "欧拉黑猫",
+        "长城汽车"
+      ],
+      "model_url": "/s/128302/",
+      "url": "https://xl.16888.com/style-202112-202112-2.html",
+      "history_checks": [
+        {
+          "month": "2021-12",
+          "old_sales": 8056,
+          "source_sales": 8056
+        },
+        {
+          "month": "2021-11",
+          "old_sales": 4270,
+          "source_sales": 4270
+        },
+        {
+          "month": "2021-10",
+          "old_sales": 4079,
+          "source_sales": 4079
+        },
+        {
+          "month": "2021-09",
+          "old_sales": 5327,
+          "source_sales": 5327
+        },
+        {
+          "month": "2021-08",
+          "old_sales": 7013,
+          "source_sales": 7013
+        },
+        {
+          "month": "2021-07",
+          "old_sales": 2753,
+          "source_sales": 2753
+        },
+        {
+          "month": "2021-06",
+          "old_sales": 6508,
+          "source_sales": 6508
+        },
+        {
+          "month": "2021-05",
+          "old_sales": 1695,
+          "source_sales": 1695
+        },
+        {
+          "month": "2021-04",
+          "old_sales": 4613,
+          "source_sales": 4613
+        },
+        {
+          "month": "2021-03",
+          "old_sales": 8527,
+          "source_sales": 8527
+        },
+        {
+          "month": "2021-02",
+          "old_sales": 4561,
+          "source_sales": 4561
+        },
+        {
+          "month": "2021-01",
+          "old_sales": 6090,
+          "source_sales": 6090
+        },
+        {
+          "month": "2020-12",
+          "old_sales": 10010,
+          "source_sales": 10010
+        },
+        {
+          "month": "2020-11",
+          "old_sales": 9463,
+          "source_sales": 9463
+        },
+        {
+          "month": "2020-10",
+          "old_sales": 6269,
+          "source_sales": 6269
+        },
+        {
+          "month": "2020-09",
+          "old_sales": 5141,
+          "source_sales": 5141
+        },
+        {
+          "month": "2020-08",
+          "old_sales": 3748,
+          "source_sales": 3748
+        },
+        {
+          "month": "2020-07",
+          "old_sales": 2771,
+          "source_sales": 2771
+        },
+        {
+          "month": "2020-06",
+          "old_sales": 2601,
+          "source_sales": 2601
+        },
+        {
+          "month": "2020-05",
+          "old_sales": 2326,
+          "source_sales": 2326
+        },
+        {
+          "month": "2020-04",
+          "old_sales": 1760,
+          "source_sales": 1760
+        },
+        {
+          "month": "2020-03",
+          "old_sales": 1138,
+          "source_sales": 1138
+        },
+        {
+          "month": "2020-02",
+          "old_sales": 252,
+          "source_sales": 252
+        },
+        {
+          "month": "2020-01",
+          "old_sales": 1295,
+          "source_sales": 1295
+        },
+        {
+          "month": "2019-12",
+          "old_sales": 2303,
+          "source_sales": 2303
+        },
+        {
+          "month": "2019-11",
+          "old_sales": 2001,
+          "source_sales": 2001
+        },
+        {
+          "month": "2019-10",
+          "old_sales": 1618,
+          "source_sales": 1618
+        },
+        {
+          "month": "2019-09",
+          "old_sales": 1710,
+          "source_sales": 1710
+        },
+        {
+          "month": "2019-08",
+          "old_sales": 1108,
+          "source_sales": 1108
+        },
+        {
+          "month": "2019-07",
+          "old_sales": 1677,
+          "source_sales": 1677
+        },
+        {
+          "month": "2019-06",
+          "old_sales": 3198,
+          "source_sales": 3198
+        },
+        {
+          "month": "2019-05",
+          "old_sales": 3790,
+          "source_sales": 3790
+        },
+        {
+          "month": "2019-04",
+          "old_sales": 3505,
+          "source_sales": 3505
+        },
+        {
+          "month": "2019-03",
+          "old_sales": 4002,
+          "source_sales": 4002
+        },
+        {
+          "month": "2019-02",
+          "old_sales": 1837,
+          "source_sales": 1837
+        },
+        {
+          "month": "2019-01",
+          "old_sales": 1749,
+          "source_sales": 1749
+        }
+      ]
+    },
+    {
+      "old": [
+        "欧拉白猫",
+        "长城新能源"
+      ],
+      "new": [
+        "欧拉白猫",
+        "长城汽车"
+      ],
+      "model_url": "/s/128576/",
+      "url": "https://xl.16888.com/style-202111-202111-4.html",
+      "history_checks": [
+        {
+          "month": "2021-12",
+          "old_sales": 2185,
+          "source_sales": 2185
+        },
+        {
+          "month": "2021-11",
+          "old_sales": 3011,
+          "source_sales": 3011
+        },
+        {
+          "month": "2021-10",
+          "old_sales": 1311,
+          "source_sales": 1311
+        },
+        {
+          "month": "2021-09",
+          "old_sales": 2358,
+          "source_sales": 2358
+        },
+        {
+          "month": "2021-08",
+          "old_sales": 1145,
+          "source_sales": 1145
+        },
+        {
+          "month": "2021-07",
+          "old_sales": 1719,
+          "source_sales": 1719
+        },
+        {
+          "month": "2021-06",
+          "old_sales": 878,
+          "source_sales": 878
+        },
+        {
+          "month": "2021-05",
+          "old_sales": 625,
+          "source_sales": 625
+        },
+        {
+          "month": "2021-04",
+          "old_sales": 1599,
+          "source_sales": 1599
+        },
+        {
+          "month": "2021-03",
+          "old_sales": 2406,
+          "source_sales": 2406
+        },
+        {
+          "month": "2021-02",
+          "old_sales": 1279,
+          "source_sales": 1279
+        },
+        {
+          "month": "2021-01",
+          "old_sales": 2089,
+          "source_sales": 2089
+        },
+        {
+          "month": "2020-12",
+          "old_sales": 719,
+          "source_sales": 719
+        },
+        {
+          "month": "2020-11",
+          "old_sales": 2054,
+          "source_sales": 2054
+        },
+        {
+          "month": "2020-10",
+          "old_sales": 1651,
+          "source_sales": 1651
+        },
+        {
+          "month": "2020-09",
+          "old_sales": 915,
+          "source_sales": 915
+        },
+        {
+          "month": "2020-08",
+          "old_sales": 1035,
+          "source_sales": 1035
+        },
+        {
+          "month": "2020-07",
+          "old_sales": 277,
+          "source_sales": 277
+        }
+      ]
+    },
+    {
+      "old": [
+        "富康ES600",
+        "东风新能源"
+      ],
+      "new": [
+        "富康ES600",
+        "神龙汽车"
+      ],
+      "model_url": "/s/129518/",
+      "url": "https://xl.16888.com/style-202307-202307-6.html",
+      "history_checks": [
+        {
+          "month": "2025-11",
+          "old_sales": 15,
+          "source_sales": 15
+        },
+        {
+          "month": "2025-09",
+          "old_sales": 1,
+          "source_sales": 1
+        },
+        {
+          "month": "2025-06",
+          "old_sales": 1,
+          "source_sales": 1
+        },
+        {
+          "month": "2025-04",
+          "old_sales": 3,
+          "source_sales": 3
+        },
+        {
+          "month": "2025-03",
+          "old_sales": 10,
+          "source_sales": 10
+        },
+        {
+          "month": "2025-02",
+          "old_sales": 151,
+          "source_sales": 151
+        },
+        {
+          "month": "2025-01",
+          "old_sales": 70,
+          "source_sales": 70
+        },
+        {
+          "month": "2024-12",
+          "old_sales": 1,
+          "source_sales": 1
+        },
+        {
+          "month": "2024-10",
+          "old_sales": 7,
+          "source_sales": 7
+        },
+        {
+          "month": "2024-09",
+          "old_sales": 150,
+          "source_sales": 150
+        },
+        {
+          "month": "2024-07",
+          "old_sales": 58,
+          "source_sales": 58
+        },
+        {
+          "month": "2024-06",
+          "old_sales": 224,
+          "source_sales": 224
+        },
+        {
+          "month": "2024-03",
+          "old_sales": 10,
+          "source_sales": 10
+        },
+        {
+          "month": "2023-12",
+          "old_sales": 4,
+          "source_sales": 4
+        },
+        {
+          "month": "2023-11",
+          "old_sales": 134,
+          "source_sales": 134
+        },
+        {
+          "month": "2023-10",
+          "old_sales": 46,
+          "source_sales": 46
+        },
+        {
+          "month": "2023-09",
+          "old_sales": 48,
+          "source_sales": 48
+        },
+        {
+          "month": "2023-08",
+          "old_sales": 719,
+          "source_sales": 719
+        },
+        {
+          "month": "2023-07",
+          "old_sales": 1104,
+          "source_sales": 1104
+        },
+        {
+          "month": "2023-06",
+          "old_sales": 222,
+          "source_sales": 222
+        },
+        {
+          "month": "2023-05",
+          "old_sales": 120,
+          "source_sales": 120
+        },
+        {
+          "month": "2023-04",
+          "old_sales": 49,
+          "source_sales": 49
+        },
+        {
+          "month": "2023-03",
+          "old_sales": 43,
+          "source_sales": 43
+        },
+        {
+          "month": "2023-02",
+          "old_sales": 47,
+          "source_sales": 47
+        },
+        {
+          "month": "2023-01",
+          "old_sales": 104,
+          "source_sales": 104
+        },
+        {
+          "month": "2022-12",
+          "old_sales": 465,
+          "source_sales": 465
+        },
+        {
+          "month": "2022-11",
+          "old_sales": 649,
+          "source_sales": 649
+        },
+        {
+          "month": "2022-10",
+          "old_sales": 2133,
+          "source_sales": 2133
+        },
+        {
+          "month": "2022-09",
+          "old_sales": 2436,
+          "source_sales": 2436
+        },
+        {
+          "month": "2022-08",
+          "old_sales": 1102,
+          "source_sales": 1102
+        },
+        {
+          "month": "2022-07",
+          "old_sales": 680,
+          "source_sales": 680
+        },
+        {
+          "month": "2022-06",
+          "old_sales": 467,
+          "source_sales": 467
+        },
+        {
+          "month": "2022-05",
+          "old_sales": 596,
+          "source_sales": 596
+        },
+        {
+          "month": "2022-04",
+          "old_sales": 738,
+          "source_sales": 738
+        },
+        {
+          "month": "2022-03",
+          "old_sales": 502,
+          "source_sales": 502
+        }
+      ]
+    },
+    {
+      "old": [
+        "欧拉芭蕾猫",
+        "长城新能源"
+      ],
+      "new": [
+        "欧拉芭蕾猫",
+        "长城汽车"
+      ],
+      "model_url": "/s/129361/",
+      "url": "https://xl.16888.com/style-202207-202207-6.html",
+      "history_checks": [
+        {
+          "month": "2026-01",
+          "old_sales": 4,
+          "source_sales": 4
+        },
+        {
+          "month": "2025-12",
+          "old_sales": 60,
+          "source_sales": 60
+        },
+        {
+          "month": "2025-11",
+          "old_sales": 34,
+          "source_sales": 34
+        },
+        {
+          "month": "2025-10",
+          "old_sales": 20,
+          "source_sales": 20
+        },
+        {
+          "month": "2025-09",
+          "old_sales": 35,
+          "source_sales": 35
+        },
+        {
+          "month": "2025-08",
+          "old_sales": 34,
+          "source_sales": 34
+        },
+        {
+          "month": "2025-07",
+          "old_sales": 18,
+          "source_sales": 18
+        },
+        {
+          "month": "2025-06",
+          "old_sales": 50,
+          "source_sales": 50
+        },
+        {
+          "month": "2025-05",
+          "old_sales": 17,
+          "source_sales": 17
+        },
+        {
+          "month": "2025-04",
+          "old_sales": 28,
+          "source_sales": 28
+        },
+        {
+          "month": "2025-03",
+          "old_sales": 46,
+          "source_sales": 46
+        },
+        {
+          "month": "2025-02",
+          "old_sales": 44,
+          "source_sales": 44
+        },
+        {
+          "month": "2025-01",
+          "old_sales": 30,
+          "source_sales": 30
+        },
+        {
+          "month": "2024-12",
+          "old_sales": 93,
+          "source_sales": 93
+        },
+        {
+          "month": "2024-11",
+          "old_sales": 150,
+          "source_sales": 150
+        },
+        {
+          "month": "2024-10",
+          "old_sales": 166,
+          "source_sales": 166
+        },
+        {
+          "month": "2024-09",
+          "old_sales": 150,
+          "source_sales": 150
+        },
+        {
+          "month": "2024-08",
+          "old_sales": 150,
+          "source_sales": 150
+        },
+        {
+          "month": "2024-07",
+          "old_sales": 175,
+          "source_sales": 175
+        },
+        {
+          "month": "2024-06",
+          "old_sales": 99,
+          "source_sales": 99
+        },
+        {
+          "month": "2024-05",
+          "old_sales": 110,
+          "source_sales": 110
+        },
+        {
+          "month": "2024-04",
+          "old_sales": 132,
+          "source_sales": 132
+        },
+        {
+          "month": "2024-03",
+          "old_sales": 123,
+          "source_sales": 123
+        },
+        {
+          "month": "2024-02",
+          "old_sales": 74,
+          "source_sales": 74
+        },
+        {
+          "month": "2024-01",
+          "old_sales": 181,
+          "source_sales": 181
+        },
+        {
+          "month": "2023-12",
+          "old_sales": 397,
+          "source_sales": 397
+        },
+        {
+          "month": "2023-11",
+          "old_sales": 144,
+          "source_sales": 144
+        },
+        {
+          "month": "2023-10",
+          "old_sales": 401,
+          "source_sales": 401
+        },
+        {
+          "month": "2023-09",
+          "old_sales": 81,
+          "source_sales": 81
+        },
+        {
+          "month": "2023-08",
+          "old_sales": 73,
+          "source_sales": 73
+        },
+        {
+          "month": "2023-07",
+          "old_sales": 101,
+          "source_sales": 101
+        },
+        {
+          "month": "2023-06",
+          "old_sales": 113,
+          "source_sales": 113
+        },
+        {
+          "month": "2023-05",
+          "old_sales": 459,
+          "source_sales": 459
+        },
+        {
+          "month": "2023-04",
+          "old_sales": 472,
+          "source_sales": 472
+        },
+        {
+          "month": "2023-03",
+          "old_sales": 253,
+          "source_sales": 253
+        },
+        {
+          "month": "2023-02",
+          "old_sales": 128,
+          "source_sales": 128
+        },
+        {
+          "month": "2023-01",
+          "old_sales": 62,
+          "source_sales": 62
+        },
+        {
+          "month": "2022-12",
+          "old_sales": 108,
+          "source_sales": 108
+        },
+        {
+          "month": "2022-11",
+          "old_sales": 115,
+          "source_sales": 115
+        },
+        {
+          "month": "2022-10",
+          "old_sales": 515,
+          "source_sales": 515
+        },
+        {
+          "month": "2022-09",
+          "old_sales": 506,
+          "source_sales": 506
+        },
+        {
+          "month": "2022-08",
+          "old_sales": 1056,
+          "source_sales": 1056
+        },
+        {
+          "month": "2022-07",
+          "old_sales": 1516,
+          "source_sales": 1516
+        }
+      ]
+    },
+    {
+      "old": [
+        "欧拉闪电猫",
+        "长城新能源"
+      ],
+      "new": [
+        "欧拉闪电猫",
+        "长城汽车"
+      ],
+      "model_url": "/s/129133/",
+      "url": "https://xl.16888.com/style-202310-202310-6.html",
+      "history_checks": [
+        {
+          "month": "2025-12",
+          "old_sales": 17,
+          "source_sales": 17
+        },
+        {
+          "month": "2025-11",
+          "old_sales": 23,
+          "source_sales": 23
+        },
+        {
+          "month": "2025-10",
+          "old_sales": 45,
+          "source_sales": 45
+        },
+        {
+          "month": "2025-09",
+          "old_sales": 49,
+          "source_sales": 49
+        },
+        {
+          "month": "2025-08",
+          "old_sales": 29,
+          "source_sales": 29
+        },
+        {
+          "month": "2025-07",
+          "old_sales": 9,
+          "source_sales": 9
+        },
+        {
+          "month": "2025-06",
+          "old_sales": 54,
+          "source_sales": 54
+        },
+        {
+          "month": "2025-05",
+          "old_sales": 17,
+          "source_sales": 17
+        },
+        {
+          "month": "2025-04",
+          "old_sales": 16,
+          "source_sales": 16
+        },
+        {
+          "month": "2025-03",
+          "old_sales": 36,
+          "source_sales": 36
+        },
+        {
+          "month": "2025-02",
+          "old_sales": 23,
+          "source_sales": 23
+        },
+        {
+          "month": "2025-01",
+          "old_sales": 40,
+          "source_sales": 40
+        },
+        {
+          "month": "2024-12",
+          "old_sales": 101,
+          "source_sales": 101
+        },
+        {
+          "month": "2024-11",
+          "old_sales": 150,
+          "source_sales": 150
+        },
+        {
+          "month": "2024-10",
+          "old_sales": 185,
+          "source_sales": 185
+        },
+        {
+          "month": "2024-09",
+          "old_sales": 160,
+          "source_sales": 160
+        },
+        {
+          "month": "2024-08",
+          "old_sales": 200,
+          "source_sales": 200
+        },
+        {
+          "month": "2024-07",
+          "old_sales": 183,
+          "source_sales": 183
+        },
+        {
+          "month": "2024-06",
+          "old_sales": 215,
+          "source_sales": 215
+        },
+        {
+          "month": "2024-05",
+          "old_sales": 168,
+          "source_sales": 168
+        },
+        {
+          "month": "2024-04",
+          "old_sales": 189,
+          "source_sales": 189
+        },
+        {
+          "month": "2024-03",
+          "old_sales": 356,
+          "source_sales": 356
+        },
+        {
+          "month": "2024-02",
+          "old_sales": 201,
+          "source_sales": 201
+        },
+        {
+          "month": "2024-01",
+          "old_sales": 371,
+          "source_sales": 371
+        },
+        {
+          "month": "2023-12",
+          "old_sales": 1129,
+          "source_sales": 1129
+        },
+        {
+          "month": "2023-11",
+          "old_sales": 868,
+          "source_sales": 868
+        },
+        {
+          "month": "2023-10",
+          "old_sales": 1311,
+          "source_sales": 1311
+        },
+        {
+          "month": "2023-09",
+          "old_sales": 812,
+          "source_sales": 812
+        },
+        {
+          "month": "2023-08",
+          "old_sales": 803,
+          "source_sales": 803
+        },
+        {
+          "month": "2023-07",
+          "old_sales": 690,
+          "source_sales": 690
+        },
+        {
+          "month": "2023-06",
+          "old_sales": 827,
+          "source_sales": 827
+        },
+        {
+          "month": "2023-05",
+          "old_sales": 854,
+          "source_sales": 854
+        },
+        {
+          "month": "2023-04",
+          "old_sales": 517,
+          "source_sales": 517
+        },
+        {
+          "month": "2023-03",
+          "old_sales": 1347,
+          "source_sales": 1347
+        },
+        {
+          "month": "2023-02",
+          "old_sales": 1330,
+          "source_sales": 1330
+        },
+        {
+          "month": "2023-01",
+          "old_sales": 1283,
+          "source_sales": 1283
+        },
+        {
+          "month": "2022-12",
+          "old_sales": 3011,
+          "source_sales": 3011
+        },
+        {
+          "month": "2022-11",
+          "old_sales": 3031,
+          "source_sales": 3031
+        }
+      ]
+    },
+    {
+      "old": [
+        "星瑞L",
+        "吉利汽车"
+      ],
+      "new": [
+        "星瑞L PLUS",
+        "吉利汽车"
+      ],
+      "model_url": "/s/130108/",
+      "url": "https://xl.16888.com/style-202310-202310-7.html",
+      "history_checks": [
+        {
+          "month": "2025-06",
+          "old_sales": 57,
+          "source_sales": 57
+        },
+        {
+          "month": "2025-05",
+          "old_sales": 68,
+          "source_sales": 68
+        },
+        {
+          "month": "2025-04",
+          "old_sales": 101,
+          "source_sales": 101
+        },
+        {
+          "month": "2025-03",
+          "old_sales": 68,
+          "source_sales": 68
+        },
+        {
+          "month": "2025-02",
+          "old_sales": 59,
+          "source_sales": 59
+        },
+        {
+          "month": "2025-01",
+          "old_sales": 101,
+          "source_sales": 101
+        },
+        {
+          "month": "2024-12",
+          "old_sales": 146,
+          "source_sales": 146
+        },
+        {
+          "month": "2024-11",
+          "old_sales": 195,
+          "source_sales": 195
+        },
+        {
+          "month": "2024-10",
+          "old_sales": 300,
+          "source_sales": 300
+        },
+        {
+          "month": "2024-09",
+          "old_sales": 390,
+          "source_sales": 390
+        },
+        {
+          "month": "2024-08",
+          "old_sales": 366,
+          "source_sales": 366
+        },
+        {
+          "month": "2024-07",
+          "old_sales": 337,
+          "source_sales": 337
+        },
+        {
+          "month": "2024-06",
+          "old_sales": 511,
+          "source_sales": 511
+        },
+        {
+          "month": "2024-05",
+          "old_sales": 650,
+          "source_sales": 650
+        },
+        {
+          "month": "2024-04",
+          "old_sales": 703,
+          "source_sales": 703
+        },
+        {
+          "month": "2024-03",
+          "old_sales": 861,
+          "source_sales": 861
+        },
+        {
+          "month": "2024-02",
+          "old_sales": 278,
+          "source_sales": 278
+        },
+        {
+          "month": "2023-12",
+          "old_sales": 1380,
+          "source_sales": 1380
+        },
+        {
+          "month": "2023-10",
+          "old_sales": 813,
+          "source_sales": 813
+        }
+      ]
+    },
+    {
+      "old": [
+        "魏牌 蓝山",
+        "长城汽车"
+      ],
+      "new": [
+        "魏牌 蓝山新能源",
+        "长城汽车"
+      ],
+      "model_url": "/s/129709/",
+      "url": "https://xl.16888.com/style-202605-202605-7.html",
+      "history_checks": [
+        {
+          "month": "2026-05",
+          "old_sales": 657,
+          "source_sales": 657
+        },
+        {
+          "month": "2026-04",
+          "old_sales": 839,
+          "source_sales": 839
+        },
+        {
+          "month": "2026-03",
+          "old_sales": 606,
+          "source_sales": 606
+        },
+        {
+          "month": "2026-02",
+          "old_sales": 721,
+          "source_sales": 721
+        },
+        {
+          "month": "2026-01",
+          "old_sales": 903,
+          "source_sales": 903
+        }
+      ]
+    },
+    {
+      "old": [
+        "瑞虎9 C-DM",
+        "奇瑞汽车"
+      ],
+      "new": [
+        "瑞虎9新能源",
+        "奇瑞汽车"
+      ],
+      "model_url": "/s/130723/",
+      "url": "https://xl.16888.com/style-202604-202604-10.html",
+      "history_checks": [
+        {
+          "month": "2026-04",
+          "old_sales": 131,
+          "source_sales": 131
+        },
+        {
+          "month": "2026-03",
+          "old_sales": 84,
+          "source_sales": 84
+        }
+      ]
+    }
+  ]
+}
