@@ -279,6 +279,8 @@ def _candidates(chain, period, rows, dimensions):
             candidate['row_hash'] = hashlib.md5(payload.encode('utf-8')).hexdigest()
         if chain == 'style':
             candidate['manufacturer_name'] = dim['oem_name']
+            from scheduler.sales_source_renames import canonical_key
+            candidate['model_name'] = canonical_key((model, _name(row['manufacturer_name'])))[0]
         if chain == 'city':
             candidate.update({field: dim[field] for field in ('area_id', 'subtype_name', 'vehicle_subtype_id', 'vehicle_type_id')})
         candidates.append(candidate)
