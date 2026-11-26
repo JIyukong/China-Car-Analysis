@@ -187,7 +187,24 @@ def _preview_city_models(parser, args) -> int:
 
 
 # 子命令参数名 -> 处理器，顺序即历史 runner.main 中的分支先后
+def _seed_reviewed_private_companies(parser, args):
+    reject_other_flags(parser, args, allowed=('seed_reviewed_private_companies', 'plan'),
+                       message='--seed-reviewed-private-companies 需要单独运行')
+    from scheduler.reviewed_private_companies import COMPANIES, run
+    if args.plan:
+        print(json.dumps({'plan': True, 'companies': COMPANIES}, ensure_ascii=False))
+        return 0
+    require_etl_account(parser)
+    try:
+        print(json.dumps(run(args.seed_reviewed_private_companies), ensure_ascii=False))
+        return 0
+    except Exception:
+        logger.exception('已核实非上市公司归属更新失败')
+        return 1
+
+
 _STANDALONE_HANDLERS = (
+    ('seed_reviewed_private_companies', _seed_reviewed_private_companies),
     ("load_reviewed_county_areas", _load_county_areas),
     ("refresh_city_tiers", _refresh_city_tiers),
     ("seed_reviewed_ads_models", _seed_reviewed_ads_models),
