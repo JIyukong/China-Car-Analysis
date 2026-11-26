@@ -6,6 +6,8 @@ from scheduler.sales_source_renames import canonical_key, rename_plan
 def test_reviewed_model_and_manufacturer_resolve_together():
     assert canonical_key(('欧拉5 EV', '长城汽车')) == ('欧拉5', '长城新能源')
     assert canonical_key(('unreviewed', '长城汽车')) == ('unreviewed', '长城汽车')
+    assert canonical_key(('e爱丽舍', '神龙汽车')) == ('e爱丽舍', '东风新能源')
+    assert canonical_key(('红旗金葵花国耀', '一汽红旗')) == ('红旗国耀', '一汽红旗')
 
 
 def test_plan_is_exact_and_preserves_unexplained_missing_keys():
