@@ -1,0 +1,685 @@
+{
+  "fetched_at": "2026-11-26T10:07:50.643635+00:00",
+  "records": [
+    {
+      "model_name": "AION i60",
+      "model_url": "/s/130968/",
+      "manufacturer": "埃安",
+      "manufacturer_url": "/f/128066/",
+      "sales": "11186",
+      "page": 1,
+      "url": "https://xl.16888.com/style-202607-202607-1.html",
+      "old_model": "AION i60",
+      "old_manufacturer": "广汽埃安",
+      "history_url": "https://xl.16888.com/s/130968/",
+      "history_checks": [
+        {
+          "month": "2026-01",
+          "old_sales": 6351,
+          "source_sales": 6351
+        },
+        {
+          "month": "2026-02",
+          "old_sales": 2825,
+          "source_sales": 2825
+        },
+        {
+          "month": "2026-03",
+          "old_sales": 10838,
+          "source_sales": 10838
+        },
+        {
+          "month": "2026-04",
+          "old_sales": 9711,
+          "source_sales": 9711
+        },
+        {
+          "month": "2026-05",
+          "old_sales": 9471,
+          "source_sales": 9471
+        },
+        {
+          "month": "2026-06",
+          "old_sales": 9692,
+          "source_sales": 9692
+        },
+        {
+          "month": "2026-07",
+          "old_sales": 11186,
+          "source_sales": 11186
+        }
+      ]
+    },
+    {
+      "model_name": "长城大狗",
+      "model_url": "/s/128907/",
+      "manufacturer": "长城汽车",
+      "manufacturer_url": "/f/126027/",
+      "sales": "5760",
+      "page": 2,
+      "url": "https://xl.16888.com/style-202607-202607-2.html",
+      "old_model": "哈弗大狗",
+      "old_manufacturer": "长城汽车",
+      "history_url": "https://xl.16888.com/s/128907/",
+      "history_checks": [
+        {
+          "month": "2026-01",
+          "old_sales": 11275,
+          "source_sales": 11275
+        },
+        {
+          "month": "2026-02",
+          "old_sales": 6281,
+          "source_sales": 6281
+        },
+        {
+          "month": "2026-03",
+          "old_sales": 12645,
+          "source_sales": 12645
+        },
+        {
+          "month": "2026-04",
+          "old_sales": 10226,
+          "source_sales": 10226
+        },
+        {
+          "month": "2026-05",
+          "old_sales": 7886,
+          "source_sales": 7886
+        },
+        {
+          "month": "2026-06",
+          "old_sales": 6882,
+          "source_sales": 6882
+        },
+        {
+          "month": "2026-07",
+          "old_sales": 5760,
+          "source_sales": 5760
+        }
+      ]
+    },
+    {
+      "model_name": "魏牌 高山新能源",
+      "model_url": "/s/129881/",
+      "manufacturer": "长城汽车",
+      "manufacturer_url": "/f/127629/",
+      "sales": "5505",
+      "page": 2,
+      "url": "https://xl.16888.com/style-202607-202607-2.html",
+      "old_model": "魏牌 高山",
+      "old_manufacturer": "长城汽车",
+      "history_url": "https://xl.16888.com/s/129881/",
+      "history_checks": [
+        {
+          "month": "2026-01",
+          "old_sales": 6707,
+          "source_sales": 6707
+        },
+        {
+          "month": "2026-02",
+          "old_sales": 4369,
+          "source_sales": 4369
+        },
+        {
+          "month": "2026-03",
+          "old_sales": 6447,
+          "source_sales": 6447
+        },
+        {
+          "month": "2026-04",
+          "old_sales": 6122,
+          "source_sales": 6122
+        },
+        {
+          "month": "2026-05",
+          "old_sales": 5662,
+          "source_sales": 5662
+        },
+        {
+          "month": "2026-06",
+          "old_sales": 4920,
+          "source_sales": 4920
+        },
+        {
+          "month": "2026-07",
+          "old_sales": 5505,
+          "source_sales": 5505
+        }
+      ]
+    },
+    {
+      "model_name": "欧拉5 EV",
+      "model_url": "/s/130963/",
+      "manufacturer": "长城汽车",
+      "manufacturer_url": "/f/128307/",
+      "sales": "4069",
+      "page": 3,
+      "url": "https://xl.16888.com/style-202607-202607-3.html",
+      "old_model": "欧拉5",
+      "old_manufacturer": "长城新能源",
+      "history_url": "https://xl.16888.com/s/130963/",
+      "history_checks": [
+        {
+          "month": "2026-01",
+          "old_sales": 1220,
+          "source_sales": 1220
+        },
+        {
+          "month": "2026-02",
+          "old_sales": 621,
+          "source_sales": 621
+        },
+        {
+          "month": "2026-03",
+          "old_sales": 1001,
+          "source_sales": 1001
+        },
+        {
+          "month": "2026-04",
+          "old_sales": 2088,
+          "source_sales": 2088
+        },
+        {
+          "month": "2026-05",
+          "old_sales": 2719,
+          "source_sales": 2719
+        },
+        {
+          "month": "2026-06",
+          "old_sales": 2789,
+          "source_sales": 2789
+        },
+        {
+          "month": "2026-07",
+          "old_sales": 4069,
+          "source_sales": 4069
+        }
+      ]
+    },
+    {
+      "model_name": "AION RT",
+      "model_url": "/s/130722/",
+      "manufacturer": "埃安",
+      "manufacturer_url": "/f/128066/",
+      "sales": "3847",
+      "page": 3,
+      "url": "https://xl.16888.com/style-202607-202607-3.html",
+      "old_model": "AION RT",
+      "old_manufacturer": "广汽埃安",
+      "history_url": "https://xl.16888.com/s/130722/",
+      "history_checks": [
+        {
+          "month": "2026-01",
+          "old_sales": 3071,
+          "source_sales": 3071
+        },
+        {
+          "month": "2026-02",
+          "old_sales": 1223,
+          "source_sales": 1223
+        },
+        {
+          "month": "2026-03",
+          "old_sales": 5448,
+          "source_sales": 5448
+        },
+        {
+          "month": "2026-04",
+          "old_sales": 4990,
+          "source_sales": 4990
+        },
+        {
+          "month": "2026-05",
+          "old_sales": 5063,
+          "source_sales": 5063
+        },
+        {
+          "month": "2026-06",
+          "old_sales": 4502,
+          "source_sales": 4502
+        },
+        {
+          "month": "2026-07",
+          "old_sales": 3847,
+          "source_sales": 3847
+        }
+      ]
+    },
+    {
+      "model_name": "AION N60",
+      "model_url": "/s/131046/",
+      "manufacturer": "埃安",
+      "manufacturer_url": "/f/128066/",
+      "sales": "3523",
+      "page": 3,
+      "url": "https://xl.16888.com/style-202607-202607-3.html",
+      "old_model": "AION N60",
+      "old_manufacturer": "广汽埃安",
+      "history_url": "https://xl.16888.com/s/131046/",
+      "history_checks": [
+        {
+          "month": "2026-04",
+          "old_sales": 884,
+          "source_sales": 884
+        },
+        {
+          "month": "2026-05",
+          "old_sales": 5173,
+          "source_sales": 5173
+        },
+        {
+          "month": "2026-06",
+          "old_sales": 4899,
+          "source_sales": 4899
+        },
+        {
+          "month": "2026-07",
+          "old_sales": 3523,
+          "source_sales": 3523
+        }
+      ]
+    },
+    {
+      "model_name": "AION S",
+      "model_url": "/s/128387/",
+      "manufacturer": "埃安",
+      "manufacturer_url": "/f/128066/",
+      "sales": "1598",
+      "page": 5,
+      "url": "https://xl.16888.com/style-202607-202607-5.html",
+      "old_model": "AION S",
+      "old_manufacturer": "广汽埃安",
+      "history_url": "https://xl.16888.com/s/128387/",
+      "history_checks": [
+        {
+          "month": "2026-01",
+          "old_sales": 3148,
+          "source_sales": 3148
+        },
+        {
+          "month": "2026-02",
+          "old_sales": 788,
+          "source_sales": 788
+        },
+        {
+          "month": "2026-03",
+          "old_sales": 4193,
+          "source_sales": 4193
+        },
+        {
+          "month": "2026-04",
+          "old_sales": 3665,
+          "source_sales": 3665
+        },
+        {
+          "month": "2026-05",
+          "old_sales": 963,
+          "source_sales": 963
+        },
+        {
+          "month": "2026-06",
+          "old_sales": 466,
+          "source_sales": 466
+        },
+        {
+          "month": "2026-07",
+          "old_sales": 1598,
+          "source_sales": 1598
+        }
+      ]
+    },
+    {
+      "model_name": "AION UT",
+      "model_url": "/s/130767/",
+      "manufacturer": "埃安",
+      "manufacturer_url": "/f/128066/",
+      "sales": "1125",
+      "page": 6,
+      "url": "https://xl.16888.com/style-202607-202607-6.html",
+      "old_model": "AION UT",
+      "old_manufacturer": "广汽埃安",
+      "history_url": "https://xl.16888.com/s/130767/",
+      "history_checks": [
+        {
+          "month": "2026-01",
+          "old_sales": 2200,
+          "source_sales": 2200
+        },
+        {
+          "month": "2026-02",
+          "old_sales": 1054,
+          "source_sales": 1054
+        },
+        {
+          "month": "2026-03",
+          "old_sales": 2767,
+          "source_sales": 2767
+        },
+        {
+          "month": "2026-04",
+          "old_sales": 2645,
+          "source_sales": 2645
+        },
+        {
+          "month": "2026-05",
+          "old_sales": 1700,
+          "source_sales": 1700
+        },
+        {
+          "month": "2026-06",
+          "old_sales": 1409,
+          "source_sales": 1409
+        },
+        {
+          "month": "2026-07",
+          "old_sales": 1125,
+          "source_sales": 1125
+        }
+      ]
+    },
+    {
+      "model_name": "海豹07",
+      "model_url": "/s/130681/",
+      "manufacturer": "比亚迪",
+      "manufacturer_url": "/f/57329/",
+      "sales": "1080",
+      "page": 6,
+      "url": "https://xl.16888.com/style-202607-202607-6.html",
+      "old_model": "海豹07 DM-i",
+      "old_manufacturer": "比亚迪",
+      "history_url": "https://xl.16888.com/s/130681/",
+      "history_checks": [
+        {
+          "month": "2026-01",
+          "old_sales": 238,
+          "source_sales": 238
+        },
+        {
+          "month": "2026-02",
+          "old_sales": 277,
+          "source_sales": 277
+        },
+        {
+          "month": "2026-03",
+          "old_sales": 432,
+          "source_sales": 432
+        },
+        {
+          "month": "2026-04",
+          "old_sales": 628,
+          "source_sales": 628
+        },
+        {
+          "month": "2026-05",
+          "old_sales": 615,
+          "source_sales": 615
+        },
+        {
+          "month": "2026-06",
+          "old_sales": 777,
+          "source_sales": 777
+        },
+        {
+          "month": "2026-07",
+          "old_sales": 1080,
+          "source_sales": 1080
+        }
+      ]
+    },
+    {
+      "model_name": "AION V",
+      "model_url": "/s/128866/",
+      "manufacturer": "埃安",
+      "manufacturer_url": "/f/128066/",
+      "sales": "1048",
+      "page": 6,
+      "url": "https://xl.16888.com/style-202607-202607-6.html",
+      "old_model": "AION V",
+      "old_manufacturer": "广汽埃安",
+      "history_url": "https://xl.16888.com/s/128866/",
+      "history_checks": [
+        {
+          "month": "2026-01",
+          "old_sales": 899,
+          "source_sales": 899
+        },
+        {
+          "month": "2026-02",
+          "old_sales": 393,
+          "source_sales": 393
+        },
+        {
+          "month": "2026-03",
+          "old_sales": 1356,
+          "source_sales": 1356
+        },
+        {
+          "month": "2026-04",
+          "old_sales": 1095,
+          "source_sales": 1095
+        },
+        {
+          "month": "2026-05",
+          "old_sales": 1056,
+          "source_sales": 1056
+        },
+        {
+          "month": "2026-06",
+          "old_sales": 829,
+          "source_sales": 829
+        },
+        {
+          "month": "2026-07",
+          "old_sales": 1048,
+          "source_sales": 1048
+        }
+      ]
+    },
+    {
+      "model_name": "AION Y",
+      "model_url": "/s/129064/",
+      "manufacturer": "埃安",
+      "manufacturer_url": "/f/128066/",
+      "sales": "894",
+      "page": 6,
+      "url": "https://xl.16888.com/style-202607-202607-6.html",
+      "old_model": "AION Y",
+      "old_manufacturer": "广汽埃安",
+      "history_url": "https://xl.16888.com/s/129064/",
+      "history_checks": [
+        {
+          "month": "2026-01",
+          "old_sales": 5287,
+          "source_sales": 5287
+        },
+        {
+          "month": "2026-02",
+          "old_sales": 1276,
+          "source_sales": 1276
+        },
+        {
+          "month": "2026-03",
+          "old_sales": 8076,
+          "source_sales": 8076
+        },
+        {
+          "month": "2026-04",
+          "old_sales": 3392,
+          "source_sales": 3392
+        },
+        {
+          "month": "2026-05",
+          "old_sales": 1012,
+          "source_sales": 1012
+        },
+        {
+          "month": "2026-06",
+          "old_sales": 1016,
+          "source_sales": 1016
+        },
+        {
+          "month": "2026-07",
+          "old_sales": 894,
+          "source_sales": 894
+        }
+      ]
+    },
+    {
+      "model_name": "领克20",
+      "model_url": "/s/130731/",
+      "manufacturer": "领克",
+      "manufacturer_url": "/f/127598/",
+      "sales": "665",
+      "page": 7,
+      "url": "https://xl.16888.com/style-202607-202607-7.html",
+      "old_model": "领克Z20",
+      "old_manufacturer": "领克",
+      "history_url": "https://xl.16888.com/s/130731/",
+      "history_checks": [
+        {
+          "month": "2026-01",
+          "old_sales": 504,
+          "source_sales": 504
+        },
+        {
+          "month": "2026-02",
+          "old_sales": 831,
+          "source_sales": 831
+        },
+        {
+          "month": "2026-03",
+          "old_sales": 1207,
+          "source_sales": 1207
+        },
+        {
+          "month": "2026-04",
+          "old_sales": 1224,
+          "source_sales": 1224
+        },
+        {
+          "month": "2026-05",
+          "old_sales": 1048,
+          "source_sales": 1048
+        },
+        {
+          "month": "2026-06",
+          "old_sales": 968,
+          "source_sales": 968
+        },
+        {
+          "month": "2026-07",
+          "old_sales": 665,
+          "source_sales": 665
+        }
+      ]
+    },
+    {
+      "model_name": "极狐问道V9",
+      "model_url": "/s/131021/",
+      "manufacturer": "北汽新能源",
+      "manufacturer_url": "/f/128129/",
+      "sales": "609",
+      "page": 7,
+      "url": "https://xl.16888.com/style-202607-202607-7.html",
+      "old_model": "问道V9",
+      "old_manufacturer": "北汽新能源",
+      "history_url": "https://xl.16888.com/s/131021/",
+      "history_checks": [
+        {
+          "month": "2026-04",
+          "old_sales": 8,
+          "source_sales": 8
+        },
+        {
+          "month": "2026-05",
+          "old_sales": 567,
+          "source_sales": 567
+        },
+        {
+          "month": "2026-06",
+          "old_sales": 1522,
+          "source_sales": 1522
+        },
+        {
+          "month": "2026-07",
+          "old_sales": 609,
+          "source_sales": 609
+        }
+      ]
+    },
+    {
+      "model_name": "欧拉好猫",
+      "model_url": "/s/128954/",
+      "manufacturer": "长城汽车",
+      "manufacturer_url": "/f/128307/",
+      "sales": "516",
+      "page": 8,
+      "url": "https://xl.16888.com/style-202607-202607-8.html",
+      "old_model": "欧拉好猫",
+      "old_manufacturer": "长城新能源",
+      "history_url": "https://xl.16888.com/s/128954/",
+      "history_checks": [
+        {
+          "month": "2026-01",
+          "old_sales": 502,
+          "source_sales": 502
+        },
+        {
+          "month": "2026-02",
+          "old_sales": 218,
+          "source_sales": 218
+        },
+        {
+          "month": "2026-03",
+          "old_sales": 784,
+          "source_sales": 784
+        },
+        {
+          "month": "2026-04",
+          "old_sales": 1125,
+          "source_sales": 1125
+        },
+        {
+          "month": "2026-05",
+          "old_sales": 1112,
+          "source_sales": 1112
+        },
+        {
+          "month": "2026-06",
+          "old_sales": 1016,
+          "source_sales": 1016
+        },
+        {
+          "month": "2026-07",
+          "old_sales": 516,
+          "source_sales": 516
+        }
+      ]
+    },
+    {
+      "model_name": "Aion LX",
+      "model_url": "/s/128584/",
+      "manufacturer": "埃安",
+      "manufacturer_url": "/f/128066/",
+      "sales": "1",
+      "page": 13,
+      "url": "https://xl.16888.com/style-202607-202607-13.html",
+      "old_model": "Aion LX",
+      "old_manufacturer": "广汽埃安",
+      "history_url": "https://xl.16888.com/s/128584/",
+      "history_checks": [
+        {
+          "month": "2026-04",
+          "old_sales": 1,
+          "source_sales": 1
+        },
+        {
+          "month": "2026-07",
+          "old_sales": 1,
+          "source_sales": 1
+        }
+      ]
+    }
+  ]
+}

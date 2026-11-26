@@ -145,6 +145,26 @@ def _reconcile_ods(loader, chain: str, period: str, rows: list[dict]) -> str:
     expected = _content(rows, fields)
     with loader.engine.begin() as conn:
         existing = _ods_content(conn, loader, chain, period, lock=True)
+        renamed = set()
+        if chain == 'style':
+            from scheduler.sales_source_renames import rename_plan
+
+            for old, new in rename_plan(existing, expected):
+                result = conn.execute(text('''
+                    UPDATE ods_sales_monthly_model
+                       SET model_name_raw=:new_model, manufacturer_name_raw=:new_oem
+                     WHERE source=:source AND stat_month=:period
+                       AND model_name_raw=:old_model AND manufacturer_name_raw=:old_oem
+                '''), {'new_model': new[0], 'new_oem': new[1], 'old_model': old[0], 'old_oem': old[1],
+                       'source': loader.SOURCE_TAG, 'period': loader.parse_month(period)})
+                if result.rowcount != 1:
+                    raise ValueError(f'来源改名更新行数异常: {old!r}')
+                renamed.add(new)
+            if renamed:
+                after = _ods_content(conn, loader, chain, period, lock=True)
+                if len(after) != len(existing) or sorted(after.values(), key=repr) != sorted(existing.values(), key=repr):
+                    raise ValueError('来源改名改变了原有行数或行情内容')
+                existing = after
         extra = existing.keys() - expected.keys()
         if extra:
             sample = sorted(extra)[:5]
@@ -152,9 +172,10 @@ def _reconcile_ods(loader, chain: str, period: str, rows: list[dict]) -> str:
                 f"{chain} {period} 有 {len(extra)} 个 ODS 历史业务键未出现在本次完整榜单，"
                 f"请核对来源是否撤回或键名是否变化。示例: {sample!r}"
             )
-        if existing != expected:
+        if existing != expected or renamed:
             changed = [row for row in rows if existing.get((row[fields[0]], row[fields[1]]))
-                       != expected[(row[fields[0]], row[fields[1]])]]
+                       != expected[(row[fields[0]], row[fields[1]])]
+                       or (row[fields[0]], row[fields[1]]) in renamed]
             loader.upsert_rows(changed, connection=conn)
             if _ods_content(conn, loader, chain, period, lock=True) != expected:
                 raise ValueError(f"{chain} {period} ODS 回读与榜单不一致，请检查业务键冲突或字段转换")

@@ -128,19 +128,24 @@ def _source(conn, chain, month, *, positive_only=True):
 def _dimensions(conn, chain, month):
     aliases, retired = read_aliases(conn)
     params = {}
+    energy_name = 'TRIM(s.model_name_raw)'
     if chain == 'style':
+        from scheduler.sales_source_renames import dimension_expressions
+        model_name, oem_name, rename_params = dimension_expressions()
+        params.update(rename_params)
+        energy_name = model_name
         cases = []
         for i, (alias, identifier) in enumerate(sorted(aliases.items())):
             cases.append(f"WHEN :alias_{i} THEN :oem_{i}")
             params.update({f"alias_{i}": alias, f"oem_{i}": identifier})
         canonical = (
-            f"CASE LOWER(TRIM(s.manufacturer_name_raw)) {' '.join(cases)} ELSE raw_o.id END"
+            f"CASE LOWER({oem_name}) {' '.join(cases)} ELSE raw_o.id END"
             if cases else "raw_o.id"
         )
         ownership = f'''
-            LEFT JOIN dim_oem raw_o ON raw_o.oem_name = TRIM(s.manufacturer_name_raw)
+            LEFT JOIN dim_oem raw_o ON raw_o.oem_name = {oem_name}
             LEFT JOIN dim_oem o ON o.id = {canonical}
-            LEFT JOIN dim_model m ON m.oem_id = o.id AND m.model_name = TRIM(s.model_name_raw)
+            LEFT JOIN dim_model m ON m.oem_id = o.id AND m.model_name = {model_name}
             LEFT JOIN (
                 SELECT oem_id, MIN(brand_id) AS brand_id
                   FROM bridge_brand_oem
@@ -172,7 +177,7 @@ def _dimensions(conn, chain, month):
               AND historical.brand_id = m.brand_id AND historical.is_current = 0
               AND historical.effective_start_date <= :as_of AND historical.effective_end_date >= :as_of
           LEFT JOIN dim_company c ON c.id = COALESCE(historical.company_id, o.company_id)
-          LEFT JOIN dim_energy_vehicle e ON e.model_name = TRIM(s.model_name_raw)
+          LEFT JOIN dim_energy_vehicle e ON e.model_name = {energy_name}
          WHERE s.stat_month = :month AND s.source = :source
     ''', month=month.isoformat(), as_of=(_month_shift(month, 1) - timedelta(days=1)).isoformat(),
           source=f'16888_{chain}', **params)
@@ -190,6 +195,7 @@ def _gap(gaps, kind, key, *fields):
 
 
 def _derive_models(conn, rows, dimensions):
+    from scheduler.sales_source_renames import canonical_key
     inserts = []
     updates = []
     seen = set()
@@ -205,7 +211,8 @@ def _derive_models(conn, rows, dimensions):
             seen.add(key)
         if dim['derived_brand_id'] is None or dim['company_code'] in (None, 'OTHER'):
             continue
-        model, oem = _name(row['model_name']), dim['oem_name']
+        model = canonical_key((_name(row['model_name']), _name(row['manufacturer_name'])))[0]
+        oem = dim['oem_name']
         if dim['model_id'] is None:
             # The existing DIM business key is (model_name, oem_id).
             code = hashlib.md5(f'{model}|{oem}'.encode()).hexdigest()[:10].upper()
