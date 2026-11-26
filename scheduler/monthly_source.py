@@ -146,15 +146,16 @@ def _reconcile_ods(loader, chain: str, period: str, rows: list[dict]) -> str:
     with loader.engine.begin() as conn:
         existing = _ods_content(conn, loader, chain, period, lock=True)
         renamed = set()
-        if chain == 'style':
+        if chain in ('style', 'city'):
             from scheduler.sales_source_renames import rename_plan
 
-            for old, new in rename_plan(existing, expected):
-                result = conn.execute(text('''
-                    UPDATE ods_sales_monthly_model
-                       SET model_name_raw=:new_model, manufacturer_name_raw=:new_oem
+            table, _, column, _ = _SOURCES[chain]
+            for old, new in rename_plan(existing, expected, chain):
+                result = conn.execute(text(f'''
+                    UPDATE {table}
+                       SET model_name_raw=:new_model, {column}=:new_oem
                      WHERE source=:source AND stat_month=:period
-                       AND model_name_raw=:old_model AND manufacturer_name_raw=:old_oem
+                       AND model_name_raw=:old_model AND {column}=:old_oem
                 '''), {'new_model': new[0], 'new_oem': new[1], 'old_model': old[0], 'old_oem': old[1],
                        'source': loader.SOURCE_TAG, 'period': loader.parse_month(period)})
                 if result.rowcount != 1:

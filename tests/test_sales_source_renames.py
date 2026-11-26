@@ -43,6 +43,13 @@ def test_both_labels_in_source_are_not_a_rename():
     assert rename_plan({old: (1,)}, {old: (1,), new: (1,)}) == []
 
 
+def test_city_rename_keeps_exact_city_and_has_no_national_ownership_dependency():
+    old, new = ('哈弗大狗', '上海'), ('长城大狗', '上海')
+    assert rename_plan({old: (1,)}, {new: (1,)}, 'city') == [(old, new)]
+    assert rename_plan({old: (1,)}, {('长城大狗', '北京'): (1,)}, 'city') == []
+    assert rename_plan({('未知', '上海'): (1,)}, {new: (1,)}, 'city') == []
+
+
 @pytest.mark.parametrize('unexplained', [False, True])
 def test_ods_rekey_is_transactional_and_keeps_row_identity(monkeypatch, unexplained):
     from types import SimpleNamespace

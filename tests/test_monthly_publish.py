@@ -288,6 +288,18 @@ def test_reviewed_rename_derives_missing_dim_with_canonical_name(warehouse):
     assert execute('SELECT sales_volume FROM dwd_sales_monthly_model') == [(5760,)]
 
 
+def test_city_reviewed_rename_updates_same_fact_without_national_dimensions(warehouse, monkeypatch):
+    publish, execute = warehouse
+    enable_city_wide(monkeypatch, execute)
+    add_source(execute, '2026-06', 10, name='哈弗大狗', city=True)
+    publish.publish_month('city', '2026-06')
+    original_id = execute('SELECT id FROM dwd_sales_monthly_city')[0][0]
+    execute("UPDATE ods_sales_monthly_model_city SET model_name_raw='长城大狗',row_hash='city-renamed'")
+    publish.publish_month('city', '2026-06')
+    assert execute('SELECT id,model_name_raw,sales_volume FROM dwd_sales_monthly_city') == [(original_id, '长城大狗', 10)]
+    assert execute('SELECT COUNT(*) FROM dim_model') == [(0,)]
+
+
 def test_missing_dimensions_leave_last_good_publication_and_city_has_own_gates(warehouse):
     publish, execute = warehouse
     execute("INSERT INTO dim_energy_vehicle VALUES ('Model','新能源','SUV')")

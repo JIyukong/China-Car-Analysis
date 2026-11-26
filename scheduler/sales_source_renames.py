@@ -40,10 +40,26 @@ def canonical_key(key):
     return next((old for old, new in RENAMES.items() if new == key), key)
 
 
-def rename_plan(existing, expected):
+CITY_RENAMES = {
+    '哈弗大狗': '长城大狗',
+    '魏牌 高山': '魏牌 高山新能源',
+    '欧拉5': '欧拉5 EV',
+    '领克Z20': '领克20',
+    '魏牌 蓝山': '魏牌 蓝山新能源',
+    '海豹07 DM-i': '海豹07',
+    '问道V9': '极狐问道V9',
+    '阿维塔07 L': '阿维塔07L',
+}
+
+
+def canonical_city_name(name):
+    return next((old for old, new in CITY_RENAMES.items() if new == name), name)
+
+
+def rename_plan(existing, expected, chain='style'):
     plan = []
     for old in sorted(existing.keys() - expected.keys()):
-        new = RENAMES.get(old)
+        new = RENAMES.get(old) if chain == 'style' else (CITY_RENAMES.get(old[0]), old[1])
         if new not in expected:
             continue
         if new in existing:
