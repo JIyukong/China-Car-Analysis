@@ -8,6 +8,21 @@ def test_reviewed_model_and_manufacturer_resolve_together():
     assert canonical_key(('unreviewed', '长城汽车')) == ('unreviewed', '长城汽车')
     assert canonical_key(('e爱丽舍', '神龙汽车')) == ('e爱丽舍', '东风新能源')
     assert canonical_key(('红旗金葵花国耀', '一汽红旗')) == ('红旗国耀', '一汽红旗')
+    assert canonical_key(('魏牌 蓝山新能源', '长城汽车')) == ('魏牌 蓝山', '长城汽车')
+    assert canonical_key(('瑞虎9新能源', '奇瑞汽车')) == ('瑞虎9 C-DM', '奇瑞汽车')
+
+
+def test_backlog_catalog_has_identity_and_multimonth_evidence():
+    import json
+    from pathlib import Path
+    from scheduler.sales_source_renames import RENAMES
+    path = Path(__file__).resolve().parents[1] / 'docs/evidence/sales-backlog-renames-2026-11-26.json'
+    records = json.loads(path.read_text(encoding='utf-8'))['records']
+    for row in records:
+        assert RENAMES[tuple(row['old'])] == tuple(row['new'])
+        assert row['model_url'].startswith('/s/')
+        assert len({c['month'] for c in row['history_checks']}) >= 2
+        assert all(c['old_sales'] == c['source_sales'] for c in row['history_checks'])
 
 
 def test_plan_is_exact_and_preserves_unexplained_missing_keys():
