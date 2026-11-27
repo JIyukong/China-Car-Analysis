@@ -414,6 +414,7 @@ def _refresh_lifecycle(conn):
 
 
 def _write_groups(conn, group, month, dwd):
+    from scheduler.research_scope import is_research_bucket
     table = f'dws_sales_monthly_{group}'
     group_id, group_name = f'{group}_id', f'{group}_name'
     previous_month, previous_year = _month_shift(month, -1), _month_shift(month, -12)
@@ -452,8 +453,8 @@ def _write_groups(conn, group, month, dwd):
     for identifier, current in totals.items():
         row = {group_name: names[identifier], 'total_sales': current,
                'market_share': _percentage(current, total_sales, '0.0001'),
-               'yoy_growth': growth(current, baseline(previous_year, identifier)),
-               'mom_growth': growth(current, baseline(previous_month, identifier)), 'is_current': 1}
+               'yoy_growth': None if is_research_bucket(group, names[identifier]) else growth(current, baseline(previous_year, identifier)),
+               'mom_growth': None if is_research_bucket(group, names[identifier]) else growth(current, baseline(previous_month, identifier)), 'is_current': 1}
         existing = stored.get((month.isoformat(), identifier))
         if existing:
             updates.append({**row, 'id': existing['id']})
@@ -468,7 +469,7 @@ def _write_groups(conn, group, month, dwd):
             retire.append({'id': row['id'], 'is_current': 0})
         elif period in (next_month.isoformat(), next_year.isoformat()):
             rate = 'mom_growth' if period == next_month.isoformat() else 'yoy_growth'
-            corrected = {**row, rate: growth(row['total_sales'], totals.get(identifier))}
+            corrected = {**row, rate: None if is_research_bucket(group, row[group_name]) else growth(row['total_sales'], totals.get(identifier))}
             future.append(corrected)
             expected[(period, identifier)] = corrected
     _insert(conn, table, inserts)

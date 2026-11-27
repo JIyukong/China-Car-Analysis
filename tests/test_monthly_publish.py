@@ -357,6 +357,22 @@ def test_publication_uses_company_effective_at_sale_month_end(warehouse):
     assert execute('SELECT company_id FROM dwd_sales_monthly_model ORDER BY stat_month') == [(1,), (2,)]
 
 
+def test_research_bucket_preserves_market_totals_without_operating_growth(warehouse):
+    publish, execute = warehouse
+    execute("UPDATE dim_company SET company_code='OUT_OF_RESEARCH',company_name='非研究范围车企' WHERE id=1")
+    for month, sales in [('2025-01', 5), ('2026-01', 10), ('2026-02', 20)]:
+        add_source(execute, month, sales)
+        publish.publish_month('style', month)
+    assert execute('SELECT total_sales,yoy_growth,mom_growth FROM dws_sales_monthly_company ORDER BY stat_month') == [
+        (5, None, None), (10, None, None), (20, None, None)]
+    assert execute('SELECT SUM(sales_volume) FROM dwd_sales_monthly_model') == [(35,)]
+    assert execute("SELECT market_share FROM dws_sales_monthly_company WHERE stat_month='2026-02-01'") == [(100,)]
+    # Revising a baseline must not recreate operating growth on future bucket rows.
+    execute("UPDATE ods_sales_monthly_model SET sales_volume=12 WHERE stat_month='2026-01-01'")
+    publish.publish_month('style', '2026-01')
+    assert execute("SELECT yoy_growth,mom_growth FROM dws_sales_monthly_company WHERE stat_month='2026-02-01'") == [(None, None)]
+
+
 def test_regrouped_totals_keep_old_groups_out_of_publication(warehouse):
     publish, execute = warehouse
     execute("INSERT INTO dim_energy_vehicle VALUES ('Model','新能源','SUV')")
