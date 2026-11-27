@@ -26,6 +26,14 @@ def is_research_bucket(group, name):
     return group == 'company' and name == COMPANY['name']
 
 
+def validate_historical_ownership(conn, name):
+    rows = conn.execute(text('''SELECT c.company_code FROM bridge_brand_oem b
+        JOIN dim_oem o ON o.id=b.oem_id LEFT JOIN dim_company c ON c.id=b.company_id
+        WHERE o.oem_name=:name AND b.is_current=0'''), {'name': name}).scalars()
+    if any(code != COMPANY['code'] for code in rows):
+        raise ValueError('历史公司归属与排除分类冲突，拒绝覆盖: ' + name)
+
+
 def run(output):
     from pipelines.dim.manual_refresh import apply_feishu_dimension
     from scheduler.monthly_publish import _publication_transaction
@@ -36,6 +44,7 @@ def run(output):
     with State().lock('warehouse', timeout=120), _publication_transaction() as conn:
         report['companies_created'] = int(register_company(conn, COMPANY))
         for name in OEMS:
+            validate_historical_ownership(conn, name)
             # Existing validator permits OTHER -> reviewed code, and rejects
             # replacing a confirmed real company or conflicting bridge.
             apply_feishu_dimension(conn, 'ownership', name, {'company_code': COMPANY['code']})

@@ -44,6 +44,7 @@ def test_scope_atomicity_and_idempotent_receipt(tmp_path, monkeypatch, conflict)
     with db.begin() as conn:
         conn.execute(text('CREATE TABLE dim_company (id INTEGER PRIMARY KEY,company_code TEXT,company_name TEXT,full_name TEXT,company_type TEXT,country TEXT,is_listed INTEGER)'))
         conn.execute(text('CREATE TABLE dim_oem (id INTEGER PRIMARY KEY,oem_name TEXT,company_id INTEGER)'))
+        conn.execute(text('CREATE TABLE bridge_brand_oem (oem_id INTEGER,company_id INTEGER,is_current INTEGER)'))
         for i, name in enumerate(job.OEMS, 1):
             conn.execute(text('INSERT INTO dim_oem VALUES (:id,:name,NULL)'), {'id': i, 'name': name})
     monkeypatch.setattr(workflow, 'State', lambda: SimpleNamespace(lock=lambda *a, **kw: nullcontext()))
@@ -65,3 +66,19 @@ def test_scope_atomicity_and_idempotent_receipt(tmp_path, monkeypatch, conflict)
         assert len(job.run(receipt)['oems']) == 34
         assert job.run(receipt)['companies_created'] == 0
         assert receipt.exists()
+
+
+def test_closed_historical_owner_cannot_be_silently_accepted():
+    from scheduler.research_scope import validate_historical_ownership
+    db = create_engine('sqlite://')
+    with db.begin() as conn:
+        conn.execute(text('CREATE TABLE dim_oem (id INTEGER,oem_name TEXT)'))
+        conn.execute(text('CREATE TABLE dim_company (id INTEGER,company_code TEXT)'))
+        conn.execute(text('CREATE TABLE bridge_brand_oem (oem_id INTEGER,company_id INTEGER,is_current INTEGER)'))
+        conn.execute(text("INSERT INTO dim_oem VALUES (1,'DS汽车')"))
+        conn.execute(text("INSERT INTO dim_company VALUES (2,'REAL_COMPANY')"))
+        conn.execute(text('INSERT INTO bridge_brand_oem VALUES (1,2,0)'))
+        with pytest.raises(ValueError, match='历史公司归属'):
+            validate_historical_ownership(conn, 'DS汽车')
+        conn.execute(text("UPDATE dim_company SET company_code='OUT_OF_RESEARCH'"))
+        validate_historical_ownership(conn, 'DS汽车')
