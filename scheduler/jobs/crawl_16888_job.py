@@ -148,7 +148,8 @@ def _replace_duplicate_pages(pages, chain, fetch, source_total, *, record_recove
         if recovered is not None:
             if record_recovery is not None:
                 record_recovery({'method': 'exact_observed_source_id_coverage',
-                                 'observations': len(observations), 'unique_source_ids': len(recovered)})
+                                 'observations': len(observations), 'raw_rows': len(recovered),
+                                 'unique_source_ids': sum(str(r.get('source_id', '')).isdigit() and int(r['source_id']) > 0 for r in recovered)})
             candidate = []
             offset = 0
             for page in pages:
@@ -164,21 +165,37 @@ def _replace_duplicate_pages(pages, chain, fetch, source_total, *, record_recove
 def _recover_tied_source_ids(observations, chain, source_total):
     if chain != 'style':
         return None
+    from scheduler.sales_source_rules import NAN
+
+    def anonymous(row):
+        return any(str(row.get(field, '')).strip().casefold() in NAN for field in ('model_name', 'manufacturer'))
+
+    def content(row):
+        return {k: v for k, v in row.items() if k not in ('rank', 'month')}
+
+    # Anonymous rows are explicitly excluded by the approved source policy.
+    # Preserve their initial raw multiplicity, never count them as unique cars.
+    initial_nan = [r for r in observations[:source_total] if anonymous(r)]
+    nan_content = [content(r) for r in initial_nan]
     unique = {}
     for row in observations:
+        if anonymous(row):
+            if content(row) not in nan_content:
+                return None
+            continue
         identity = str(row.get('source_id', '')).strip()
         if not identity.isdigit() or int(identity) == 0:
             return None
-        content = {k: v for k, v in row.items() if k not in ('rank', 'month')}
+        payload = content(row)
         if identity in unique:
             previous = {k: v for k, v in unique[identity].items() if k not in ('rank', 'month')}
-            if previous != content:
+            if previous != payload:
                 return None
         else:
             unique[identity] = row
-    if len(unique) != source_total:
+    if len(unique) + len(initial_nan) != source_total:
         return None
-    rows = list(unique.values())
+    rows = [*unique.values(), *initial_nan]
     if _duplicate_pages([rows], chain):
         return None
     return rows

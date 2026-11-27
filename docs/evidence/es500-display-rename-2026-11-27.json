@@ -1,0 +1,16 @@
+{
+  "scope": "2022-04 only",
+  "old": ["富康ES500", "东风新能源"],
+  "new": ["富康ES500", "神龙汽车"],
+  "source_id": "128264",
+  "source_url": "https://xl.16888.com/s/128264/",
+  "sales": 1,
+  "price_range": "14.18 - 14.18",
+  "old_rank": 499,
+  "new_rank": 502,
+  "observations": [
+    "2026-11-26 local logs/etl/renames-backlog-evidence.json",
+    "2026-11-27 full capture logs/etl/source-rules-capture-v2/2022-04/style_2022-04.csv"
+  ],
+  "note": "Source display-key correction only. Not a corporate ownership transfer. No mapping for other periods. Existing missing-key and duplicate guards remain."
+}

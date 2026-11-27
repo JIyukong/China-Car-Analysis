@@ -174,7 +174,7 @@ def _reconcile_ods(loader, chain: str, period: str, rows: list[dict]) -> str:
             from scheduler.sales_source_renames import rename_plan
 
             table, _, column, _ = _SOURCES[chain]
-            for old, new in rename_plan(existing, expected, chain):
+            for old, new in rename_plan(existing, expected, chain, period=period):
                 result = conn.execute(text(f'''
                     UPDATE {table}
                        SET model_name_raw=:new_model, {column}=:new_oem
