@@ -74,4 +74,6 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument('--load-reviewed-county-areas', metavar='REPORT_JSON')
     parser.add_argument('--seed-reviewed-private-companies', metavar='REPORT_JSON',
                         help='按已核实独立经营法人增量补公司归属，不发送飞书消息')
+    parser.add_argument('--apply-research-exclusions', metavar='REPORT_JSON',
+                        help='应用用户确认的34个非研究范围车企归属，不发送消息')
     return parser

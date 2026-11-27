@@ -5,6 +5,8 @@ from pathlib import Path
 from sqlalchemy import text
 
 COMPANIES = (
+    {'code': 'LINKTOUR', 'name': '领途汽车', 'full': '领途汽车有限公司',
+     'evidence': 'https://ggzyfw.beijing.gov.cn/ztxxtbr/20250121/4957680.html'},
     {'code': 'HYCAN', 'name': '合创汽车', 'full': '合创汽车科技有限公司',
      'evidence': 'https://static.cninfo.com.cn/finalpage/2024-03-29/1219444071.PDF'},
     {'code': 'HOZON', 'name': '合众汽车', 'full': '合众新能源汽车股份有限公司',
