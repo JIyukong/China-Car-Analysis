@@ -359,7 +359,7 @@ def test_publication_uses_company_effective_at_sale_month_end(warehouse):
 
 def test_research_bucket_preserves_market_totals_without_operating_growth(warehouse):
     publish, execute = warehouse
-    execute("UPDATE dim_company SET company_code='OUT_OF_RESEARCH',company_name='非研究范围车企' WHERE id=1")
+    execute("UPDATE dim_company SET company_code='OUT_OF_RESEARCH',company_name='非研究范围车企（改名）' WHERE id=1")
     for month, sales in [('2025-01', 5), ('2026-01', 10), ('2026-02', 20)]:
         add_source(execute, month, sales)
         publish.publish_month('style', month)
