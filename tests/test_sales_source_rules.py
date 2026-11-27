@@ -35,3 +35,11 @@ def test_qin_only_keeps_largest_sales_and_does_not_hide_pagination_ties():
     # Unrelated duplicates must still reach strict duplicate validation.
     other = row()
     assert select_rows([other, other.copy()], 'style')[0] == [other, other]
+
+
+def test_raw_positive_identity_repetition_is_checked_before_exclusion():
+    from scheduler.sales_source_rules import duplicate_source_ids
+    excluded = row('红旗H5', '一汽红旗', '7117', '129643')
+    assert duplicate_source_ids([excluded, excluded.copy()]) == {'129643'}
+    with pytest.raises(ValueError, match='冲突'):
+        duplicate_source_ids([excluded, {**excluded, 'sales_volume': '1'}])

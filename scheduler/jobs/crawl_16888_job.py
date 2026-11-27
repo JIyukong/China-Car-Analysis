@@ -96,14 +96,18 @@ def _navigate_capture(page, url: str):
 
 
 def _duplicate_pages(pages: list[list[dict]], chain: str) -> set[int]:
-    from scheduler.sales_source_rules import select_rows
-    kept, _ = select_rows([record for records in pages for record in records], chain)
+    from scheduler.sales_source_rules import duplicate_source_ids, select_rows
+    raw = [record for records in pages for record in records]
+    raw_duplicates = duplicate_source_ids(raw) if chain == 'style' else set()
+    kept, _ = select_rows(raw, chain)
     selected = {id(row) for row in kept}
     seen = {}
     duplicate_pages = set()
     column = 'manufacturer' if chain == 'style' else 'city'
     for number, records in enumerate(pages, 1):
         for record in records:
+            if str(record.get('source_id', '')).strip() in raw_duplicates:
+                duplicate_pages.add(number)
             if id(record) not in selected:
                 continue
             key = (record.get('model_name', '').strip(), record.get(column, '').strip())

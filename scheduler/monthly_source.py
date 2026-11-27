@@ -92,7 +92,9 @@ def _validated_csv(csv_path: Path, manifest_path: Path, chain: str, period: str)
             raise ValueError(f'月份与目标月 {period} 不符: {csv_path}')
     if len(raw_rows) != source_total:
         raise ValueError(f'CSV 覆盖不足或超出站点总数: {csv_path}')
-    from scheduler.sales_source_rules import VERSION, select_rows
+    from scheduler.sales_source_rules import VERSION, duplicate_source_ids, select_rows
+    if chain == 'style' and duplicate_source_ids(raw_rows):
+        raise ValueError('原始来源编号重复，排除规则不能掩盖分页遗漏')
     selected, excluded = select_rows(raw_rows, chain)
     if not selected:
         raise ValueError('来源业务键规则排除后没有有效记录，拒绝验收空月份')

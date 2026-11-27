@@ -49,6 +49,12 @@ def test_retry_pool_recovers_missing_ids_and_records_decision():
     assert decisions[0]['unique_source_ids'] == 2
 
 
+def test_excluded_h5_duplicate_still_requires_pagination_repair():
+    excluded = {**row('红旗H5'), 'manufacturer': '一汽红旗', 'source_id': '129643'}
+    other = {**row('other'), 'source_id': '2'}
+    assert _duplicate_pages([[excluded], [other], [excluded.copy()]], 'style') == {1, 3}
+
+
 def test_conflicting_duplicates_are_never_retried():
     with pytest.raises(ValueError, match='冲突'):
         _replace_duplicate_pages([[row('a')], [row('a', '63')]], 'style', lambda n: pytest.fail('must not fetch'), 2)

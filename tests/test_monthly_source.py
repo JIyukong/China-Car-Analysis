@@ -97,6 +97,24 @@ def test_reviewed_qin_selects_max_and_retains_exclusion_receipt(source, monkeypa
     assert receipt['excluded'][0]['row']['sales_volume'] == '1484'
 
 
+def test_raw_excluded_duplicate_cannot_pass_csv_acceptance(tmp_path):
+    from scheduler.monthly_source import _validated_csv
+    write_snapshot(tmp_path, [['2026-07', 'Other', 'Maker', '1']] * 3)
+    csv_path = tmp_path / 'style_2026-07.csv'
+    with csv_path.open('w', encoding='utf-8', newline='') as handle:
+        writer = csv.writer(handle)
+        writer.writerow(['month', 'model_name', 'manufacturer', 'sales_volume', 'source_id'])
+        writer.writerows([['2026-07', '红旗H5', '一汽红旗', '7117', '129643'],
+                          ['2026-07', 'Other', 'Maker', '1', '2'],
+                          ['2026-07', '红旗H5', '一汽红旗', '7117', '129643']])
+    path = tmp_path / 'manifest.json'
+    manifest = json.loads(path.read_text())
+    manifest['csv_sha256'] = hashlib.sha256(csv_path.read_bytes()).hexdigest()
+    path.write_text(json.dumps(manifest))
+    with pytest.raises(ValueError, match='原始来源编号重复'):
+        _validated_csv(csv_path, path, 'style', '2026-07')
+
+
 def test_accepted_digest_reconciles_missing_ods_row(source, monkeypatch):
     monthly, ods = source
     rows = [["2026-07", "Model", "Maker", "5"]]

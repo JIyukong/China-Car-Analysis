@@ -10,6 +10,23 @@ VERSION = 'reviewed_sales_v1'
 NAN = {'', 'nan', 'none', 'null', 'n/a'}
 
 
+def duplicate_source_ids(rows):
+    """Check raw positive IDs before exclusions, including questionable records."""
+    seen, duplicates = {}, set()
+    for row in rows:
+        identity = str(row.get('source_id', '')).strip()
+        if not identity.isdigit() or int(identity) == 0:
+            continue
+        content = {k: v for k, v in row.items() if k not in ('rank', 'month')}
+        if identity in seen:
+            if seen[identity] != content:
+                raise ValueError(f'来源编号重复且内容冲突: {identity}')
+            duplicates.add(identity)
+        else:
+            seen[identity] = content
+    return duplicates
+
+
 def _sales(row):
     value = str(row.get('sales_volume', '')).strip()
     if not re.fullmatch(r'(?:[0-9]+|[0-9]{1,3}(?:,[0-9]{3})+)', value):
