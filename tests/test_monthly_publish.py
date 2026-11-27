@@ -357,6 +357,20 @@ def test_publication_uses_company_effective_at_sale_month_end(warehouse):
     assert execute('SELECT company_id FROM dwd_sales_monthly_model ORDER BY stat_month') == [(1,), (2,)]
 
 
+def test_reviewed_existing_display_alias_keeps_fact_id_on_republication(warehouse):
+    publish, execute = warehouse
+    execute("UPDATE dim_oem SET oem_name='长城汽车' WHERE id=1")
+    add_source(execute, '2026-10', 10, '长城大狗')
+    execute("UPDATE ods_sales_monthly_model SET manufacturer_name_raw='长城汽车'")
+    execute("INSERT INTO dim_model (id,model_name,oem_id,brand_id) VALUES (1,'哈弗大狗',1,1)")
+    publish.publish_month('style','2026-10')
+    original=execute('SELECT id,sales_volume FROM dwd_sales_monthly_model')
+    execute("UPDATE dwd_sales_monthly_model SET model_name='长城大狗'")
+    publish.publish_month('style','2026-10')
+    assert execute('SELECT id,sales_volume FROM dwd_sales_monthly_model')==original
+    assert execute('SELECT model_name FROM dwd_sales_monthly_model')==[('哈弗大狗',)]
+
+
 def test_research_bucket_preserves_market_totals_without_operating_growth(warehouse):
     publish, execute = warehouse
     execute("UPDATE dim_company SET company_code='OUT_OF_RESEARCH',company_name='非研究范围车企（改名）' WHERE id=1")

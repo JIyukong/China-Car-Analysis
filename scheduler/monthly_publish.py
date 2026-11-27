@@ -323,7 +323,9 @@ def _write_dwd(conn, chain, period, source, candidates, *, wide_city=False):
             from scheduler.sales_source_renames import canonical_city_name
             return canonical_city_name(_name(row['model_name_raw'])).casefold(), _name(row['city_name_raw']).casefold()
         if chain == 'style':
-            return _name(row['model_name']).casefold(), row['oem_id']
+            from scheduler.sales_source_renames import canonical_key
+            model = canonical_key((_name(row['model_name']), _name(row['manufacturer_name'])))[0]
+            return model.casefold(), row['oem_id']
         return _natural_key(chain, row)
 
     expected = _index(candidates, key, 'DWD 候选')

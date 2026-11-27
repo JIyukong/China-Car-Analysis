@@ -219,7 +219,28 @@ def _apply_research_exclusions(parser, args):
         return 1
 
 
+def _repair_gaoshan_identities(parser, args):
+    reject_other_flags(parser, args, allowed=('repair_gaoshan_identities','plan'),
+                       message='--repair-gaoshan-identities 需要单独运行')
+    from scheduler.gaoshan_identity import PROFILES, ReceiptWriteError, run
+    if args.plan:
+        print(json.dumps({'plan':True,'profiles':PROFILES},ensure_ascii=False))
+        return 0
+    require_etl_account(parser)
+    try:
+        print(json.dumps(run(args.repair_gaoshan_identities),ensure_ascii=False,default=str))
+        return 0
+    except ReceiptWriteError as exc:
+        print(json.dumps({'committed':True,'receipt_error':str(exc),'report':exc.report},ensure_ascii=False,default=str))
+        logger.error('%s', exc)
+        return 2
+    except Exception:
+        logger.exception('高山车型身份修复失败，事务回滚')
+        return 1
+
+
 _STANDALONE_HANDLERS = (
+    ('repair_gaoshan_identities', _repair_gaoshan_identities),
     ('apply_research_exclusions', _apply_research_exclusions),
     ('seed_reviewed_private_companies', _seed_reviewed_private_companies),
     ("load_reviewed_county_areas", _load_county_areas),
