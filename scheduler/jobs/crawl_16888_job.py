@@ -96,11 +96,16 @@ def _navigate_capture(page, url: str):
 
 
 def _duplicate_pages(pages: list[list[dict]], chain: str) -> set[int]:
+    from scheduler.sales_source_rules import select_rows
+    kept, _ = select_rows([record for records in pages for record in records], chain)
+    selected = {id(row) for row in kept}
     seen = {}
     duplicate_pages = set()
     column = 'manufacturer' if chain == 'style' else 'city'
     for number, records in enumerate(pages, 1):
         for record in records:
+            if id(record) not in selected:
+                continue
             key = (record.get('model_name', '').strip(), record.get(column, '').strip())
             if not all(key):
                 raise ValueError('来源业务键缺失，不能局部修复')
@@ -116,8 +121,9 @@ def _duplicate_pages(pages: list[list[dict]], chain: str) -> set[int]:
     return duplicate_pages
 
 
-def _replace_duplicate_pages(pages, chain, fetch, source_total):
+def _replace_duplicate_pages(pages, chain, fetch, source_total, *, record_recovery=None):
     candidate = [list(records) for records in pages]
+    observations = [record for records in pages for record in records]
     for _ in range(2):
         affected = _duplicate_pages(candidate, chain)
         if not affected:
@@ -126,14 +132,52 @@ def _replace_duplicate_pages(pages, chain, fetch, source_total):
             raise ValueError('重复涉及超过六页，拒绝扩大局部重抓')
         for number in sorted(affected):
             records = fetch(number)
+            observations.extend(records)
             if len(records) != len(candidate[number - 1]):
                 raise ValueError('局部重抓行数变化，必须重新完整验收')
             candidate[number - 1] = records
     if _duplicate_pages(candidate, chain):
+        # Tied source rows can drift across page boundaries. Recover only when
+        # observed real source IDs form an exact, conflict-free full-month set.
+        # This is coverage recovery, never blind name-based deduplication.
+        recovered = _recover_tied_source_ids(observations, chain, source_total)
+        if recovered is not None:
+            if record_recovery is not None:
+                record_recovery({'method': 'exact_observed_source_id_coverage',
+                                 'observations': len(observations), 'unique_source_ids': len(recovered)})
+            candidate = []
+            offset = 0
+            for page in pages:
+                candidate.append(recovered[offset:offset + len(page)])
+                offset += len(page)
+            return candidate
         raise ValueError('局部重抓两轮后仍有重复业务键，来源分页不稳定')
     if sum(map(len, candidate)) != source_total:
         raise ValueError('局部重抓后唯一业务键覆盖不足')
     return candidate
+
+
+def _recover_tied_source_ids(observations, chain, source_total):
+    if chain != 'style':
+        return None
+    unique = {}
+    for row in observations:
+        identity = str(row.get('source_id', '')).strip()
+        if not identity.isdigit() or int(identity) == 0:
+            return None
+        content = {k: v for k, v in row.items() if k not in ('rank', 'month')}
+        if identity in unique:
+            previous = {k: v for k, v in unique[identity].items() if k not in ('rank', 'month')}
+            if previous != content:
+                return None
+        else:
+            unique[identity] = row
+    if len(unique) != source_total:
+        return None
+    rows = list(unique.values())
+    if _duplicate_pages([rows], chain):
+        return None
+    return rows
 
 
 def _capture_pages(page, crawler, chain: str, period: str, path: Path) -> None:
@@ -197,10 +241,16 @@ def _capture_pages(page, crawler, chain: str, period: str, path: Path) -> None:
         if len(affected) > 6:
             raise ValueError('重复涉及超过六页，拒绝扩大局部重抓')
         # Compact original evidence only; successful pages never produce HTML.
-        (path / 'page_retry.json').write_text(json.dumps({
+        retry_evidence = {
             'chain': chain, 'period': period, 'affected_pages': affected,
             'original_rows': {str(n): captured_pages[n - 1] for n in affected},
-        }, ensure_ascii=False, indent=2), encoding='utf-8')
+            'refetches': [],
+        }
+
+        def save_retry():
+            (path / 'page_retry.json').write_text(json.dumps(retry_evidence, ensure_ascii=False, indent=2), encoding='utf-8')
+
+        save_retry()
 
         def refetch(number):
             time.sleep(random.uniform(crawler.PAGE_SLEEP_MIN, crawler.PAGE_SLEEP_MAX))
@@ -213,9 +263,16 @@ def _capture_pages(page, crawler, chain: str, period: str, path: Path) -> None:
                     or crawler.get_total_count(page) != source_total
                     or (pager.locator('.next').count() > 0) != (number < len(captured_pages))):
                 raise ValueError('局部重抓分页或来源总数变化')
-            return crawler.extract_table_rows(page)
+            records = crawler.extract_table_rows(page)
+            retry_evidence['refetches'].append({'page': number, 'rows': records})
+            save_retry()
+            return records
 
-        repaired = _replace_duplicate_pages(captured_pages, chain, refetch, source_total)
+        def record_recovery(result):
+            retry_evidence['recovery'] = result
+            save_retry()
+
+        repaired = _replace_duplicate_pages(captured_pages, chain, refetch, source_total, record_recovery=record_recovery)
         with csv_path.open('w', encoding='utf-8-sig', newline='') as handle:
             writer = csv.DictWriter(handle, fieldnames=crawler.CSV_COLUMNS)
             writer.writeheader()

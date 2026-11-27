@@ -76,6 +76,27 @@ def test_source_digest_detects_sales_revision_with_same_row_count(source, monkey
     assert ods.writes == 2
 
 
+def test_reviewed_nan_row_is_not_loaded_but_raw_coverage_is_checked(source, monkeypatch):
+    monthly, ods = source
+    rows = [['2026-07', 'Model', 'Maker', '5'], ['2026-07', '', '', '200']]
+    monkeypatch.setattr(monthly, '_crawl_snapshot', lambda chain, period, path: write_snapshot(path, rows))
+    monthly.collect_month('style', '2026-07')
+    assert len(ods.rows) == 1
+    receipts = list(ods.rows.values())
+    assert receipts[0]['sales_volume'] == 5
+
+
+def test_reviewed_qin_selects_max_and_retains_exclusion_receipt(source, monkeypatch, tmp_path):
+    monthly, ods = source
+    rows = [['2026-07', '秦新能源', '比亚迪', '3029'], ['2026-07', '秦新能源', '比亚迪', '1484']]
+    monkeypatch.setattr(monthly, '_crawl_snapshot', lambda chain, period, path: write_snapshot(path, rows))
+    monthly.collect_month('style', '2026-07')
+    assert ods.rows[('秦新能源', '比亚迪')]['sales_volume'] == 3029
+    receipt = json.loads(next(tmp_path.rglob('*.review.json')).read_text(encoding='utf-8'))
+    assert receipt['raw_rows'] == 2 and receipt['accepted_rows'] == 1
+    assert receipt['excluded'][0]['row']['sales_volume'] == '1484'
+
+
 def test_accepted_digest_reconciles_missing_ods_row(source, monkeypatch):
     monthly, ods = source
     rows = [["2026-07", "Model", "Maker", "5"]]

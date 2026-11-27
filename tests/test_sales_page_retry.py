@@ -28,6 +28,27 @@ def test_persistent_duplicate_has_bounded_retries():
     assert len(calls) == 4
 
 
+def test_tied_page_drift_recovers_only_exact_observed_source_id_coverage():
+    from scheduler.jobs.crawl_16888_job import _recover_tied_source_ids
+    a, b = {**row('a'), 'source_id': '1'}, {**row('b'), 'source_id': '2'}
+    assert _recover_tied_source_ids([a, a, b], 'style', 2) == [a, b]
+    assert _recover_tied_source_ids([a, a], 'style', 2) is None
+    assert _recover_tied_source_ids([a, b], 'style', 1) is None
+    assert _recover_tied_source_ids([a, {**a, 'sales_volume': '99'}, b], 'style', 2) is None
+    assert _recover_tied_source_ids([a, {**b, 'source_id': '0'}], 'style', 2) is None
+    assert _recover_tied_source_ids([a, b], 'city', 2) is None
+
+
+def test_retry_pool_recovers_missing_ids_and_records_decision():
+    a, b = {**row('a'), 'source_id': '1'}, {**row('b'), 'source_id': '2'}
+    decisions = []
+    result = _replace_duplicate_pages([[a], [a.copy()]], 'style', lambda n: [b.copy()], 2,
+                                      record_recovery=decisions.append)
+    assert {r['source_id'] for p in result for r in p} == {'1', '2'}
+    assert decisions[0]['method'] == 'exact_observed_source_id_coverage'
+    assert decisions[0]['unique_source_ids'] == 2
+
+
 def test_conflicting_duplicates_are_never_retried():
     with pytest.raises(ValueError, match='冲突'):
         _replace_duplicate_pages([[row('a')], [row('a', '63')]], 'style', lambda n: pytest.fail('must not fetch'), 2)

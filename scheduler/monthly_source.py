@@ -84,9 +84,21 @@ def _validated_csv(csv_path: Path, manifest_path: Path, chain: str, period: str)
             or sum(page_rows) != source_total):
         raise ValueError(f"分页行数与站点总数无法核对覆盖: {manifest_path}")
 
+    raw_rows = list(reader)
+    for row in raw_rows:
+        if None in row or any(value is None for value in row.values()):
+            raise ValueError(f'CSV 列数异常: {csv_path}')
+        if row['month'].strip() != period:
+            raise ValueError(f'月份与目标月 {period} 不符: {csv_path}')
+    if len(raw_rows) != source_total:
+        raise ValueError(f'CSV 覆盖不足或超出站点总数: {csv_path}')
+    from scheduler.sales_source_rules import VERSION, select_rows
+    selected, excluded = select_rows(raw_rows, chain)
+    if not selected:
+        raise ValueError('来源业务键规则排除后没有有效记录，拒绝验收空月份')
     key_lines = {}
-    for row in reader:
-        location = f"{csv_path}:{reader.line_num}"
+    for number, row in enumerate(selected, 2):
+        location = f"{csv_path}:selected:{number}"
         if None in row or any(value is None for value in row.values()):
             raise ValueError(f"CSV 列数异常: {location}")
         if row["month"].strip() != period:
@@ -98,7 +110,7 @@ def _validated_csv(csv_path: Path, manifest_path: Path, chain: str, period: str)
             raise ValueError(
                 f"业务键重复 {key!r}: {location} 与第 {key_lines[key]} 行重复，请检查站点分页或同名车型"
             )
-        key_lines[key] = reader.line_num
+        key_lines[key] = number
         sales = row["sales_volume"].strip()
         if not _UNSIGNED_INT.fullmatch(sales) or int(sales.replace(",", "")) > _MAX_UNSIGNED:
             raise ValueError(f"销量无效 {sales!r}: {location}")
@@ -108,10 +120,20 @@ def _validated_csv(csv_path: Path, manifest_path: Path, chain: str, period: str)
         if any(len(row.get(field, "").strip()) > 64 for field in ("price_range", "level")):
             raise ValueError(f"价格或级别超过 ODS 字段长度: {location}")
 
-    if len(key_lines) != source_total:
-        raise ValueError(f"CSV 覆盖不足或超出站点总数: {csv_path}，有效业务键 {len(key_lines)}/{source_total}")
+    if len(key_lines) + len(excluded) != source_total:
+        raise ValueError(f'来源规则行数对账失败: {csv_path}')
     if len(key_lines) < warn_minimum:
         logger.warning("16888 %s %s 已核对站点覆盖，但 %d 行低于历史参考 %d 行", chain, period, len(key_lines), warn_minimum)
+    if excluded:
+        receipt = {'rules_version': VERSION, 'chain': chain, 'period': period,
+                   'raw_sha256': manifest['csv_sha256'], 'raw_rows': source_total,
+                   'accepted_rows': len(selected), 'excluded': excluded}
+        csv_path.with_suffix('.review.json').write_text(json.dumps(receipt, ensure_ascii=False, indent=2), encoding='utf-8')
+        output = io.StringIO(newline='')
+        writer = csv.DictWriter(output, fieldnames=header)
+        writer.writeheader()
+        writer.writerows(selected)
+        return output.getvalue().encode('utf-8-sig')
     return raw_csv
 
 
