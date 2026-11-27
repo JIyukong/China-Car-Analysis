@@ -43,6 +43,16 @@ def test_both_labels_in_source_are_not_a_rename():
     assert rename_plan({old: (1,)}, {old: (1,), new: (1,)}) == []
 
 
+def test_es500_display_rename_is_limited_to_the_verified_month():
+    from scheduler.sales_source_renames import dimension_expressions
+    old, new = ('富康ES500', '东风新能源'), ('富康ES500', '神龙汽车')
+    assert rename_plan({old: (1,)}, {new: (1,)}, period='2022-04') == [(old, new)]
+    assert rename_plan({old: (1,)}, {new: (1,)}, period='2022-03') == []
+    params = dimension_expressions('2022-04')[2]
+    assert '富康ES500' in params.values()
+    assert '富康ES500' not in dimension_expressions('2022-03')[2].values()
+
+
 def test_city_rename_keeps_exact_city_and_has_no_national_ownership_dependency():
     old, new = ('哈弗大狗', '上海'), ('长城大狗', '上海')
     assert rename_plan({old: (1,)}, {new: (1,)}, 'city') == [(old, new)]

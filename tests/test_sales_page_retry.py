@@ -55,6 +55,16 @@ def test_excluded_h5_duplicate_still_requires_pagination_repair():
     assert _duplicate_pages([[excluded], [other], [excluded.copy()]], 'style') == {1, 3}
 
 
+def test_tied_recovery_accounts_for_approved_nan_rows_without_dropping_them():
+    from scheduler.jobs.crawl_16888_job import _recover_tied_source_ids
+    a, b = {**row('a'), 'source_id': '1'}, {**row('b'), 'source_id': '2'}
+    dirty = {**row(''), 'manufacturer': '', 'source_id': '0'}
+    recovered = _recover_tied_source_ids([a, a.copy(), dirty, b], 'style', 3)
+    assert recovered is not None and len(recovered) == 3 and dirty in recovered
+    # A newly observed anonymous payload is not evidence of the original dirty row.
+    assert _recover_tied_source_ids([a, a.copy(), dirty, b, {**dirty, 'sales_volume':'99'}], 'style', 3) is None
+
+
 def test_conflicting_duplicates_are_never_retried():
     with pytest.raises(ValueError, match='冲突'):
         _replace_duplicate_pages([[row('a')], [row('a', '63')]], 'style', lambda n: pytest.fail('must not fetch'), 2)

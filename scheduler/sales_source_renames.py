@@ -36,6 +36,17 @@ RENAMES = {
 }
 
 
+PERIOD_RENAMES = {
+    # Two independent observations (2026-11-26 and 27) of source /s/128264/;
+    # only this historical month is evidenced. Preserve the original DIM identity.
+    '2022-04': {('富康ES500', '东风新能源'): ('富康ES500', '神龙汽车')},
+}
+
+
+def _rules(period=None):
+    return {**RENAMES, **PERIOD_RENAMES.get(period, {})}
+
+
 def canonical_key(key):
     return next((old for old, new in RENAMES.items() if new == key), key)
 
@@ -62,10 +73,10 @@ def canonical_city_name(name):
     return next((old for old, new in CITY_RENAMES.items() if new == name), name)
 
 
-def rename_plan(existing, expected, chain='style'):
+def rename_plan(existing, expected, chain='style', *, period=None):
     plan = []
     for old in sorted(existing.keys() - expected.keys()):
-        new = RENAMES.get(old) if chain == 'style' else (CITY_RENAMES.get(old[0]), old[1])
+        new = _rules(period).get(old) if chain == 'style' else (CITY_RENAMES.get(old[0]), old[1])
         if new not in expected:
             continue
         if new in existing:
@@ -74,10 +85,10 @@ def rename_plan(existing, expected, chain='style'):
     return plan
 
 
-def dimension_expressions():
+def dimension_expressions(period=None):
     """Parameterized SQL expressions for resolving new source labels to old DIM identity."""
     model, oem, params = [], [], {}
-    for i, (old, new) in enumerate(RENAMES.items()):
+    for i, (old, new) in enumerate(_rules(period).items()):
         params.update({f'rm{i}': new[0], f'ro{i}': new[1], f'cm{i}': old[0], f'co{i}': old[1]})
         condition = f'TRIM(s.model_name_raw)=:rm{i} AND TRIM(s.manufacturer_name_raw)=:ro{i}'
         model.append(f'WHEN {condition} THEN :cm{i}')

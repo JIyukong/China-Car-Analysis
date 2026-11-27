@@ -131,7 +131,7 @@ def _dimensions(conn, chain, month):
     energy_name = 'TRIM(s.model_name_raw)'
     if chain == 'style':
         from scheduler.sales_source_renames import dimension_expressions
-        model_name, oem_name, rename_params = dimension_expressions()
+        model_name, oem_name, rename_params = dimension_expressions(month.strftime('%Y-%m'))
         params.update(rename_params)
         energy_name = model_name
         cases = []
