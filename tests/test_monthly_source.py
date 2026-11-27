@@ -76,6 +76,45 @@ def test_source_digest_detects_sales_revision_with_same_row_count(source, monkey
     assert ods.writes == 2
 
 
+def test_reviewed_nan_row_is_not_loaded_but_raw_coverage_is_checked(source, monkeypatch):
+    monthly, ods = source
+    rows = [['2026-07', 'Model', 'Maker', '5'], ['2026-07', '', '', '200']]
+    monkeypatch.setattr(monthly, '_crawl_snapshot', lambda chain, period, path: write_snapshot(path, rows))
+    monthly.collect_month('style', '2026-07')
+    assert len(ods.rows) == 1
+    receipts = list(ods.rows.values())
+    assert receipts[0]['sales_volume'] == 5
+
+
+def test_reviewed_qin_selects_max_and_retains_exclusion_receipt(source, monkeypatch, tmp_path):
+    monthly, ods = source
+    rows = [['2026-07', '秦新能源', '比亚迪', '3029'], ['2026-07', '秦新能源', '比亚迪', '1484']]
+    monkeypatch.setattr(monthly, '_crawl_snapshot', lambda chain, period, path: write_snapshot(path, rows))
+    monthly.collect_month('style', '2026-07')
+    assert ods.rows[('秦新能源', '比亚迪')]['sales_volume'] == 3029
+    receipt = json.loads(next(tmp_path.rglob('*.review.json')).read_text(encoding='utf-8'))
+    assert receipt['raw_rows'] == 2 and receipt['accepted_rows'] == 1
+    assert receipt['excluded'][0]['row']['sales_volume'] == '1484'
+
+
+def test_raw_excluded_duplicate_cannot_pass_csv_acceptance(tmp_path):
+    from scheduler.monthly_source import _validated_csv
+    write_snapshot(tmp_path, [['2026-07', 'Other', 'Maker', '1']] * 3)
+    csv_path = tmp_path / 'style_2026-07.csv'
+    with csv_path.open('w', encoding='utf-8', newline='') as handle:
+        writer = csv.writer(handle)
+        writer.writerow(['month', 'model_name', 'manufacturer', 'sales_volume', 'source_id'])
+        writer.writerows([['2026-07', '红旗H5', '一汽红旗', '7117', '129643'],
+                          ['2026-07', 'Other', 'Maker', '1', '2'],
+                          ['2026-07', '红旗H5', '一汽红旗', '7117', '129643']])
+    path = tmp_path / 'manifest.json'
+    manifest = json.loads(path.read_text())
+    manifest['csv_sha256'] = hashlib.sha256(csv_path.read_bytes()).hexdigest()
+    path.write_text(json.dumps(manifest))
+    with pytest.raises(ValueError, match='原始来源编号重复'):
+        _validated_csv(csv_path, path, 'style', '2026-07')
+
+
 def test_accepted_digest_reconciles_missing_ods_row(source, monkeypatch):
     monthly, ods = source
     rows = [["2026-07", "Model", "Maker", "5"]]
