@@ -1,0 +1,39 @@
+{
+  "approved_on": "2026-11-28",
+  "authority": "用户明确要求自主修复；仅品牌和主机厂为本次审核重点",
+  "required_identity_fields": [
+    "brand_code",
+    "brand_name",
+    "oem_code",
+    "oem_name"
+  ],
+  "other_attributes": "按联网证据填齐九字段；进口渠道不能由车型名称确定时保留校验器允许的unknown；混合能源或品牌聚合来源用其他并保留原因",
+  "overseas_oem_bucket": {
+    "code": "OEM_OVERSEAS_OUT_OF_RESEARCH",
+    "name": "海外主机厂不在研究范围内",
+    "match_name_contains": [
+      "海外",
+      "进口"
+    ],
+    "meaning": "研究范围汇总分类，非实际生产企业；保留原始车型名与实际生产企业证据",
+    "apply_to": "city_model only"
+  },
+  "company_bucket": {
+    "code": "OUT_OF_RESEARCH",
+    "name": "非研究范围车企",
+    "meaning": "复用现有公司研究排除分类；不覆盖已确认真实公司归属"
+  },
+  "status": "applied_286_city_models_2026_11_28",
+  "required_review_fields": [
+    "brand_code",
+    "brand_name",
+    "oem_code",
+    "oem_name",
+    "production_type",
+    "import_channel",
+    "energy_type",
+    "vehicle_type",
+    "evidence"
+  ],
+  "receipt": "logs/etl/city-model-review-20261128/receipt.json"
+}

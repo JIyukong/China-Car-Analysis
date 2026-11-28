@@ -1,0 +1,4804 @@
+[
+  {
+    "source_model_name": "AION N60",
+    "values": {
+      "brand_code": "BRAND_8DA451D471",
+      "brand_name": "埃安",
+      "oem_code": "OEM_C761EDB8CF",
+      "oem_name": "广汽埃安",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "production_type": "unknown",
+      "import_channel": "unknown",
+      "evidence": "厂家车型目录核实埃安与广汽埃安品牌关联；产品属性沿用唯一同名 dim_model id=5；https://www.aion.com.cn/vehicle/config/table?cid=NzA%3D"
+    }
+  },
+  {
+    "source_model_name": "AION RT",
+    "values": {
+      "brand_code": "BRAND_8DA451D471",
+      "brand_name": "埃安",
+      "oem_code": "OEM_C761EDB8CF",
+      "oem_name": "广汽埃安",
+      "energy_type": "新能源",
+      "vehicle_type": "轿车",
+      "production_type": "unknown",
+      "import_channel": "unknown",
+      "evidence": "厂家车型目录核实埃安与广汽埃安品牌关联；产品属性沿用唯一同名 dim_model id=6；https://www.aion.com.cn/vehicle/config/table?cid=NzA%3D"
+    }
+  },
+  {
+    "source_model_name": "AION S",
+    "values": {
+      "brand_code": "BRAND_8DA451D471",
+      "brand_name": "埃安",
+      "oem_code": "OEM_C761EDB8CF",
+      "oem_name": "广汽埃安",
+      "energy_type": "新能源",
+      "vehicle_type": "轿车",
+      "production_type": "unknown",
+      "import_channel": "unknown",
+      "evidence": "厂家车型目录核实埃安与广汽埃安品牌关联；产品属性沿用唯一同名 dim_model id=7；https://www.aion.com.cn/vehicle/config/table?cid=NzA%3D"
+    }
+  },
+  {
+    "source_model_name": "AION UT",
+    "values": {
+      "brand_code": "BRAND_8DA451D471",
+      "brand_name": "埃安",
+      "oem_code": "OEM_C761EDB8CF",
+      "oem_name": "广汽埃安",
+      "energy_type": "新能源",
+      "vehicle_type": "轿车",
+      "production_type": "unknown",
+      "import_channel": "unknown",
+      "evidence": "厂家车型目录核实埃安与广汽埃安品牌关联；产品属性沿用唯一同名 dim_model id=8；https://www.aion.com.cn/vehicle/config/table?cid=NzA%3D"
+    }
+  },
+  {
+    "source_model_name": "AION V",
+    "values": {
+      "brand_code": "BRAND_8DA451D471",
+      "brand_name": "埃安",
+      "oem_code": "OEM_C761EDB8CF",
+      "oem_name": "广汽埃安",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "production_type": "unknown",
+      "import_channel": "unknown",
+      "evidence": "厂家车型目录核实埃安与广汽埃安品牌关联；产品属性沿用唯一同名 dim_model id=9；https://www.aion.com.cn/vehicle/config/table?cid=NzA%3D"
+    }
+  },
+  {
+    "source_model_name": "AION Y",
+    "values": {
+      "brand_code": "BRAND_8DA451D471",
+      "brand_name": "埃安",
+      "oem_code": "OEM_C761EDB8CF",
+      "oem_name": "广汽埃安",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "production_type": "unknown",
+      "import_channel": "unknown",
+      "evidence": "厂家车型目录核实埃安与广汽埃安品牌关联；产品属性沿用唯一同名 dim_model id=10；https://www.aion.com.cn/vehicle/config/table?cid=NzA%3D"
+    }
+  },
+  {
+    "source_model_name": "AION i60",
+    "values": {
+      "brand_code": "BRAND_8DA451D471",
+      "brand_name": "埃安",
+      "oem_code": "OEM_C761EDB8CF",
+      "oem_name": "广汽埃安",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "production_type": "unknown",
+      "import_channel": "unknown",
+      "evidence": "厂家车型目录核实埃安与广汽埃安品牌关联；产品属性沿用唯一同名 dim_model id=3；https://www.aion.com.cn/vehicle/config/table?cid=NzA%3D"
+    }
+  },
+  {
+    "source_model_name": "Model Y L",
+    "values": {
+      "brand_code": "BRAND_9EDEF009C2",
+      "brand_name": "特斯拉",
+      "oem_code": "OEM_598A21221C",
+      "oem_name": "特斯拉中国",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "production_type": "unknown",
+      "import_channel": "unknown",
+      "evidence": "https://www.tesla.cn/modely/design?cfg=&redirect=no ; https://sh.people.com.cn/n2/2025/0820/c176738-41327979.html"
+    }
+  },
+  {
+    "source_model_name": "SKY EV01",
+    "values": {
+      "brand_code": "BRAND_0CA2DE02B3",
+      "brand_name": "东风",
+      "oem_code": "OEM_636957BF19",
+      "oem_name": "东风乘用车",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "production_type": "unknown",
+      "import_channel": "unknown",
+      "evidence": "东风风神纯电SUV，https://www.dfmc.com.cn/news/company/news_20231031_0930.html；品牌编码沿用全国东风乘用车维度口径"
+    }
+  },
+  {
+    "source_model_name": "五菱宏光PLUS",
+    "values": {
+      "brand_code": "BRAND_B181B14331",
+      "brand_name": "五菱",
+      "oem_code": "OEM_BEC3E4C50C",
+      "oem_name": "上汽通用五菱",
+      "energy_type": "燃油",
+      "vehicle_type": "MPV",
+      "production_type": "unknown",
+      "import_channel": "unknown",
+      "evidence": "https://www.sgmw.com.cn/carDetail?id=65"
+    }
+  },
+  {
+    "source_model_name": "五菱宏光S3",
+    "values": {
+      "brand_code": "BRAND_B181B14331",
+      "brand_name": "五菱",
+      "oem_code": "OEM_BEC3E4C50C",
+      "oem_name": "上汽通用五菱",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "production_type": "unknown",
+      "import_channel": "unknown",
+      "evidence": "https://www.sgmw.com.cn/carDetail?id=60"
+    }
+  },
+  {
+    "source_model_name": "捷途X70 PLUS",
+    "values": {
+      "brand_code": "BRAND_59C83C7889",
+      "brand_name": "奇瑞",
+      "oem_code": "OEM_A993E4D1D4",
+      "oem_name": "奇瑞汽车",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "production_type": "unknown",
+      "import_channel": "unknown",
+      "evidence": "https://www.jetour.com.cn/pc/enterprise/brand/index.html ; https://www.jetour.com.cn/vehicles/2026X70PLUS/；品牌编码沿用全国奇瑞汽车维度口径"
+    }
+  },
+  {
+    "source_model_name": "捷途X90 PLUS",
+    "values": {
+      "brand_code": "BRAND_59C83C7889",
+      "brand_name": "奇瑞",
+      "oem_code": "OEM_A993E4D1D4",
+      "oem_name": "奇瑞汽车",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "production_type": "unknown",
+      "import_channel": "unknown",
+      "evidence": "https://www.jetour.com.cn/pc/enterprise/brand/index.html ; https://www.jetour.com.cn/vehicles/2026X70PLUS/；品牌编码沿用全国奇瑞汽车维度口径"
+    }
+  },
+  {
+    "source_model_name": "捷途X95",
+    "values": {
+      "brand_code": "BRAND_59C83C7889",
+      "brand_name": "奇瑞",
+      "oem_code": "OEM_A993E4D1D4",
+      "oem_name": "奇瑞汽车",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "production_type": "unknown",
+      "import_channel": "unknown",
+      "evidence": "https://www.jetour.com.cn/pc/enterprise/brand/index.html ; https://www.jetour.com.cn/vehicles/2026X70PLUS/；品牌编码沿用全国奇瑞汽车维度口径"
+    }
+  },
+  {
+    "source_model_name": "捷途自由者7 PLUS",
+    "values": {
+      "brand_code": "BRAND_59C83C7889",
+      "brand_name": "奇瑞",
+      "oem_code": "OEM_A993E4D1D4",
+      "oem_name": "奇瑞汽车",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "production_type": "unknown",
+      "import_channel": "unknown",
+      "evidence": "https://www.jetour.com.cn/vehicles/freedom7plus/?sec=testdrive；品牌编码沿用全国奇瑞汽车维度口径"
+    }
+  },
+  {
+    "source_model_name": "哈弗H6L",
+    "values": {
+      "brand_code": "BRAND_592C5CD944",
+      "brand_name": "长城",
+      "oem_code": "OEM_940240A733",
+      "oem_name": "长城汽车",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "production_type": "unknown",
+      "import_channel": "unknown",
+      "evidence": "https://www.gwm.com.cn/history.html ; https://developer.huawei.com/consumer/cn/doc/DP-HiCar-Guides/available-models/；品牌编码沿用全国长城汽车维度口径"
+    }
+  },
+  {
+    "source_model_name": "哈弗H6S",
+    "values": {
+      "brand_code": "BRAND_592C5CD944",
+      "brand_name": "长城",
+      "oem_code": "OEM_940240A733",
+      "oem_name": "长城汽车",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "production_type": "unknown",
+      "import_channel": "unknown",
+      "evidence": "https://www.gwm.com.cn/history.html ; https://developer.huawei.com/consumer/cn/doc/DP-HiCar-Guides/available-models/；品牌编码沿用全国长城汽车维度口径"
+    }
+  },
+  {
+    "source_model_name": "欧拉好猫",
+    "values": {
+      "brand_code": "BRAND_592C5CD944",
+      "brand_name": "长城",
+      "oem_code": "OEM_940240A733",
+      "oem_name": "长城汽车",
+      "energy_type": "新能源",
+      "vehicle_type": "轿车",
+      "production_type": "unknown",
+      "import_channel": "unknown",
+      "evidence": "https://www.gwm.com.cn/history.html；欧拉品牌归属长城，品牌编码沿用全国同名车型维度口径"
+    }
+  },
+  {
+    "source_model_name": "蓝电E5 PLUS",
+    "values": {
+      "brand_code": "BRAND_7AE0DF12CD",
+      "brand_name": "蓝电",
+      "oem_code": "OEM_B25EEC0016",
+      "oem_name": "赛力斯蓝电",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "production_type": "unknown",
+      "import_channel": "unknown",
+      "evidence": "https://car.autohome.com.cn/config/series/7832.html ; https://detail.zol.com.cn/Api_Article_ProParam_proIds%3D2128102.html"
+    }
+  },
+  {
+    "source_model_name": "长安之星5",
+    "values": {
+      "brand_code": "BRAND_E0FC3C0EEA",
+      "brand_name": "凯程",
+      "oem_code": "OEM_E8BEED577C",
+      "oem_name": "长安凯程",
+      "energy_type": "燃油",
+      "vehicle_type": "其他",
+      "production_type": "unknown",
+      "import_channel": "unknown",
+      "evidence": "https://www.cakcauto.com/；微面/轻客按仓库大类口径为其他"
+    }
+  },
+  {
+    "source_model_name": "长安睿行M60",
+    "values": {
+      "brand_code": "BRAND_E0FC3C0EEA",
+      "brand_name": "凯程",
+      "oem_code": "OEM_E8BEED577C",
+      "oem_name": "长安凯程",
+      "energy_type": "燃油",
+      "vehicle_type": "其他",
+      "production_type": "unknown",
+      "import_channel": "unknown",
+      "evidence": "https://www.cakcauto.com/；微面/轻客按仓库大类口径为其他"
+    }
+  },
+  {
+    "source_model_name": "长安睿行EM60",
+    "values": {
+      "brand_code": "BRAND_E0FC3C0EEA",
+      "brand_name": "凯程",
+      "oem_code": "OEM_E8BEED577C",
+      "oem_name": "长安凯程",
+      "energy_type": "新能源",
+      "vehicle_type": "其他",
+      "production_type": "unknown",
+      "import_channel": "unknown",
+      "evidence": "https://www.cakcauto.com/ ; https://car.autohome.com.cn/config/series/5477-21892.html；微面/轻客按仓库大类口径为其他"
+    }
+  },
+  {
+    "source_model_name": "逸动PHEV",
+    "values": {
+      "brand_code": "BRAND_F466E62EAD",
+      "brand_name": "长安",
+      "oem_code": "OEM_71EF3844E8",
+      "oem_name": "长安汽车",
+      "energy_type": "新能源",
+      "vehicle_type": "轿车",
+      "production_type": "unknown",
+      "import_channel": "unknown",
+      "evidence": "https://www.ithome.com/0/839/798.htm"
+    }
+  },
+  {
+    "source_model_name": "长安CS55PLUS PHEV",
+    "values": {
+      "brand_code": "BRAND_F466E62EAD",
+      "brand_name": "长安",
+      "oem_code": "OEM_71EF3844E8",
+      "oem_name": "长安汽车",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "production_type": "unknown",
+      "import_channel": "unknown",
+      "evidence": "https://www.ithome.com/0/839/798.htm"
+    }
+  },
+  {
+    "source_model_name": "瑞虎7L",
+    "values": {
+      "brand_code": "BRAND_59C83C7889",
+      "brand_name": "奇瑞",
+      "oem_code": "OEM_A993E4D1D4",
+      "oem_name": "奇瑞汽车",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "production_type": "unknown",
+      "import_channel": "unknown",
+      "evidence": "https://www.chery.cn/vehicles/tiggo7l/"
+    }
+  },
+  {
+    "source_model_name": "风云A8L",
+    "values": {
+      "brand_code": "BRAND_59C83C7889",
+      "brand_name": "奇瑞",
+      "oem_code": "OEM_A993E4D1D4",
+      "oem_name": "奇瑞汽车",
+      "energy_type": "新能源",
+      "vehicle_type": "轿车",
+      "production_type": "unknown",
+      "import_channel": "unknown",
+      "evidence": "https://fulwin.chery.cn/vehicles/a8l/config/；品牌编码沿用全国奇瑞汽车维度口径"
+    }
+  },
+  {
+    "source_model_name": "高尔夫GTI",
+    "values": {
+      "brand_code": "BRAND_C3F70203DA",
+      "brand_name": "大众",
+      "oem_code": "OEM_0F661AB7A2",
+      "oem_name": "一汽-大众",
+      "energy_type": "燃油",
+      "vehicle_type": "轿车",
+      "production_type": "unknown",
+      "import_channel": "unknown",
+      "evidence": "https://vw.faw-vw.com/ ; https://www.vw.com.cn/CarModelList.html"
+    }
+  },
+  {
+    "source_model_name": "鑫源E3",
+    "values": {
+      "brand_code": "BRAND_98AD72838C",
+      "brand_name": "鑫源",
+      "oem_code": "OEM_938B704F58",
+      "oem_name": "鑫源汽车",
+      "energy_type": "新能源",
+      "vehicle_type": "其他",
+      "production_type": "unknown",
+      "import_channel": "unknown",
+      "evidence": "https://www.shineray-motors.com/content/details_493_883.html；微面/轻客按仓库大类口径为其他"
+    }
+  },
+  {
+    "source_model_name": "鑫源E3L",
+    "values": {
+      "brand_code": "BRAND_98AD72838C",
+      "brand_name": "鑫源",
+      "oem_code": "OEM_938B704F58",
+      "oem_name": "鑫源汽车",
+      "energy_type": "新能源",
+      "vehicle_type": "其他",
+      "production_type": "unknown",
+      "import_channel": "unknown",
+      "evidence": "https://www.shineray-motors.com/content/details_493_883.html；微面/轻客按仓库大类口径为其他"
+    }
+  },
+  {
+    "source_model_name": "轩度EV",
+    "values": {
+      "brand_code": "BRAND_2BD5062322",
+      "brand_name": "凯翼",
+      "oem_code": "OEM_56D3EA9149",
+      "oem_name": "凯翼汽车",
+      "energy_type": "新能源",
+      "vehicle_type": "轿车",
+      "production_type": "unknown",
+      "import_channel": "unknown",
+      "evidence": "https://kaiyihome.com/model/xuanduev"
+    }
+  },
+  {
+    "source_model_name": "领裕新能源",
+    "values": {
+      "brand_code": "BRAND_895A57FE6B",
+      "brand_name": "福特",
+      "oem_code": "OEM_35EAA0D160",
+      "oem_name": "江铃福特",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "production_type": "unknown",
+      "import_channel": "unknown",
+      "evidence": "https://www.jmc.com.cn/config.html?brand_id=1401&car_category=1&car_type=0&configure_id=1306"
+    }
+  },
+  {
+    "source_model_name": "家越07",
+    "values": {
+      "brand_code": "BRAND_023FB098D0",
+      "brand_name": "上汽",
+      "oem_code": "OEM_3735315737",
+      "oem_name": "上汽集团",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "production_type": "unknown",
+      "import_channel": "unknown",
+      "evidence": "https://www.roewe.com.cn/vehicles/jiayue07/?energytype=ev；品牌编码沿用全国上汽集团口径"
+    }
+  },
+  {
+    "source_model_name": "猛士X700",
+    "values": {
+      "brand_code": "BRAND_7B1659C0BA",
+      "brand_name": "猛士",
+      "oem_code": "OEM_0657387D28",
+      "oem_name": "猛士科技",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "production_type": "unknown",
+      "import_channel": "unknown",
+      "evidence": "https://www.dfmc.com.cn/news/company/news_20261012_0909.html ; https://www.dfmc.com.cn/news/company/news_20260929_0957.html"
+    }
+  },
+  {
+    "source_model_name": "菱智PLUS",
+    "values": {
+      "brand_code": "BRAND_93A1BBA6DF",
+      "brand_name": "风行",
+      "oem_code": "OEM_EAC3564ED9",
+      "oem_name": "东风风行",
+      "energy_type": "其他",
+      "vehicle_type": "MPV",
+      "production_type": "unknown",
+      "import_channel": "unknown",
+      "evidence": "https://www.fxauto.com.cn/index.php/car/parameter?cid=29；同一来源名包含汽油及天然气，能源大类采用其他，不单独认定为燃油"
+    }
+  },
+  {
+    "source_model_name": "传祺越7",
+    "values": {
+      "brand_code": "BRAND_1F8D836DFD",
+      "brand_name": "广汽",
+      "oem_code": "OEM_F91895E619",
+      "oem_name": "广汽乘用车",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "production_type": "unknown",
+      "import_channel": "unknown",
+      "evidence": "https://www.gacmotor.com/service/manual ; https://www.autohome.com.cn/news/202609/1317357.html?from=m&platform-key=pc"
+    }
+  },
+  {
+    "source_model_name": "捷途X70L",
+    "values": {
+      "brand_code": "BRAND_59C83C7889",
+      "brand_name": "奇瑞",
+      "oem_code": "OEM_A993E4D1D4",
+      "oem_name": "奇瑞汽车",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "production_type": "unknown",
+      "import_channel": "unknown",
+      "evidence": "https://www.jetour.com.cn/vehicles/jietux70l/；品牌编码沿用全国奇瑞汽车维度口径"
+    }
+  },
+  {
+    "source_model_name": "坦克300L新能源",
+    "values": {
+      "brand_code": "BRAND_592C5CD944",
+      "brand_name": "长城",
+      "oem_code": "OEM_940240A733",
+      "oem_name": "长城汽车",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "production_type": "unknown",
+      "import_channel": "unknown",
+      "evidence": "https://dealer.yiche.com/100235688/price_detail/187624.html ; https://www.gwm.com.cn/；品牌编码沿用全国长城汽车维度口径"
+    }
+  },
+  {
+    "source_model_name": "长城猛龙 PLUS",
+    "values": {
+      "brand_code": "BRAND_592C5CD944",
+      "brand_name": "长城",
+      "oem_code": "OEM_940240A733",
+      "oem_name": "长城汽车",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "production_type": "unknown",
+      "import_channel": "unknown",
+      "evidence": "https://static.cninfo.com.cn/finalpage/2026-08-26/1225502459.PDF；长城汽车2026半年报产品介绍，Hi4插混SUV"
+    }
+  },
+  {
+    "source_model_name": "鑫源向上V6 新能源",
+    "values": {
+      "brand_code": "BRAND_98AD72838C",
+      "brand_name": "鑫源",
+      "oem_code": "OEM_938B704F58",
+      "oem_name": "鑫源汽车",
+      "energy_type": "新能源",
+      "vehicle_type": "MPV",
+      "production_type": "unknown",
+      "import_channel": "unknown",
+      "evidence": "https://www.shineray-motors.com/up.html ; https://car.autohome.com.cn/config/series/8318.html"
+    }
+  },
+  {
+    "source_model_name": "领汇e5",
+    "values": {
+      "brand_code": "CITY_BRAND_B1433D70296C3D0348F3",
+      "brand_name": "领汇",
+      "oem_code": "OEM_1DE9A5E2EA",
+      "oem_name": "比亚迪",
+      "energy_type": "新能源",
+      "vehicle_type": "轿车",
+      "production_type": "unknown",
+      "import_channel": "unknown",
+      "evidence": "https://www.nbd.com.cn/articles/2026-05-09/4385358.html ; https://www.12365auto.com/list/brand-945-0-0-1.shtml"
+    }
+  },
+  {
+    "source_model_name": "领汇e7",
+    "values": {
+      "brand_code": "CITY_BRAND_B1433D70296C3D0348F3",
+      "brand_name": "领汇",
+      "oem_code": "OEM_1DE9A5E2EA",
+      "oem_name": "比亚迪",
+      "energy_type": "新能源",
+      "vehicle_type": "轿车",
+      "production_type": "unknown",
+      "import_channel": "unknown",
+      "evidence": "https://www.nbd.com.cn/articles/2026-05-09/4385358.html ; https://www.12365auto.com/list/brand-945-0-0-1.shtml"
+    }
+  },
+  {
+    "source_model_name": "领汇e9",
+    "values": {
+      "brand_code": "CITY_BRAND_B1433D70296C3D0348F3",
+      "brand_name": "领汇",
+      "oem_code": "OEM_1DE9A5E2EA",
+      "oem_name": "比亚迪",
+      "energy_type": "新能源",
+      "vehicle_type": "轿车",
+      "production_type": "unknown",
+      "import_channel": "unknown",
+      "evidence": "https://www.nbd.com.cn/articles/2026-05-09/4385358.html ; https://www.12365auto.com/list/brand-945-0-0-1.shtml"
+    }
+  },
+  {
+    "source_model_name": "领汇M9",
+    "values": {
+      "brand_code": "CITY_BRAND_B1433D70296C3D0348F3",
+      "brand_name": "领汇",
+      "oem_code": "OEM_1DE9A5E2EA",
+      "oem_name": "比亚迪",
+      "energy_type": "新能源",
+      "vehicle_type": "MPV",
+      "production_type": "unknown",
+      "import_channel": "unknown",
+      "evidence": "https://www.autohome.com.cn/news/202606/1315364.html?from=m&platform-key=pc"
+    }
+  },
+  {
+    "source_model_name": "阿斯顿·马丁DBX",
+    "values": {
+      "brand_code": "CITY_BRAND_9A11834A5E8366CE6F26",
+      "brand_name": "阿斯顿·马丁",
+      "oem_code": "CITY_OEM_F03195C8ACFE875233AF",
+      "oem_name": "Aston Martin Lagonda",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "evidence": "https://www.astonmartin.com/en-gb/our-world/news/2019/11/20 ; https://media.astonmartin.com/aston-martin-lagonda-opens-manufacturing-plant-in-st-athan-wales"
+    }
+  },
+  {
+    "source_model_name": "FOR ME",
+    "values": {
+      "brand_name": "莲花跑车",
+      "brand_code": "CITY_BRAND_F8998DA588774918B506",
+      "oem_name": "莲花跑车",
+      "oem_code": "CITY_OEM_F8998DA588774918B506",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "evidence": "用户确认莲花跑车FORME；政府报道确认武汉工厂生产；https://www.whkfq.gov.cn/xwzx/yw/kfqyw/qnxw/202604/t20260424_2757059.html ; https://car.autohome.com.cn/price/series-8464.html"
+    }
+  },
+  {
+    "source_model_name": "启境GT7",
+    "values": {
+      "brand_name": "启境",
+      "brand_code": "CITY_BRAND_7370E5014643A295D202",
+      "oem_name": "启境智能汽车科技（广州）有限公司",
+      "oem_code": "CITY_OEM_468B9FBD18025E3B1174",
+      "energy_type": "新能源",
+      "vehicle_type": "轿车",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "evidence": "用户确认广汽旗下独立主机厂；百度百科与广汽披露确认华望更名启境，不填成华为或泛广汽。https://bkso.baidu.com/item/启境/66770111 ; https://static.cninfo.com.cn/finalpage/2026-09-30/1225587906.PDF ; https://www.aistalandauto.com/support/"
+    }
+  },
+  {
+    "source_model_name": "启境GX7",
+    "values": {
+      "brand_name": "启境",
+      "brand_code": "CITY_BRAND_7370E5014643A295D202",
+      "oem_name": "启境智能汽车科技（广州）有限公司",
+      "oem_code": "CITY_OEM_468B9FBD18025E3B1174",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "evidence": "用户确认广汽旗下独立主机厂；百度百科与广汽披露确认华望更名启境，不填成华为或泛广汽。https://bkso.baidu.com/item/启境/66770111 ; https://static.cninfo.com.cn/finalpage/2026-09-30/1225587906.PDF ; https://www.aistalandauto.com/support/"
+    }
+  },
+  {
+    "source_model_name": "神行者8",
+    "values": {
+      "brand_name": "神行者",
+      "brand_code": "CITY_BRAND_839A6F987B1E809D4503",
+      "oem_name": "奇瑞捷豹路虎",
+      "oem_code": "OEM_5B1661E5D2",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "evidence": "用户确认奇瑞捷豹路虎主机厂；品牌独立保存神行者。https://www.ithome.com/1/004/471.htm ; https://www.ithome.com/1/002/029.htm"
+    }
+  },
+  {
+    "source_model_name": "吉祥AIR",
+    "values": {
+      "brand_name": "吉祥汽车",
+      "brand_code": "CITY_BRAND_C01D17B297DA39678765",
+      "oem_name": "云度新能源",
+      "oem_code": "OEM_3F8C4939FD",
+      "energy_type": "新能源",
+      "vehicle_type": "轿车",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "evidence": "云度为吉祥汽车制造公司，AIR为纯电紧凑型轿车。https://www.autohome.com.cn/news/202402/1292737.html ; https://www.autohome.com.cn/news/202505/1305983.html ; https://www.juneyao-auto.com.cn/"
+    }
+  },
+  {
+    "source_model_name": "奕境X9",
+    "values": {
+      "brand_name": "奕境",
+      "brand_code": "CITY_BRAND_17E0278DF1CEB97D8BB8",
+      "oem_name": "东风汽车集团有限公司",
+      "oem_code": "CITY_OEM_7C40B523EE4F059D2283",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "evidence": "生产企业东风汽车集团有限公司成都分公司，独立奕境品牌。https://sichuan.scol.com.cn/ggxw/202606/83267671.html ; https://www.dfmc.com.cn/news/company/news_20260928_1114.html"
+    }
+  },
+  {
+    "source_model_name": "电动MINI JCW",
+    "values": {
+      "brand_name": "MINI",
+      "brand_code": "CITY_BRAND_8DDEFB0087B1484E5E11",
+      "oem_name": "光束汽车",
+      "oem_code": "OEM_E5C6066735",
+      "energy_type": "新能源",
+      "vehicle_type": "轿车",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "evidence": "精确车型目录对应光束汽车电动MINI JCW（COOPER），ACEMAN为另一个完整来源车型名，不混并。https://car.autohome.com.cn/config/series/7866.html ; https://www.minichina.com.cn/zh_CN/home/range/all-electric-mini-cooper-jcw.html"
+    }
+  },
+  {
+    "source_model_name": "跨越星V3",
+    "values": {
+      "brand_name": "长安跨越",
+      "brand_code": "CITY_BRAND_87025D0D75955AB64DB4",
+      "oem_name": "重庆长安跨越车辆有限公司",
+      "oem_code": "CITY_OEM_3A31E0202C073D2CC07A",
+      "energy_type": "燃油",
+      "vehicle_type": "其他",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "evidence": "独立长安跨越，微面按仓库大类为其他；V5同时有汽油/CNG按其他能源保存，V5 EV保持独立。https://dealer.autohome.com.cn/2123558/info.html ; https://car.autohome.com.cn/config/series/6489.html ; https://car.autohome.com.cn/config/series/6340-20047.html"
+    }
+  },
+  {
+    "source_model_name": "跨越星V5",
+    "values": {
+      "brand_name": "长安跨越",
+      "brand_code": "CITY_BRAND_87025D0D75955AB64DB4",
+      "oem_name": "重庆长安跨越车辆有限公司",
+      "oem_code": "CITY_OEM_3A31E0202C073D2CC07A",
+      "energy_type": "其他",
+      "vehicle_type": "其他",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "evidence": "独立长安跨越，微面按仓库大类为其他；V5同时有汽油/CNG按其他能源保存，V5 EV保持独立。https://dealer.autohome.com.cn/2123558/info.html ; https://car.autohome.com.cn/config/series/6489.html ; https://car.autohome.com.cn/config/series/6340-20047.html"
+    }
+  },
+  {
+    "source_model_name": "跨越星V5 EV",
+    "values": {
+      "brand_name": "长安跨越",
+      "brand_code": "CITY_BRAND_87025D0D75955AB64DB4",
+      "oem_name": "重庆长安跨越车辆有限公司",
+      "oem_code": "CITY_OEM_3A31E0202C073D2CC07A",
+      "energy_type": "新能源",
+      "vehicle_type": "其他",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "evidence": "独立长安跨越，微面按仓库大类为其他；V5同时有汽油/CNG按其他能源保存，V5 EV保持独立。https://dealer.autohome.com.cn/2123558/info.html ; https://car.autohome.com.cn/config/series/6489.html ; https://car.autohome.com.cn/config/series/6340-20047.html"
+    }
+  },
+  {
+    "source_model_name": "e爱丽舍",
+    "values": {
+      "brand_name": "东风富康",
+      "brand_code": "DONGFENG_FUKANG",
+      "oem_name": "神龙汽车",
+      "oem_code": "OEM_5BF7A78EC2",
+      "energy_type": "新能源",
+      "vehicle_type": "轿车",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "evidence": "神龙官网明确e爱丽舍为东风富康车型；2021官方交付报道确认神龙制造，排除全国ODS中东风新能源作为具体生产主机厂的候选。https://www.dpca.com.cn/gywm/qygk ; https://www.dfmc.com.cn/news/company/news_20211222_1433.html"
+    }
+  },
+  {
+    "source_model_name": "江豚E5",
+    "values": {
+      "brand_name": "开瑞",
+      "brand_code": "BRAND_EE36B9D226",
+      "oem_name": "开瑞汽车",
+      "oem_code": "OEM_ECFC88D24F",
+      "energy_type": "新能源",
+      "vehicle_type": "其他",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "evidence": "按完整车系名区分：江豚E5对应开瑞，凯翼江豚E5是另一完整车系名；微面大类其他。https://www.mykarry.com/carConfig/99 ; https://car.autohome.com.cn/price/series-7735.html ; https://m.modiauto.com.cn/xuanche/cmp_22566.html"
+    }
+  },
+  {
+    "source_model_name": "宝马2系",
+    "values": {
+      "brand_name": "宝马",
+      "brand_code": "BRAND_38682F11C1",
+      "oem_name": "华晨宝马",
+      "oem_code": "OEM_762B15C372",
+      "energy_type": "燃油",
+      "vehicle_type": "轿车",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "evidence": "来源车型名宝马2系对应华晨国产目录，进口2系为单独车型身份，不合并进口记录。https://www.autohome.com.cn/7827/price.html ; https://www.chehang168.com/index.php?c=tool&m=parameter&pbid=cd8IS&psid=9a5gWXbf&type=1 ; https://bkso.baidu.com/item/宝马2系/5586270"
+    }
+  },
+  {
+    "source_model_name": "AION S MAX",
+    "values": {
+      "brand_name": "埃安",
+      "brand_code": "BRAND_8DA451D471",
+      "oem_name": "广汽埃安",
+      "oem_code": "OEM_C761EDB8CF",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：AION S MAX；品牌=埃安；主机厂=广汽埃安；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://voltavto.az/file/volt.pdf"
+    }
+  },
+  {
+    "source_model_name": "AION S Plus",
+    "values": {
+      "brand_name": "埃安",
+      "brand_code": "BRAND_8DA451D471",
+      "oem_name": "广汽埃安",
+      "oem_code": "OEM_C761EDB8CF",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：AION S Plus；品牌=埃安；主机厂=广汽埃安；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://car.autohome.com.cn/config/series/6619-22629.html"
+    }
+  },
+  {
+    "source_model_name": "AMG GT",
+    "values": {
+      "brand_name": "奔驰",
+      "brand_code": "BRAND_1DF1AA9A0A",
+      "oem_name": "梅赛德斯-AMG",
+      "oem_code": "CITY_OEM_086CD9F481E9AB1708E5",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "其他",
+      "evidence": "2026-11-28联网审核：AMG GT；品牌=奔驰；主机厂=梅赛德斯-AMG；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://price.pcauto.com.cn/sg27971/config.html"
+    }
+  },
+  {
+    "source_model_name": "Boxster",
+    "values": {
+      "brand_name": "保时捷",
+      "brand_code": "CITY_BRAND_6E126AE9CC805D712B27",
+      "oem_name": "保时捷",
+      "oem_code": "CITY_OEM_6E126AE9CC805D712B27",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "其他",
+      "evidence": "2026-11-28联网审核：Boxster；品牌=保时捷；主机厂=保时捷；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://price.pcauto.com.cn/sg176/config.html"
+    }
+  },
+  {
+    "source_model_name": "Bronco(进口)",
+    "values": {
+      "brand_name": "福特",
+      "brand_code": "BRAND_895A57FE6B",
+      "oem_name": "海外主机厂不在研究范围内",
+      "oem_code": "OEM_OVERSEAS_OUT_OF_RESEARCH",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：Bronco(进口)；品牌=福特；主机厂=海外主机厂不在研究范围内；按用户2026-11-28授权归入海外主机厂研究排除桶，目录实际主机厂为福特(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://k.autohome.com.cn/5440"
+    }
+  },
+  {
+    "source_model_name": "Cayenne",
+    "values": {
+      "brand_name": "保时捷",
+      "brand_code": "CITY_BRAND_6E126AE9CC805D712B27",
+      "oem_name": "保时捷",
+      "oem_code": "CITY_OEM_6E126AE9CC805D712B27",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：Cayenne；品牌=保时捷；主机厂=保时捷；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://detail.zol.com.cn/series/2530/10926063_1.html"
+    }
+  },
+  {
+    "source_model_name": "Cayenne新能源",
+    "values": {
+      "brand_name": "保时捷",
+      "brand_code": "CITY_BRAND_6E126AE9CC805D712B27",
+      "oem_name": "保时捷",
+      "oem_code": "CITY_OEM_6E126AE9CC805D712B27",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：Cayenne新能源；品牌=保时捷；主机厂=保时捷；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://detail.zol.com.cn/series/2530/10926063_1.html"
+    }
+  },
+  {
+    "source_model_name": "Cayman",
+    "values": {
+      "brand_name": "保时捷",
+      "brand_code": "CITY_BRAND_6E126AE9CC805D712B27",
+      "oem_name": "保时捷",
+      "oem_code": "CITY_OEM_6E126AE9CC805D712B27",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "其他",
+      "evidence": "2026-11-28联网审核：Cayman；品牌=保时捷；主机厂=保时捷；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.dongchedi.com/auto/series/159"
+    }
+  },
+  {
+    "source_model_name": "ELETRE",
+    "values": {
+      "brand_name": "莲花跑车",
+      "brand_code": "CITY_BRAND_F8998DA588774918B506",
+      "oem_name": "莲花跑车",
+      "oem_code": "CITY_OEM_F8998DA588774918B506",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：ELETRE；品牌=莲花跑车；主机厂=莲花跑车；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://zh.wikipedia.org/wiki/%E8%93%AE%E8%8A%B1Eletre"
+    }
+  },
+  {
+    "source_model_name": "EMEYA",
+    "values": {
+      "brand_name": "莲花跑车",
+      "brand_code": "CITY_BRAND_F8998DA588774918B506",
+      "oem_name": "莲花跑车",
+      "oem_code": "CITY_OEM_F8998DA588774918B506",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：EMEYA；品牌=莲花跑车；主机厂=莲花跑车；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://m.pcauto.com.cn/auto/sg29210/price/"
+    }
+  },
+  {
+    "source_model_name": "EMIRA",
+    "values": {
+      "brand_name": "莲花跑车",
+      "brand_code": "CITY_BRAND_F8998DA588774918B506",
+      "oem_name": "莲花跑车(进口)",
+      "oem_code": "CITY_OEM_C3897C2705D3DE3564D9",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "其他",
+      "evidence": "2026-11-28联网审核：EMIRA；品牌=莲花跑车；主机厂=莲花跑车(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://price.pcauto.com.cn/s47500/config.html"
+    }
+  },
+  {
+    "source_model_name": "FJ 酷路泽",
+    "values": {
+      "brand_name": "丰田",
+      "brand_code": "BRAND_C77696CAAD",
+      "oem_name": "丰田(进口)",
+      "oem_code": "CITY_OEM_856BB6716B177B31F6DA",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：FJ 酷路泽；品牌=丰田；主机厂=丰田(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.12365auto.com/series/301/index.shtml"
+    }
+  },
+  {
+    "source_model_name": "GR YARIS",
+    "values": {
+      "brand_name": "丰田",
+      "brand_code": "BRAND_C77696CAAD",
+      "oem_name": "丰田(进口)",
+      "oem_code": "CITY_OEM_856BB6716B177B31F6DA",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：GR YARIS；品牌=丰田；主机厂=丰田(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://en.wikipedia.org/wiki/Toyota_GR_Yaris"
+    }
+  },
+  {
+    "source_model_name": "Ghibli",
+    "values": {
+      "brand_name": "玛莎拉蒂",
+      "brand_code": "CITY_BRAND_E2B5E916624AAF829788",
+      "oem_name": "玛莎拉蒂",
+      "oem_code": "CITY_OEM_E2B5E916624AAF829788",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：Ghibli；品牌=玛莎拉蒂；主机厂=玛莎拉蒂；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://zh.wikipedia.org/wiki/%E7%8E%9B%E8%8E%8E%E6%8B%89%E8%92%82Ghibli_%28M157%29"
+    }
+  },
+  {
+    "source_model_name": "Giulia朱丽叶",
+    "values": {
+      "brand_name": "阿尔法·罗密欧",
+      "brand_code": "CITY_BRAND_7B7C908C2B288741F736",
+      "oem_name": "阿尔法·罗密欧",
+      "oem_code": "CITY_OEM_7B7C908C2B288741F736",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：Giulia朱丽叶；品牌=阿尔法·罗密欧；主机厂=阿尔法·罗密欧；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.12365auto.com/series/2062/index.shtml"
+    }
+  },
+  {
+    "source_model_name": "Grecale格雷嘉",
+    "values": {
+      "brand_name": "玛莎拉蒂",
+      "brand_code": "CITY_BRAND_E2B5E916624AAF829788",
+      "oem_name": "玛莎拉蒂",
+      "oem_code": "CITY_OEM_E2B5E916624AAF829788",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：Grecale格雷嘉；品牌=玛莎拉蒂；主机厂=玛莎拉蒂；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://dealer.yiche.com/100259066/price_detail/191100.html"
+    }
+  },
+  {
+    "source_model_name": "ID. ERA 5X",
+    "values": {
+      "brand_name": "大众",
+      "brand_code": "BRAND_C3F70203DA",
+      "oem_name": "上汽大众",
+      "oem_code": "OEM_EB0C2AF0C6",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：ID. ERA 5X；品牌=大众；主机厂=上汽大众；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://newsroom.vw.com.cn/Home/PressReleaseDetail?id=277"
+    }
+  },
+  {
+    "source_model_name": "LEVC TX",
+    "values": {
+      "brand_name": "翼真",
+      "brand_code": "BRAND_D04A2523F9",
+      "oem_name": "LEVC",
+      "oem_code": "OEM_2AA21F6C8F",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "MPV",
+      "evidence": "2026-11-28联网审核：LEVC TX；品牌=翼真；主机厂=LEVC；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://detail.zol.com.cn/car/index1963904.shtml"
+    }
+  },
+  {
+    "source_model_name": "Levante",
+    "values": {
+      "brand_name": "玛莎拉蒂",
+      "brand_code": "CITY_BRAND_E2B5E916624AAF829788",
+      "oem_name": "玛莎拉蒂",
+      "oem_code": "CITY_OEM_E2B5E916624AAF829788",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：Levante；品牌=玛莎拉蒂；主机厂=玛莎拉蒂；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.12365auto.com/series/1889/index.shtml"
+    }
+  },
+  {
+    "source_model_name": "MG5天蝎座",
+    "values": {
+      "brand_name": "名爵",
+      "brand_code": "CITY_BRAND_30A52E7CB2D527A1B548",
+      "oem_name": "上汽集团",
+      "oem_code": "OEM_3735315737",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：MG5天蝎座；品牌=名爵；主机厂=上汽集团；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://car.autohome.com.cn/price/series-6660-1-3-0-0-0-0-1.html"
+    }
+  },
+  {
+    "source_model_name": "MINI",
+    "values": {
+      "brand_name": "MINI",
+      "brand_code": "CITY_BRAND_8DDEFB0087B1484E5E11",
+      "oem_name": "MINI",
+      "oem_code": "CITY_OEM_8DDEFB0087B1484E5E11",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：MINI；品牌=MINI；主机厂=MINI；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.minichina.com.cn/zh_CN/home/range/all-electric-mini-cooper-jcw.html"
+    }
+  },
+  {
+    "source_model_name": "MINI CLUBMAN",
+    "values": {
+      "brand_name": "MINI",
+      "brand_code": "CITY_BRAND_8DDEFB0087B1484E5E11",
+      "oem_name": "MINI",
+      "oem_code": "CITY_OEM_8DDEFB0087B1484E5E11",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：MINI CLUBMAN；品牌=MINI；主机厂=MINI；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://en.wikipedia.org/wiki/Mini_Clubman_%282007%29"
+    }
+  },
+  {
+    "source_model_name": "MINI COUNTRYMAN",
+    "values": {
+      "brand_name": "MINI",
+      "brand_code": "CITY_BRAND_8DDEFB0087B1484E5E11",
+      "oem_name": "MINI",
+      "oem_code": "CITY_OEM_8DDEFB0087B1484E5E11",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：MINI COUNTRYMAN；品牌=MINI；主机厂=MINI；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.m1.mini-originprod2.minichina.com.cn/zh_CN/home/range/new-mini-countryman.html"
+    }
+  },
+  {
+    "source_model_name": "MINI JCW",
+    "values": {
+      "brand_name": "MINI",
+      "brand_code": "CITY_BRAND_8DDEFB0087B1484E5E11",
+      "oem_name": "MINI",
+      "oem_code": "CITY_OEM_8DDEFB0087B1484E5E11",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：MINI JCW；品牌=MINI；主机厂=MINI；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.minichina.com.cn/zh_CN/home/range/all-electric-mini-cooper-jcw.html"
+    }
+  },
+  {
+    "source_model_name": "MINI JCW CLUBMAN",
+    "values": {
+      "brand_name": "MINI",
+      "brand_code": "CITY_BRAND_8DDEFB0087B1484E5E11",
+      "oem_name": "MINI",
+      "oem_code": "CITY_OEM_8DDEFB0087B1484E5E11",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：MINI JCW CLUBMAN；品牌=MINI；主机厂=MINI；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://car.autohome.com.cn/config/spec/57503.html"
+    }
+  },
+  {
+    "source_model_name": "MINI JCW COUNTRYMAN",
+    "values": {
+      "brand_name": "MINI",
+      "brand_code": "CITY_BRAND_8DDEFB0087B1484E5E11",
+      "oem_name": "MINI",
+      "oem_code": "CITY_OEM_8DDEFB0087B1484E5E11",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：MINI JCW COUNTRYMAN；品牌=MINI；主机厂=MINI；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://car.autohome.com.cn/config/series/3181-14205.html"
+    }
+  },
+  {
+    "source_model_name": "Macan",
+    "values": {
+      "brand_name": "保时捷",
+      "brand_code": "CITY_BRAND_6E126AE9CC805D712B27",
+      "oem_name": "保时捷",
+      "oem_code": "CITY_OEM_6E126AE9CC805D712B27",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：Macan；品牌=保时捷；主机厂=保时捷；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://car.autohome.com.cn/config/series/2838-20483.html"
+    }
+  },
+  {
+    "source_model_name": "Macan新能源",
+    "values": {
+      "brand_name": "保时捷",
+      "brand_code": "CITY_BRAND_6E126AE9CC805D712B27",
+      "oem_name": "保时捷",
+      "oem_code": "CITY_OEM_6E126AE9CC805D712B27",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：Macan新能源；品牌=保时捷；主机厂=保时捷；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.12365auto.com/series/3928/index.shtml"
+    }
+  },
+  {
+    "source_model_name": "Mirai",
+    "values": {
+      "brand_name": "丰田",
+      "brand_code": "BRAND_C77696CAAD",
+      "oem_name": "丰田(进口)",
+      "oem_code": "CITY_OEM_856BB6716B177B31F6DA",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：Mirai；品牌=丰田；主机厂=丰田(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://en.wikipedia.org/wiki/Toyota_Mirai"
+    }
+  },
+  {
+    "source_model_name": "Model S",
+    "values": {
+      "brand_name": "特斯拉",
+      "brand_code": "BRAND_9EDEF009C2",
+      "oem_name": "特斯拉(进口)",
+      "oem_code": "CITY_OEM_6EBADFD4D68DA4CD5E11",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：Model S；品牌=特斯拉；主机厂=特斯拉(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.lexus.com.cn/models/nx/spec"
+    }
+  },
+  {
+    "source_model_name": "Model X",
+    "values": {
+      "brand_name": "特斯拉",
+      "brand_code": "BRAND_9EDEF009C2",
+      "oem_name": "特斯拉(进口)",
+      "oem_code": "CITY_OEM_6EBADFD4D68DA4CD5E11",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：Model X；品牌=特斯拉；主机厂=特斯拉(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://en.wikipedia.org/wiki/Tesla_Model_X"
+    }
+  },
+  {
+    "source_model_name": "Mustang",
+    "values": {
+      "brand_name": "福特",
+      "brand_code": "BRAND_895A57FE6B",
+      "oem_name": "福特(进口)",
+      "oem_code": "CITY_OEM_5B6751C4925042F7F557",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "其他",
+      "evidence": "2026-11-28联网审核：Mustang；品牌=福特；主机厂=福特(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://en.wikipedia.org/wiki/Ford_Mustang"
+    }
+  },
+  {
+    "source_model_name": "Panamera",
+    "values": {
+      "brand_name": "保时捷",
+      "brand_code": "CITY_BRAND_6E126AE9CC805D712B27",
+      "oem_name": "保时捷",
+      "oem_code": "CITY_OEM_6E126AE9CC805D712B27",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：Panamera；品牌=保时捷；主机厂=保时捷；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://car.autohome.com.cn/config/series/4322-22951.html"
+    }
+  },
+  {
+    "source_model_name": "Panamera新能源",
+    "values": {
+      "brand_name": "保时捷",
+      "brand_code": "CITY_BRAND_6E126AE9CC805D712B27",
+      "oem_name": "保时捷",
+      "oem_code": "CITY_OEM_6E126AE9CC805D712B27",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：Panamera新能源；品牌=保时捷；主机厂=保时捷；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://car.autohome.com.cn/config/series/4322-22951.html"
+    }
+  },
+  {
+    "source_model_name": "Portofino",
+    "values": {
+      "brand_name": "法拉利",
+      "brand_code": "CITY_BRAND_B038B1AEB58BE13DB068",
+      "oem_name": "法拉利",
+      "oem_code": "CITY_OEM_B038B1AEB58BE13DB068",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "其他",
+      "evidence": "2026-11-28联网审核：Portofino；品牌=法拉利；主机厂=法拉利；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.auto-salon-singen.de/de/fahrzeug/download/5e618b96bf773"
+    }
+  },
+  {
+    "source_model_name": "Revuelto",
+    "values": {
+      "brand_name": "兰博基尼",
+      "brand_code": "CITY_BRAND_6415107C648CA1DC21E2",
+      "oem_name": "兰博基尼",
+      "oem_code": "CITY_OEM_6415107C648CA1DC21E2",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "其他",
+      "evidence": "2026-11-28联网审核：Revuelto；品牌=兰博基尼；主机厂=兰博基尼；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://zh.wikipedia.org/wiki/%E8%98%AD%E5%8D%9A%E5%9F%BA%E5%B0%BCRevuelto"
+    }
+  },
+  {
+    "source_model_name": "Roma",
+    "values": {
+      "brand_name": "法拉利",
+      "brand_code": "CITY_BRAND_B038B1AEB58BE13DB068",
+      "oem_name": "法拉利",
+      "oem_code": "CITY_OEM_B038B1AEB58BE13DB068",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "其他",
+      "evidence": "2026-11-28联网审核：Roma；品牌=法拉利；主机厂=法拉利；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://m.maiche.com/s4815/"
+    }
+  },
+  {
+    "source_model_name": "SRM鑫源新能源小海狮EV",
+    "values": {
+      "brand_name": "鑫源",
+      "brand_code": "BRAND_98AD72838C",
+      "oem_name": "鑫源汽车",
+      "oem_code": "OEM_938B704F58",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "其他",
+      "evidence": "2026-11-28联网审核：SRM鑫源新能源小海狮EV；品牌=鑫源；主机厂=鑫源汽车；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://car.autohome.com.cn/config/series/5526-16581.html"
+    }
+  },
+  {
+    "source_model_name": "SWM斯威大虎EDi",
+    "values": {
+      "brand_name": "SWM斯威",
+      "brand_code": "BRAND_FB69A2B600",
+      "oem_name": "SWM斯威汽车",
+      "oem_code": "OEM_177B6375CF",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：SWM斯威大虎EDi；品牌=SWM斯威；主机厂=SWM斯威汽车；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://k.autohome.com.cn/7119"
+    }
+  },
+  {
+    "source_model_name": "Sienna",
+    "values": {
+      "brand_name": "丰田",
+      "brand_code": "BRAND_C77696CAAD",
+      "oem_name": "丰田(进口)",
+      "oem_code": "CITY_OEM_856BB6716B177B31F6DA",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "MPV",
+      "evidence": "2026-11-28联网审核：Sienna；品牌=丰田；主机厂=丰田(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://en.wikipedia.org/wiki/Toyota_Sienna"
+    }
+  },
+  {
+    "source_model_name": "Supra",
+    "values": {
+      "brand_name": "丰田",
+      "brand_code": "BRAND_C77696CAAD",
+      "oem_name": "丰田(进口)",
+      "oem_code": "CITY_OEM_856BB6716B177B31F6DA",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "其他",
+      "evidence": "2026-11-28联网审核：Supra；品牌=丰田；主机厂=丰田(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://zh.wikipedia.org/wiki/%E8%B1%90%E7%94%B0Supra"
+    }
+  },
+  {
+    "source_model_name": "TAHOE太浩",
+    "values": {
+      "brand_name": "雪佛兰",
+      "brand_code": "BRAND_07E47A8082",
+      "oem_name": "雪佛兰(进口)",
+      "oem_code": "CITY_OEM_16DB39CA0B69931C7D95",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：TAHOE太浩；品牌=雪佛兰；主机厂=雪佛兰(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://m.pcauto.com.cn/auto/sg1403/config.html"
+    }
+  },
+  {
+    "source_model_name": "Taycan",
+    "values": {
+      "brand_name": "保时捷",
+      "brand_code": "CITY_BRAND_6E126AE9CC805D712B27",
+      "oem_name": "保时捷",
+      "oem_code": "CITY_OEM_6E126AE9CC805D712B27",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：Taycan；品牌=保时捷；主机厂=保时捷；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://price.pcauto.com.cn/sg13160/config.html"
+    }
+  },
+  {
+    "source_model_name": "Urus",
+    "values": {
+      "brand_name": "兰博基尼",
+      "brand_code": "CITY_BRAND_6415107C648CA1DC21E2",
+      "oem_name": "兰博基尼",
+      "oem_code": "CITY_OEM_6415107C648CA1DC21E2",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：Urus；品牌=兰博基尼；主机厂=兰博基尼；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://car.autohome.com.cn/config/series/2775.html"
+    }
+  },
+  {
+    "source_model_name": "Urus SE",
+    "values": {
+      "brand_name": "兰博基尼",
+      "brand_code": "CITY_BRAND_6415107C648CA1DC21E2",
+      "oem_name": "兰博基尼",
+      "oem_code": "CITY_OEM_6415107C648CA1DC21E2",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：Urus SE；品牌=兰博基尼；主机厂=兰博基尼；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://finance.sina.cn/2026-09-24/detail-inisxaff4968589.d.html"
+    }
+  },
+  {
+    "source_model_name": "VGV U75",
+    "values": {
+      "brand_name": "重汽VGV",
+      "brand_code": "BRAND_F08728AAD5",
+      "oem_name": "中国重汽VGV",
+      "oem_code": "OEM_8B893519C6",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：VGV U75；品牌=重汽VGV；主机厂=中国重汽VGV；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://ru.wikipedia.org/wiki/VGV_U75_Plus"
+    }
+  },
+  {
+    "source_model_name": "VISTIQ(海外)",
+    "values": {
+      "brand_name": "凯迪拉克",
+      "brand_code": "BRAND_0D8BBD4581",
+      "oem_name": "海外主机厂不在研究范围内",
+      "oem_code": "OEM_OVERSEAS_OUT_OF_RESEARCH",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：VISTIQ(海外)；品牌=凯迪拉克；主机厂=海外主机厂不在研究范围内；按用户2026-11-28授权归入海外主机厂研究排除桶，目录实际主机厂为凯迪拉克(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.cadillac.com/electric/preceding-year/vistiq"
+    }
+  },
+  {
+    "source_model_name": "iCAR 03T",
+    "values": {
+      "brand_name": "iCAR",
+      "brand_code": "CITY_BRAND_983D23B87FB70FE7B113",
+      "oem_name": "奇瑞新能源",
+      "oem_code": "OEM_4004C72F7F",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：iCAR 03T；品牌=iCAR；主机厂=奇瑞新能源；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.dongchedi.com/auto/params-carIds-x-24811"
+    }
+  },
+  {
+    "source_model_name": "上汽大通MAXUS",
+    "values": {
+      "brand_name": "大通",
+      "brand_code": "BRAND_3ADAB9C8B6",
+      "oem_name": "上汽大通",
+      "oem_code": "OEM_BD2A2DD64B",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "其他",
+      "vehicle_type": "其他",
+      "evidence": "2026-11-28联网审核：上汽大通MAXUS；品牌=大通；主机厂=上汽大通；来源仅提供品牌聚合名，不擅自指定具体车型，产品大类和混合能源均归其他。普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.saicmaxus.com/p/strength.shtml"
+    }
+  },
+  {
+    "source_model_name": "东南DX8S",
+    "values": {
+      "brand_name": "东南",
+      "brand_code": "BRAND_0A865E3915",
+      "oem_name": "东南汽车",
+      "oem_code": "OEM_DAD666A35B",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：东南DX8S；品牌=东南；主机厂=东南汽车；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://detail.zol.com.cn/series/2530/10851675_1.html"
+    }
+  },
+  {
+    "source_model_name": "东风小康EC36",
+    "values": {
+      "brand_name": "小康",
+      "brand_code": "BRAND_BD650D4A87",
+      "oem_name": "东风小康",
+      "oem_code": "OEM_66D2F16740",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "其他",
+      "evidence": "2026-11-28联网审核：东风小康EC36；品牌=小康；主机厂=东风小康；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.12365auto.com/series/2097/index.shtml"
+    }
+  },
+  {
+    "source_model_name": "东风小康K07S",
+    "values": {
+      "brand_name": "小康",
+      "brand_code": "BRAND_BD650D4A87",
+      "oem_name": "东风小康",
+      "oem_code": "OEM_66D2F16740",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "其他",
+      "evidence": "2026-11-28联网审核：东风小康K07S；品牌=小康；主机厂=东风小康；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.dongchedi.com/auto/series/473"
+    }
+  },
+  {
+    "source_model_name": "丰田86",
+    "values": {
+      "brand_name": "丰田",
+      "brand_code": "BRAND_C77696CAAD",
+      "oem_name": "丰田(进口)",
+      "oem_code": "CITY_OEM_856BB6716B177B31F6DA",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "其他",
+      "evidence": "2026-11-28联网审核：丰田86；品牌=丰田；主机厂=丰田(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.autohome.com.cn/news/201610/894674.html?from=m&platform-key=pc"
+    }
+  },
+  {
+    "source_model_name": "予风EV50",
+    "values": {
+      "brand_name": "予风",
+      "brand_code": "CITY_BRAND_74D1BA55772331E57EBD",
+      "oem_name": "五菱新能源",
+      "oem_code": "OEM_F812155E63",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "其他",
+      "evidence": "2026-11-28联网审核：予风EV50；品牌=予风；主机厂=五菱新能源；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.12365auto.com/series/4043/index.shtml"
+    }
+  },
+  {
+    "source_model_name": "云兔",
+    "values": {
+      "brand_name": "云度",
+      "brand_code": "BRAND_5AEE1D6198",
+      "oem_name": "云度新能源",
+      "oem_code": "OEM_3F8C4939FD",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：云兔；品牌=云度；主机厂=云度新能源；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://k.autohome.com.cn/7124"
+    }
+  },
+  {
+    "source_model_name": "五菱宏光S",
+    "values": {
+      "brand_name": "五菱",
+      "brand_code": "BRAND_B181B14331",
+      "oem_name": "上汽通用五菱",
+      "oem_code": "OEM_BEC3E4C50C",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "其他",
+      "evidence": "2026-11-28联网审核：五菱宏光S；品牌=五菱；主机厂=上汽通用五菱；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.sgmw.com.cn/carDetail?id=24"
+    }
+  },
+  {
+    "source_model_name": "五菱征程新能源",
+    "values": {
+      "brand_name": "五菱",
+      "brand_code": "BRAND_B181B14331",
+      "oem_name": "上汽通用五菱",
+      "oem_code": "OEM_BEC3E4C50C",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "MPV",
+      "evidence": "2026-11-28联网审核：五菱征程新能源；品牌=五菱；主机厂=上汽通用五菱；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://price.pcauto.com.cn/sg28865/config.html"
+    }
+  },
+  {
+    "source_model_name": "五菱星光L",
+    "values": {
+      "brand_name": "五菱",
+      "brand_code": "BRAND_B181B14331",
+      "oem_name": "上汽通用五菱",
+      "oem_code": "OEM_BEC3E4C50C",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：五菱星光L；品牌=五菱；主机厂=上汽通用五菱；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://price.pcauto.com.cn/sg31113/config.html"
+    }
+  },
+  {
+    "source_model_name": "五菱荣光S",
+    "values": {
+      "brand_name": "五菱",
+      "brand_code": "BRAND_B181B14331",
+      "oem_name": "上汽通用五菱",
+      "oem_code": "OEM_BEC3E4C50C",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "其他",
+      "evidence": "2026-11-28联网审核：五菱荣光S；品牌=五菱；主机厂=上汽通用五菱；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.wuling.com/carDetail?id=56"
+    }
+  },
+  {
+    "source_model_name": "伊兰特Elantra N",
+    "values": {
+      "brand_name": "现代",
+      "brand_code": "BRAND_0FA79175E1",
+      "oem_name": "现代(进口)",
+      "oem_code": "CITY_OEM_A0A174587EC019985CB9",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：伊兰特Elantra N；品牌=现代；主机厂=现代(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://detail.zol.com.cn/car/index2142589.shtml"
+    }
+  },
+  {
+    "source_model_name": "传祺E8 PHEV",
+    "values": {
+      "brand_name": "广汽",
+      "brand_code": "BRAND_1F8D836DFD",
+      "oem_name": "广汽乘用车",
+      "oem_code": "OEM_F91895E619",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "MPV",
+      "evidence": "2026-11-28联网审核：传祺E8 PHEV；品牌=广汽；主机厂=广汽乘用车；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.autohome.com.cn/spec/71720/"
+    }
+  },
+  {
+    "source_model_name": "俊风E11K",
+    "values": {
+      "brand_name": "东风",
+      "brand_code": "BRAND_0CA2DE02B3",
+      "oem_name": "东风汽车",
+      "oem_code": "OEM_1F06F570F8",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：俊风E11K；品牌=东风；主机厂=东风汽车；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://k.autohome.com.cn/4740"
+    }
+  },
+  {
+    "source_model_name": "俊风EV30",
+    "values": {
+      "brand_name": "东风",
+      "brand_code": "BRAND_0CA2DE02B3",
+      "oem_name": "东风汽车",
+      "oem_code": "OEM_1F06F570F8",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：俊风EV30；品牌=东风；主机厂=东风汽车；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.autohome.com.cn/5736"
+    }
+  },
+  {
+    "source_model_name": "保时捷718",
+    "values": {
+      "brand_name": "保时捷",
+      "brand_code": "CITY_BRAND_6E126AE9CC805D712B27",
+      "oem_name": "保时捷",
+      "oem_code": "CITY_OEM_6E126AE9CC805D712B27",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "其他",
+      "evidence": "2026-11-28联网审核：保时捷718；品牌=保时捷；主机厂=保时捷；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://m.pcauto.com.cn/auto/sg14151/m103265/config.html"
+    }
+  },
+  {
+    "source_model_name": "保时捷911",
+    "values": {
+      "brand_name": "保时捷",
+      "brand_code": "CITY_BRAND_6E126AE9CC805D712B27",
+      "oem_name": "保时捷",
+      "oem_code": "CITY_OEM_6E126AE9CC805D712B27",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "其他",
+      "evidence": "2026-11-28联网审核：保时捷911；品牌=保时捷；主机厂=保时捷；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://detail.zol.com.cn/series/2530/10848964_1.html"
+    }
+  },
+  {
+    "source_model_name": "傲虎",
+    "values": {
+      "brand_name": "斯巴鲁",
+      "brand_code": "CITY_BRAND_F1D9ACF04E561DF5516B",
+      "oem_name": "斯巴鲁",
+      "oem_code": "CITY_OEM_F1D9ACF04E561DF5516B",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：傲虎；品牌=斯巴鲁；主机厂=斯巴鲁；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.autohome.com.cn/286/"
+    }
+  },
+  {
+    "source_model_name": "兰德酷路泽(进口)",
+    "values": {
+      "brand_name": "丰田",
+      "brand_code": "BRAND_C77696CAAD",
+      "oem_name": "海外主机厂不在研究范围内",
+      "oem_code": "OEM_OVERSEAS_OUT_OF_RESEARCH",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：兰德酷路泽(进口)；品牌=丰田；主机厂=海外主机厂不在研究范围内；按用户2026-11-28授权归入海外主机厂研究排除桶，目录实际主机厂为丰田(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.dongchedi.com/auto/series/522"
+    }
+  },
+  {
+    "source_model_name": "凌宝COCO",
+    "values": {
+      "brand_name": "凌宝汽车",
+      "brand_code": "CITY_BRAND_F41C2F64EC22E78D00FA",
+      "oem_name": "吉麦新能源",
+      "oem_code": "OEM_CFD9427212",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：凌宝COCO；品牌=凌宝汽车；主机厂=吉麦新能源；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.autohome.com.cn/6115/"
+    }
+  },
+  {
+    "source_model_name": "凯翼E5 EV",
+    "values": {
+      "brand_name": "凯翼",
+      "brand_code": "BRAND_2BD5062322",
+      "oem_name": "凯翼汽车",
+      "oem_code": "OEM_56D3EA9149",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：凯翼E5 EV；品牌=凯翼；主机厂=凯翼汽车；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.kaiyihome.com/perspective/news/content_1919.jhtml"
+    }
+  },
+  {
+    "source_model_name": "北京EU5 PLUS",
+    "values": {
+      "brand_name": "北京",
+      "brand_code": "BRAND_692E92669C",
+      "oem_name": "北汽新能源",
+      "oem_code": "OEM_028CF3DF43",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：北京EU5 PLUS；品牌=北京；主机厂=北汽新能源；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://price.pcauto.com.cn/sg27532/config.html"
+    }
+  },
+  {
+    "source_model_name": "北京EU7",
+    "values": {
+      "brand_name": "北京",
+      "brand_code": "BRAND_692E92669C",
+      "oem_name": "北汽新能源",
+      "oem_code": "OEM_028CF3DF43",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：北京EU7；品牌=北京；主机厂=北汽新能源；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.12365auto.com/series/2668/index.shtml"
+    }
+  },
+  {
+    "source_model_name": "北京U5",
+    "values": {
+      "brand_name": "北京",
+      "brand_code": "BRAND_692E92669C",
+      "oem_name": "北京汽车",
+      "oem_code": "OEM_3D548164F1",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：北京U5；品牌=北京；主机厂=北京汽车；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://price.pcauto.com.cn/sg27531/config.html"
+    }
+  },
+  {
+    "source_model_name": "北京U5 PLUS",
+    "values": {
+      "brand_name": "北京",
+      "brand_code": "BRAND_692E92669C",
+      "oem_name": "北京汽车",
+      "oem_code": "OEM_3D548164F1",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：北京U5 PLUS；品牌=北京；主机厂=北京汽车；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://price.pcauto.com.cn/sg27531/config.html"
+    }
+  },
+  {
+    "source_model_name": "北斗星X5",
+    "values": {
+      "brand_name": "铃木",
+      "brand_code": "BRAND_8A52660E1B",
+      "oem_name": "昌河铃木",
+      "oem_code": "OEM_F2BEF3EBC8",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：北斗星X5；品牌=铃木；主机厂=昌河铃木；保留原铃木/昌河铃木身份，区别昌河北斗星X5。普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://price.pcauto.com.cn/sg9210/"
+    }
+  },
+  {
+    "source_model_name": "北汽瑞翔X3",
+    "values": {
+      "brand_name": "北汽瑞翔",
+      "brand_code": "CITY_BRAND_E34F6FEF4933AEA8BE49",
+      "oem_name": "北汽瑞翔汽车",
+      "oem_code": "CITY_OEM_BFDAA362C883FE7672F5",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：北汽瑞翔X3；品牌=北汽瑞翔；主机厂=北汽瑞翔汽车；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://detail.zol.com.cn/series/2530/10851770_1.html"
+    }
+  },
+  {
+    "source_model_name": "北汽瑞翔X5",
+    "values": {
+      "brand_name": "北汽瑞翔",
+      "brand_code": "CITY_BRAND_E34F6FEF4933AEA8BE49",
+      "oem_name": "北汽瑞翔汽车",
+      "oem_code": "CITY_OEM_BFDAA362C883FE7672F5",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：北汽瑞翔X5；品牌=北汽瑞翔；主机厂=北汽瑞翔汽车；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.autohome.com.cn/news/202108/1194336.html"
+    }
+  },
+  {
+    "source_model_name": "发现",
+    "values": {
+      "brand_name": "路虎",
+      "brand_code": "CITY_BRAND_EE875A961B9A4FD0B4D6",
+      "oem_name": "路虎(进口)",
+      "oem_code": "CITY_OEM_FD4F58F515E0D089C6B6",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：发现；品牌=路虎；主机厂=路虎(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://chejiahao.m.autohome.com.cn/info/19205839"
+    }
+  },
+  {
+    "source_model_name": "古思特",
+    "values": {
+      "brand_name": "劳斯莱斯",
+      "brand_code": "CITY_BRAND_9B3ADC4E66B7D9663AD7",
+      "oem_name": "劳斯莱斯",
+      "oem_code": "CITY_OEM_9B3ADC4E66B7D9663AD7",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：古思特；品牌=劳斯莱斯；主机厂=劳斯莱斯；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://car.autohome.com.cn/config/series/836.html"
+    }
+  },
+  {
+    "source_model_name": "吉利几何T",
+    "values": {
+      "brand_name": "几何",
+      "brand_code": "BRAND_0B5E7F1995",
+      "oem_name": "吉利几何",
+      "oem_code": "OEM_7D55609307",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：吉利几何T；品牌=几何；主机厂=吉利几何；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.autohome.com.cn/5786"
+    }
+  },
+  {
+    "source_model_name": "吉姆尼(进口)",
+    "values": {
+      "brand_name": "铃木",
+      "brand_code": "BRAND_8A52660E1B",
+      "oem_name": "海外主机厂不在研究范围内",
+      "oem_code": "OEM_OVERSEAS_OUT_OF_RESEARCH",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：吉姆尼(进口)；品牌=铃木；主机厂=海外主机厂不在研究范围内；按用户2026-11-28授权归入海外主机厂研究排除桶，目录实际主机厂为铃木(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://car.autohome.com.cn/config/series/508-1028.html"
+    }
+  },
+  {
+    "source_model_name": "哈弗大狗 PLUS",
+    "values": {
+      "brand_name": "哈弗",
+      "brand_code": "CITY_BRAND_2F3E2AA3DD5AA5FB30A3",
+      "oem_name": "长城汽车",
+      "oem_code": "OEM_940240A733",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：哈弗大狗 PLUS；品牌=哈弗；主机厂=长城汽车；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.dongchedi.com/auto/params-carIds-93657"
+    }
+  },
+  {
+    "source_model_name": "哈弗枭龙",
+    "values": {
+      "brand_name": "哈弗",
+      "brand_code": "CITY_BRAND_2F3E2AA3DD5AA5FB30A3",
+      "oem_name": "长城汽车",
+      "oem_code": "OEM_940240A733",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：哈弗枭龙；品牌=哈弗；主机厂=长城汽车；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://detail.zol.com.cn/2127/2126069/param.shtml"
+    }
+  },
+  {
+    "source_model_name": "哪吒S猎装",
+    "values": {
+      "brand_name": "合众",
+      "brand_code": "BRAND_887791C5E7",
+      "oem_name": "合众汽车",
+      "oem_code": "OEM_70F1295E48",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：哪吒S猎装；品牌=合众；主机厂=合众汽车；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.dongchedi.com/auto/series/9882"
+    }
+  },
+  {
+    "source_model_name": "埃尔法",
+    "values": {
+      "brand_name": "丰田",
+      "brand_code": "BRAND_C77696CAAD",
+      "oem_name": "丰田(进口)",
+      "oem_code": "CITY_OEM_856BB6716B177B31F6DA",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "MPV",
+      "evidence": "2026-11-28联网审核：埃尔法；品牌=丰田；主机厂=丰田(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.yiche.com/zhai/list-3088-161/"
+    }
+  },
+  {
+    "source_model_name": "大切诺基(进口)",
+    "values": {
+      "brand_name": "Jeep",
+      "brand_code": "BRAND_0BFC4B3D2E",
+      "oem_name": "海外主机厂不在研究范围内",
+      "oem_code": "OEM_OVERSEAS_OUT_OF_RESEARCH",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：大切诺基(进口)；品牌=Jeep；主机厂=海外主机厂不在研究范围内；按用户2026-11-28授权归入海外主机厂研究排除桶，目录实际主机厂为Jeep(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://12365auto.com/series/449/index.shtml"
+    }
+  },
+  {
+    "source_model_name": "大切诺基4xe(进口)",
+    "values": {
+      "brand_name": "Jeep",
+      "brand_code": "BRAND_0BFC4B3D2E",
+      "oem_name": "海外主机厂不在研究范围内",
+      "oem_code": "OEM_OVERSEAS_OUT_OF_RESEARCH",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：大切诺基4xe(进口)；品牌=Jeep；主机厂=海外主机厂不在研究范围内；按用户2026-11-28授权归入海外主机厂研究排除桶，目录实际主机厂为Jeep(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.dongchedi.com/auto/params-carIds-240660"
+    }
+  },
+  {
+    "source_model_name": "天美汽车ET5",
+    "values": {
+      "brand_name": "天美汽车",
+      "brand_code": "CITY_BRAND_31F110ED22DA40BD2D78",
+      "oem_name": "创维汽车",
+      "oem_code": "OEM_D0C15903BD",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：天美汽车ET5；品牌=天美汽车；主机厂=创维汽车；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.autohome.com.cn/drive/202007/1016853.html?from=m&platform-key=pc"
+    }
+  },
+  {
+    "source_model_name": "天际ME7",
+    "values": {
+      "brand_name": "天际",
+      "brand_code": "BRAND_3F51C61B33",
+      "oem_name": "天际汽车",
+      "oem_code": "OEM_40AB946186",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：天际ME7；品牌=天际；主机厂=天际汽车；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.pcauto.com.cn/sg23773/s40601/"
+    }
+  },
+  {
+    "source_model_name": "奇瑞舒享家",
+    "values": {
+      "brand_name": "奇瑞",
+      "brand_code": "BRAND_59C83C7889",
+      "oem_name": "奇瑞新能源",
+      "oem_code": "OEM_4004C72F7F",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：奇瑞舒享家；品牌=奇瑞；主机厂=奇瑞新能源；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.yiche.com/zhai/list-10183-573/"
+    }
+  },
+  {
+    "source_model_name": "奔驰A级(进口)",
+    "values": {
+      "brand_name": "奔驰",
+      "brand_code": "BRAND_1DF1AA9A0A",
+      "oem_name": "海外主机厂不在研究范围内",
+      "oem_code": "OEM_OVERSEAS_OUT_OF_RESEARCH",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：奔驰A级(进口)；品牌=奔驰；主机厂=海外主机厂不在研究范围内；按用户2026-11-28授权归入海外主机厂研究排除桶，目录实际主机厂为奔驰(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://car.autohome.com.cn/config/series/52.html"
+    }
+  },
+  {
+    "source_model_name": "奔驰A级AMG(进口)",
+    "values": {
+      "brand_name": "奔驰",
+      "brand_code": "BRAND_1DF1AA9A0A",
+      "oem_name": "海外主机厂不在研究范围内",
+      "oem_code": "OEM_OVERSEAS_OUT_OF_RESEARCH",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：奔驰A级AMG(进口)；品牌=奔驰；主机厂=海外主机厂不在研究范围内；按用户2026-11-28授权归入海外主机厂研究排除桶，目录实际主机厂为奔驰(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://car.autohome.com.cn/config/series/2842-9375.html"
+    }
+  },
+  {
+    "source_model_name": "奔驰B级",
+    "values": {
+      "brand_name": "奔驰",
+      "brand_code": "BRAND_1DF1AA9A0A",
+      "oem_name": "奔驰(进口)",
+      "oem_code": "CITY_OEM_456464FA180266281754",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：奔驰B级；品牌=奔驰；主机厂=奔驰(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://12365auto.com/series/92/index.shtml"
+    }
+  },
+  {
+    "source_model_name": "奔驰CLA AMG",
+    "values": {
+      "brand_name": "奔驰",
+      "brand_code": "BRAND_1DF1AA9A0A",
+      "oem_name": "奔驰(进口)",
+      "oem_code": "CITY_OEM_456464FA180266281754",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：奔驰CLA AMG；品牌=奔驰；主机厂=奔驰(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://car.autohome.com.cn/config/series/2967-21834.html"
+    }
+  },
+  {
+    "source_model_name": "奔驰CLA(进口)",
+    "values": {
+      "brand_name": "奔驰",
+      "brand_code": "BRAND_1DF1AA9A0A",
+      "oem_name": "海外主机厂不在研究范围内",
+      "oem_code": "OEM_OVERSEAS_OUT_OF_RESEARCH",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：奔驰CLA(进口)；品牌=奔驰；主机厂=海外主机厂不在研究范围内；按用户2026-11-28授权归入海外主机厂研究排除桶，目录实际主机厂为奔驰(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.12365auto.com/series/1466/index.shtml"
+    }
+  },
+  {
+    "source_model_name": "奔驰CLE",
+    "values": {
+      "brand_name": "奔驰",
+      "brand_code": "BRAND_1DF1AA9A0A",
+      "oem_name": "奔驰(进口)",
+      "oem_code": "CITY_OEM_456464FA180266281754",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "其他",
+      "evidence": "2026-11-28联网审核：奔驰CLE；品牌=奔驰；主机厂=奔驰(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.12365auto.com/series/3966/index.shtml"
+    }
+  },
+  {
+    "source_model_name": "奔驰CLE AMG",
+    "values": {
+      "brand_name": "奔驰",
+      "brand_code": "BRAND_1DF1AA9A0A",
+      "oem_name": "奔驰(进口)",
+      "oem_code": "CITY_OEM_456464FA180266281754",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "其他",
+      "evidence": "2026-11-28联网审核：奔驰CLE AMG；品牌=奔驰；主机厂=奔驰(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.12365auto.com/series/3966/index.shtml"
+    }
+  },
+  {
+    "source_model_name": "奔驰CLS",
+    "values": {
+      "brand_name": "奔驰",
+      "brand_code": "BRAND_1DF1AA9A0A",
+      "oem_name": "奔驰(进口)",
+      "oem_code": "CITY_OEM_456464FA180266281754",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：奔驰CLS；品牌=奔驰；主机厂=奔驰(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://car.autohome.com.cn/config/series/365-17645.html"
+    }
+  },
+  {
+    "source_model_name": "奔驰C级(进口)",
+    "values": {
+      "brand_name": "奔驰",
+      "brand_code": "BRAND_1DF1AA9A0A",
+      "oem_name": "海外主机厂不在研究范围内",
+      "oem_code": "OEM_OVERSEAS_OUT_OF_RESEARCH",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：奔驰C级(进口)；品牌=奔驰；主机厂=海外主机厂不在研究范围内；按用户2026-11-28授权归入海外主机厂研究排除桶，目录实际主机厂为奔驰(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.12365auto.com/series/109/index.shtml"
+    }
+  },
+  {
+    "source_model_name": "奔驰C级AMG",
+    "values": {
+      "brand_name": "奔驰",
+      "brand_code": "BRAND_1DF1AA9A0A",
+      "oem_name": "奔驰(进口)",
+      "oem_code": "CITY_OEM_456464FA180266281754",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：奔驰C级AMG；品牌=奔驰；主机厂=奔驰(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.dongchedi.com/auto/params-carIds-x-5969"
+    }
+  },
+  {
+    "source_model_name": "奔驰EQE AMG",
+    "values": {
+      "brand_name": "奔驰",
+      "brand_code": "BRAND_1DF1AA9A0A",
+      "oem_name": "奔驰(进口)",
+      "oem_code": "CITY_OEM_456464FA180266281754",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：奔驰EQE AMG；品牌=奔驰；主机厂=奔驰(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.qcwp.com/series/362/parameter"
+    }
+  },
+  {
+    "source_model_name": "奔驰EQE SUV AMG",
+    "values": {
+      "brand_name": "奔驰",
+      "brand_code": "BRAND_1DF1AA9A0A",
+      "oem_name": "奔驰(进口)",
+      "oem_code": "CITY_OEM_456464FA180266281754",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：奔驰EQE SUV AMG；品牌=奔驰；主机厂=奔驰(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://dealer.yiche.com/100055356/price_detail/175701.html?leads_source=p032006"
+    }
+  },
+  {
+    "source_model_name": "奔驰EQS",
+    "values": {
+      "brand_name": "奔驰",
+      "brand_code": "BRAND_1DF1AA9A0A",
+      "oem_name": "奔驰(进口)",
+      "oem_code": "CITY_OEM_456464FA180266281754",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：奔驰EQS；品牌=奔驰；主机厂=奔驰(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://price.pcauto.com.cn/sg25319/config.html"
+    }
+  },
+  {
+    "source_model_name": "奔驰EQS AMG",
+    "values": {
+      "brand_name": "奔驰",
+      "brand_code": "BRAND_1DF1AA9A0A",
+      "oem_name": "奔驰(进口)",
+      "oem_code": "CITY_OEM_456464FA180266281754",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：奔驰EQS AMG；品牌=奔驰；主机厂=奔驰(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://dealer.yiche.com/100039193/price_detail/161651.html?leads_source=p033001"
+    }
+  },
+  {
+    "source_model_name": "奔驰EQS SUV",
+    "values": {
+      "brand_name": "奔驰",
+      "brand_code": "BRAND_1DF1AA9A0A",
+      "oem_name": "奔驰(进口)",
+      "oem_code": "CITY_OEM_456464FA180266281754",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：奔驰EQS SUV；品牌=奔驰；主机厂=奔驰(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://price.pcauto.com.cn/sg28635/config.html"
+    }
+  },
+  {
+    "source_model_name": "奔驰E级(进口)",
+    "values": {
+      "brand_name": "奔驰",
+      "brand_code": "BRAND_1DF1AA9A0A",
+      "oem_name": "海外主机厂不在研究范围内",
+      "oem_code": "OEM_OVERSEAS_OUT_OF_RESEARCH",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：奔驰E级(进口)；品牌=奔驰；主机厂=海外主机厂不在研究范围内；按用户2026-11-28授权归入海外主机厂研究排除桶，目录实际主机厂为奔驰(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://dealer.m.yiche.com/d100015844/price_detail_185766.html?leads_source=m021001"
+    }
+  },
+  {
+    "source_model_name": "奔驰GLA AMG",
+    "values": {
+      "brand_name": "奔驰",
+      "brand_code": "BRAND_1DF1AA9A0A",
+      "oem_name": "奔驰(进口)",
+      "oem_code": "CITY_OEM_456464FA180266281754",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：奔驰GLA AMG；品牌=奔驰；主机厂=奔驰(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.12365auto.com/series/2782/index.shtml"
+    }
+  },
+  {
+    "source_model_name": "奔驰GLB AMG",
+    "values": {
+      "brand_name": "奔驰",
+      "brand_code": "BRAND_1DF1AA9A0A",
+      "oem_name": "奔驰(进口)",
+      "oem_code": "CITY_OEM_456464FA180266281754",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：奔驰GLB AMG；品牌=奔驰；主机厂=奔驰(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://detail.zol.com.cn/1975/1974712/param.shtml"
+    }
+  },
+  {
+    "source_model_name": "奔驰GLC AMG",
+    "values": {
+      "brand_name": "奔驰",
+      "brand_code": "BRAND_1DF1AA9A0A",
+      "oem_name": "奔驰(进口)",
+      "oem_code": "CITY_OEM_456464FA180266281754",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：奔驰GLC AMG；品牌=奔驰；主机厂=奔驰(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://detail.zol.com.cn/1967/1966206/param.shtml"
+    }
+  },
+  {
+    "source_model_name": "奔驰GLC轿跑",
+    "values": {
+      "brand_name": "奔驰",
+      "brand_code": "BRAND_1DF1AA9A0A",
+      "oem_name": "奔驰(进口)",
+      "oem_code": "CITY_OEM_456464FA180266281754",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：奔驰GLC轿跑；品牌=奔驰；主机厂=奔驰(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://car.autohome.com.cn/config/series/3339-15173.html"
+    }
+  },
+  {
+    "source_model_name": "奔驰GLE AMG",
+    "values": {
+      "brand_name": "奔驰",
+      "brand_code": "BRAND_1DF1AA9A0A",
+      "oem_name": "奔驰(进口)",
+      "oem_code": "CITY_OEM_456464FA180266281754",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：奔驰GLE AMG；品牌=奔驰；主机厂=奔驰(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://detail.zol.com.cn/series/2530/18558/param_10847624_0_1.html"
+    }
+  },
+  {
+    "source_model_name": "奔驰GLE(进口)",
+    "values": {
+      "brand_name": "奔驰",
+      "brand_code": "BRAND_1DF1AA9A0A",
+      "oem_name": "海外主机厂不在研究范围内",
+      "oem_code": "OEM_OVERSEAS_OUT_OF_RESEARCH",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：奔驰GLE(进口)；品牌=奔驰；主机厂=海外主机厂不在研究范围内；按用户2026-11-28授权归入海外主机厂研究排除桶，目录实际主机厂为奔驰(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://m.pcauto.com.cn/auto/sg10700/config.html?ad=17340"
+    }
+  },
+  {
+    "source_model_name": "奔驰GLE新能源",
+    "values": {
+      "brand_name": "奔驰",
+      "brand_code": "BRAND_1DF1AA9A0A",
+      "oem_name": "奔驰(进口)",
+      "oem_code": "CITY_OEM_456464FA180266281754",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：奔驰GLE新能源；品牌=奔驰；主机厂=奔驰(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://price.pcauto.com.cn/sg21433/config.html"
+    }
+  },
+  {
+    "source_model_name": "奔驰GLE轿跑",
+    "values": {
+      "brand_name": "奔驰",
+      "brand_code": "BRAND_1DF1AA9A0A",
+      "oem_name": "奔驰(进口)",
+      "oem_code": "CITY_OEM_456464FA180266281754",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：奔驰GLE轿跑；品牌=奔驰；主机厂=奔驰(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://qa-model.pcauto.com.cn/auto/sg27491/price/"
+    }
+  },
+  {
+    "source_model_name": "奔驰GLE轿跑新能源",
+    "values": {
+      "brand_name": "奔驰",
+      "brand_code": "BRAND_1DF1AA9A0A",
+      "oem_name": "奔驰(进口)",
+      "oem_code": "CITY_OEM_456464FA180266281754",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：奔驰GLE轿跑新能源；品牌=奔驰；主机厂=奔驰(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://price.pcauto.com.cn/s43923/config.html"
+    }
+  },
+  {
+    "source_model_name": "奔驰GLS",
+    "values": {
+      "brand_name": "奔驰",
+      "brand_code": "BRAND_1DF1AA9A0A",
+      "oem_name": "奔驰(进口)",
+      "oem_code": "CITY_OEM_456464FA180266281754",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：奔驰GLS；品牌=奔驰；主机厂=奔驰(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://zh.wikipedia.org/wiki/%E6%A2%85%E8%B5%9B%E5%BE%B7%E6%96%AF-%E5%A5%94%E9%A9%B0GLS%E7%BA%A7"
+    }
+  },
+  {
+    "source_model_name": "奔驰G级",
+    "values": {
+      "brand_name": "奔驰",
+      "brand_code": "BRAND_1DF1AA9A0A",
+      "oem_name": "奔驰(进口)",
+      "oem_code": "CITY_OEM_456464FA180266281754",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：奔驰G级；品牌=奔驰；主机厂=奔驰(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://qa-model.pcauto.com.cn/auto/sg8232/config.html"
+    }
+  },
+  {
+    "source_model_name": "奔驰G级AMG",
+    "values": {
+      "brand_name": "奔驰",
+      "brand_code": "BRAND_1DF1AA9A0A",
+      "oem_name": "奔驰(进口)",
+      "oem_code": "CITY_OEM_456464FA180266281754",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：奔驰G级AMG；品牌=奔驰；主机厂=奔驰(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://qa-model.pcauto.com.cn/auto/sg8232/config.html"
+    }
+  },
+  {
+    "source_model_name": "奔驰G级新能源",
+    "values": {
+      "brand_name": "奔驰",
+      "brand_code": "BRAND_1DF1AA9A0A",
+      "oem_name": "奔驰(进口)",
+      "oem_code": "CITY_OEM_456464FA180266281754",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：奔驰G级新能源；品牌=奔驰；主机厂=奔驰(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://price.pcauto.com.cn/sg28001/config.html"
+    }
+  },
+  {
+    "source_model_name": "奔驰S级",
+    "values": {
+      "brand_name": "奔驰",
+      "brand_code": "BRAND_1DF1AA9A0A",
+      "oem_name": "奔驰(进口)",
+      "oem_code": "CITY_OEM_456464FA180266281754",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：奔驰S级；品牌=奔驰；主机厂=奔驰(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://car.autohome.com.cn/config/series/59-7744.html"
+    }
+  },
+  {
+    "source_model_name": "奔驰S级新能源",
+    "values": {
+      "brand_name": "奔驰",
+      "brand_code": "BRAND_1DF1AA9A0A",
+      "oem_name": "奔驰(进口)",
+      "oem_code": "CITY_OEM_456464FA180266281754",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：奔驰S级新能源；品牌=奔驰；主机厂=奔驰(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://price.pcauto.com.cn/sg21463/config.html"
+    }
+  },
+  {
+    "source_model_name": "奔驰V级(进口)",
+    "values": {
+      "brand_name": "奔驰",
+      "brand_code": "BRAND_1DF1AA9A0A",
+      "oem_name": "海外主机厂不在研究范围内",
+      "oem_code": "OEM_OVERSEAS_OUT_OF_RESEARCH",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "MPV",
+      "evidence": "2026-11-28联网审核：奔驰V级(进口)；品牌=奔驰；主机厂=海外主机厂不在研究范围内；按用户2026-11-28授权归入海外主机厂研究排除桶，目录实际主机厂为奔驰(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://car.autohome.com.cn/config/series/3364.html"
+    }
+  },
+  {
+    "source_model_name": "奥迪A4(进口)",
+    "values": {
+      "brand_name": "奥迪",
+      "brand_code": "BRAND_D578EEC9F9",
+      "oem_name": "海外主机厂不在研究范围内",
+      "oem_code": "OEM_OVERSEAS_OUT_OF_RESEARCH",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：奥迪A4(进口)；品牌=奥迪；主机厂=海外主机厂不在研究范围内；按用户2026-11-28授权归入海外主机厂研究排除桶，目录实际主机厂为奥迪(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://detail.zol.com.cn/series/2530/18667/param_10847273_15512925.html"
+    }
+  },
+  {
+    "source_model_name": "奥迪A5(进口)",
+    "values": {
+      "brand_name": "奥迪",
+      "brand_code": "BRAND_D578EEC9F9",
+      "oem_name": "海外主机厂不在研究范围内",
+      "oem_code": "OEM_OVERSEAS_OUT_OF_RESEARCH",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：奥迪A5(进口)；品牌=奥迪；主机厂=海外主机厂不在研究范围内；按用户2026-11-28授权归入海外主机厂研究排除桶，目录实际主机厂为奥迪(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://detail.zol.com.cn/2145/2144459/param.shtml"
+    }
+  },
+  {
+    "source_model_name": "奥迪A6",
+    "values": {
+      "brand_name": "奥迪",
+      "brand_code": "BRAND_D578EEC9F9",
+      "oem_name": "奥迪(进口)",
+      "oem_code": "CITY_OEM_D7ED94B89F09A99A4C37",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：奥迪A6；品牌=奥迪；主机厂=奥迪(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://detail.zol.com.cn/series/2530/10908236_1.html"
+    }
+  },
+  {
+    "source_model_name": "奥迪A6(进口)",
+    "values": {
+      "brand_name": "奥迪",
+      "brand_code": "BRAND_D578EEC9F9",
+      "oem_name": "海外主机厂不在研究范围内",
+      "oem_code": "OEM_OVERSEAS_OUT_OF_RESEARCH",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：奥迪A6(进口)；品牌=奥迪；主机厂=海外主机厂不在研究范围内；按用户2026-11-28授权归入海外主机厂研究排除桶，目录实际主机厂为奥迪(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://detail.zol.com.cn/series/2530/10908236_1.html"
+    }
+  },
+  {
+    "source_model_name": "奥迪A7",
+    "values": {
+      "brand_name": "奥迪",
+      "brand_code": "BRAND_D578EEC9F9",
+      "oem_name": "奥迪(进口)",
+      "oem_code": "CITY_OEM_D7ED94B89F09A99A4C37",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：奥迪A7；品牌=奥迪；主机厂=奥迪(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://dealer.yiche.com/100134499/price_detail/177296.html"
+    }
+  },
+  {
+    "source_model_name": "奥迪A8",
+    "values": {
+      "brand_name": "奥迪",
+      "brand_code": "BRAND_D578EEC9F9",
+      "oem_name": "奥迪(进口)",
+      "oem_code": "CITY_OEM_D7ED94B89F09A99A4C37",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：奥迪A8；品牌=奥迪；主机厂=奥迪(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.autohome.com.cn/config/spec/70487.html"
+    }
+  },
+  {
+    "source_model_name": "奥迪Q7",
+    "values": {
+      "brand_name": "奥迪",
+      "brand_code": "BRAND_D578EEC9F9",
+      "oem_name": "奥迪(进口)",
+      "oem_code": "CITY_OEM_D7ED94B89F09A99A4C37",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：奥迪Q7；品牌=奥迪；主机厂=奥迪(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://car.autohome.com.cn/config/series/412-1049.html"
+    }
+  },
+  {
+    "source_model_name": "奥迪Q8",
+    "values": {
+      "brand_name": "奥迪",
+      "brand_code": "BRAND_D578EEC9F9",
+      "oem_name": "奥迪(进口)",
+      "oem_code": "CITY_OEM_D7ED94B89F09A99A4C37",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：奥迪Q8；品牌=奥迪；主机厂=奥迪(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://detail.zol.com.cn/2100/2099444/param.shtml"
+    }
+  },
+  {
+    "source_model_name": "奥迪RS 4",
+    "values": {
+      "brand_name": "奥迪",
+      "brand_code": "BRAND_D578EEC9F9",
+      "oem_name": "奥迪(进口)",
+      "oem_code": "CITY_OEM_D7ED94B89F09A99A4C37",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：奥迪RS 4；品牌=奥迪；主机厂=奥迪(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://car.autohome.com.cn/config/series/2733-18416.html"
+    }
+  },
+  {
+    "source_model_name": "奥迪RS 5",
+    "values": {
+      "brand_name": "奥迪",
+      "brand_code": "BRAND_D578EEC9F9",
+      "oem_name": "奥迪(进口)",
+      "oem_code": "CITY_OEM_D7ED94B89F09A99A4C37",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：奥迪RS 5；品牌=奥迪；主机厂=奥迪(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.pcauto.com.cn/sg4542/price/"
+    }
+  },
+  {
+    "source_model_name": "奥迪RS 6",
+    "values": {
+      "brand_name": "奥迪",
+      "brand_code": "BRAND_D578EEC9F9",
+      "oem_name": "奥迪(进口)",
+      "oem_code": "CITY_OEM_D7ED94B89F09A99A4C37",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：奥迪RS 6；品牌=奥迪；主机厂=奥迪(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://dealer.m.yiche.com/100118737/price_detail_184314.html?fromCMT=3A99D1C6-0DAF-4FD5-8D98-69E1949A38A9&leads_source=m002010"
+    }
+  },
+  {
+    "source_model_name": "奥迪RS 7",
+    "values": {
+      "brand_name": "奥迪",
+      "brand_code": "BRAND_D578EEC9F9",
+      "oem_name": "奥迪(进口)",
+      "oem_code": "CITY_OEM_D7ED94B89F09A99A4C37",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：奥迪RS 7；品牌=奥迪；主机厂=奥迪(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://price.pcauto.com.cn/sg8872/config.html"
+    }
+  },
+  {
+    "source_model_name": "奥迪RS e-tron GT",
+    "values": {
+      "brand_name": "奥迪",
+      "brand_code": "BRAND_D578EEC9F9",
+      "oem_name": "奥迪(进口)",
+      "oem_code": "CITY_OEM_D7ED94B89F09A99A4C37",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：奥迪RS e-tron GT；品牌=奥迪；主机厂=奥迪(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://qa-model.pcauto.com.cn/auto/sg27022/config.html"
+    }
+  },
+  {
+    "source_model_name": "奥迪S4",
+    "values": {
+      "brand_name": "奥迪",
+      "brand_code": "BRAND_D578EEC9F9",
+      "oem_name": "奥迪(进口)",
+      "oem_code": "CITY_OEM_D7ED94B89F09A99A4C37",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：奥迪S4；品牌=奥迪；主机厂=奥迪(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://price.pcauto.com.cn/sg9001/config.html"
+    }
+  },
+  {
+    "source_model_name": "奥迪SQ5",
+    "values": {
+      "brand_name": "奥迪",
+      "brand_code": "BRAND_D578EEC9F9",
+      "oem_name": "奥迪(进口)",
+      "oem_code": "CITY_OEM_D7ED94B89F09A99A4C37",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：奥迪SQ5；品牌=奥迪；主机厂=奥迪(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://price.pcauto.com.cn/sg8320/config.html"
+    }
+  },
+  {
+    "source_model_name": "奥迪e-tron(进口)",
+    "values": {
+      "brand_name": "奥迪",
+      "brand_code": "BRAND_D578EEC9F9",
+      "oem_name": "海外主机厂不在研究范围内",
+      "oem_code": "OEM_OVERSEAS_OUT_OF_RESEARCH",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：奥迪e-tron(进口)；品牌=奥迪；主机厂=海外主机厂不在研究范围内；按用户2026-11-28授权归入海外主机厂研究排除桶，目录实际主机厂为奥迪(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://price.pcauto.com.cn/sg13028/config.html"
+    }
+  },
+  {
+    "source_model_name": "好运",
+    "values": {
+      "brand_name": "鑫源",
+      "brand_code": "BRAND_98AD72838C",
+      "oem_name": "鑫源汽车",
+      "oem_code": "OEM_938B704F58",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "其他",
+      "evidence": "2026-11-28联网审核：好运；品牌=鑫源；主机厂=鑫源汽车；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://m.pcauto.com.cn/auto/sg29416/config.html?ad=17340"
+    }
+  },
+  {
+    "source_model_name": "威尔法",
+    "values": {
+      "brand_name": "丰田",
+      "brand_code": "BRAND_C77696CAAD",
+      "oem_name": "丰田(进口)",
+      "oem_code": "CITY_OEM_856BB6716B177B31F6DA",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "MPV",
+      "evidence": "2026-11-28联网审核：威尔法；品牌=丰田；主机厂=丰田(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.autohome.com.cn/news/202004/990848.html"
+    }
+  },
+  {
+    "source_model_name": "宝沃BXi7",
+    "values": {
+      "brand_name": "宝沃",
+      "brand_code": "BRAND_FD301F161A",
+      "oem_name": "宝沃汽车",
+      "oem_code": "OEM_6692073D41",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：宝沃BXi7；品牌=宝沃；主机厂=宝沃汽车；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.12365auto.com/series/2275/index.shtml"
+    }
+  },
+  {
+    "source_model_name": "宝马2系(进口)",
+    "values": {
+      "brand_name": "宝马",
+      "brand_code": "BRAND_38682F11C1",
+      "oem_name": "海外主机厂不在研究范围内",
+      "oem_code": "OEM_OVERSEAS_OUT_OF_RESEARCH",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：宝马2系(进口)；品牌=宝马；主机厂=海外主机厂不在研究范围内；按用户2026-11-28授权归入海外主机厂研究排除桶，目录实际主机厂为宝马(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://m.pcauto.com.cn/auto/sg9351/config.html"
+    }
+  },
+  {
+    "source_model_name": "宝马4系",
+    "values": {
+      "brand_name": "宝马",
+      "brand_code": "BRAND_38682F11C1",
+      "oem_name": "宝马(进口)",
+      "oem_code": "CITY_OEM_ADC625C09DE9AE536F06",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：宝马4系；品牌=宝马；主机厂=宝马(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://detail.zol.com.cn/series/2530/10925825_1.html"
+    }
+  },
+  {
+    "source_model_name": "宝马5系(进口)",
+    "values": {
+      "brand_name": "宝马",
+      "brand_code": "BRAND_38682F11C1",
+      "oem_name": "海外主机厂不在研究范围内",
+      "oem_code": "OEM_OVERSEAS_OUT_OF_RESEARCH",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：宝马5系(进口)；品牌=宝马；主机厂=海外主机厂不在研究范围内；按用户2026-11-28授权归入海外主机厂研究排除桶，目录实际主机厂为宝马(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.12365auto.com/series/79/index.shtml"
+    }
+  },
+  {
+    "source_model_name": "宝马6系GT",
+    "values": {
+      "brand_name": "宝马",
+      "brand_code": "BRAND_38682F11C1",
+      "oem_name": "宝马(进口)",
+      "oem_code": "CITY_OEM_ADC625C09DE9AE536F06",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：宝马6系GT；品牌=宝马；主机厂=宝马(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.dongchedi.com/auto/params-carIds-77003"
+    }
+  },
+  {
+    "source_model_name": "宝马7系",
+    "values": {
+      "brand_name": "宝马",
+      "brand_code": "BRAND_38682F11C1",
+      "oem_name": "宝马(进口)",
+      "oem_code": "CITY_OEM_ADC625C09DE9AE536F06",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：宝马7系；品牌=宝马；主机厂=宝马(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://detail.zol.com.cn/series/2530/10921364_1.html"
+    }
+  },
+  {
+    "source_model_name": "宝马8系",
+    "values": {
+      "brand_name": "宝马",
+      "brand_code": "BRAND_38682F11C1",
+      "oem_name": "宝马(进口)",
+      "oem_code": "CITY_OEM_ADC625C09DE9AE536F06",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：宝马8系；品牌=宝马；主机厂=宝马(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.12365auto.com/series/2628/index.shtml"
+    }
+  },
+  {
+    "source_model_name": "宝马M2",
+    "values": {
+      "brand_name": "宝马",
+      "brand_code": "BRAND_38682F11C1",
+      "oem_name": "宝马(进口)",
+      "oem_code": "CITY_OEM_ADC625C09DE9AE536F06",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：宝马M2；品牌=宝马；主机厂=宝马(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://m.pcauto.com.cn/auto/sg9998/m141144/config.html"
+    }
+  },
+  {
+    "source_model_name": "宝马M3",
+    "values": {
+      "brand_name": "宝马",
+      "brand_code": "BRAND_38682F11C1",
+      "oem_name": "宝马(进口)",
+      "oem_code": "CITY_OEM_ADC625C09DE9AE536F06",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：宝马M3；品牌=宝马；主机厂=宝马(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.dongchedi.com/auto/params-carIds-76661"
+    }
+  },
+  {
+    "source_model_name": "宝马M4",
+    "values": {
+      "brand_name": "宝马",
+      "brand_code": "BRAND_38682F11C1",
+      "oem_name": "宝马(进口)",
+      "oem_code": "CITY_OEM_ADC625C09DE9AE536F06",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：宝马M4；品牌=宝马；主机厂=宝马(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://price.pcauto.com.cn/m126774/config.html"
+    }
+  },
+  {
+    "source_model_name": "宝马X2(进口)",
+    "values": {
+      "brand_name": "宝马",
+      "brand_code": "BRAND_38682F11C1",
+      "oem_name": "海外主机厂不在研究范围内",
+      "oem_code": "OEM_OVERSEAS_OUT_OF_RESEARCH",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：宝马X2(进口)；品牌=宝马；主机厂=海外主机厂不在研究范围内；按用户2026-11-28授权归入海外主机厂研究排除桶，目录实际主机厂为宝马(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://m.pcauto.com.cn/auto/sg10099/config.html"
+    }
+  },
+  {
+    "source_model_name": "宝马X3 M",
+    "values": {
+      "brand_name": "宝马",
+      "brand_code": "BRAND_38682F11C1",
+      "oem_name": "宝马(进口)",
+      "oem_code": "CITY_OEM_ADC625C09DE9AE536F06",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：宝马X3 M；品牌=宝马；主机厂=宝马(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://detail.zol.com.cn/1966/1965712/param.shtml"
+    }
+  },
+  {
+    "source_model_name": "宝马X3(进口)",
+    "values": {
+      "brand_name": "宝马",
+      "brand_code": "BRAND_38682F11C1",
+      "oem_name": "海外主机厂不在研究范围内",
+      "oem_code": "OEM_OVERSEAS_OUT_OF_RESEARCH",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：宝马X3(进口)；品牌=宝马；主机厂=海外主机厂不在研究范围内；按用户2026-11-28授权归入海外主机厂研究排除桶，目录实际主机厂为宝马(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.12365auto.com/series/74/index.shtml"
+    }
+  },
+  {
+    "source_model_name": "宝马X4",
+    "values": {
+      "brand_name": "宝马",
+      "brand_code": "BRAND_38682F11C1",
+      "oem_name": "宝马(进口)",
+      "oem_code": "CITY_OEM_ADC625C09DE9AE536F06",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：宝马X4；品牌=宝马；主机厂=宝马(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://price.pcauto.com.cn/s42825/config.html"
+    }
+  },
+  {
+    "source_model_name": "宝马X4 M",
+    "values": {
+      "brand_name": "宝马",
+      "brand_code": "BRAND_38682F11C1",
+      "oem_name": "宝马(进口)",
+      "oem_code": "CITY_OEM_ADC625C09DE9AE536F06",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：宝马X4 M；品牌=宝马；主机厂=宝马(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://price.pcauto.com.cn/s42825/config.html"
+    }
+  },
+  {
+    "source_model_name": "宝马X5 M",
+    "values": {
+      "brand_name": "宝马",
+      "brand_code": "BRAND_38682F11C1",
+      "oem_name": "宝马(进口)",
+      "oem_code": "CITY_OEM_ADC625C09DE9AE536F06",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：宝马X5 M；品牌=宝马；主机厂=宝马(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.dongchedi.com/auto/params-carIds-x-139"
+    }
+  },
+  {
+    "source_model_name": "宝马X5(进口)",
+    "values": {
+      "brand_name": "宝马",
+      "brand_code": "BRAND_38682F11C1",
+      "oem_name": "海外主机厂不在研究范围内",
+      "oem_code": "OEM_OVERSEAS_OUT_OF_RESEARCH",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：宝马X5(进口)；品牌=宝马；主机厂=海外主机厂不在研究范围内；按用户2026-11-28授权归入海外主机厂研究排除桶，目录实际主机厂为宝马(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://qa-model.pcauto.com.cn/auto/sg169/config.html"
+    }
+  },
+  {
+    "source_model_name": "宝马X6",
+    "values": {
+      "brand_name": "宝马",
+      "brand_code": "BRAND_38682F11C1",
+      "oem_name": "宝马(进口)",
+      "oem_code": "CITY_OEM_ADC625C09DE9AE536F06",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：宝马X6；品牌=宝马；主机厂=宝马(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://m.pcauto.com.cn/auto/sg3198/config.html"
+    }
+  },
+  {
+    "source_model_name": "宝马X7",
+    "values": {
+      "brand_name": "宝马",
+      "brand_code": "BRAND_38682F11C1",
+      "oem_name": "宝马(进口)",
+      "oem_code": "CITY_OEM_ADC625C09DE9AE536F06",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：宝马X7；品牌=宝马；主机厂=宝马(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://detail.zol.com.cn/series/2530/18635/param_10847694_0_1.html"
+    }
+  },
+  {
+    "source_model_name": "宝马XM",
+    "values": {
+      "brand_name": "宝马",
+      "brand_code": "BRAND_38682F11C1",
+      "oem_name": "宝马(进口)",
+      "oem_code": "CITY_OEM_ADC625C09DE9AE536F06",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：宝马XM；品牌=宝马；主机厂=宝马(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://price.pcauto.com.cn/sg28372/config.html"
+    }
+  },
+  {
+    "source_model_name": "宝马Z4",
+    "values": {
+      "brand_name": "宝马",
+      "brand_code": "BRAND_38682F11C1",
+      "oem_name": "宝马(进口)",
+      "oem_code": "CITY_OEM_ADC625C09DE9AE536F06",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "其他",
+      "evidence": "2026-11-28联网审核：宝马Z4；品牌=宝马；主机厂=宝马(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://car.autohome.com.cn/config/series/161-313.html"
+    }
+  },
+  {
+    "source_model_name": "宝马i3(进口)",
+    "values": {
+      "brand_name": "宝马",
+      "brand_code": "BRAND_38682F11C1",
+      "oem_name": "海外主机厂不在研究范围内",
+      "oem_code": "OEM_OVERSEAS_OUT_OF_RESEARCH",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：宝马i3(进口)；品牌=宝马；主机厂=海外主机厂不在研究范围内；按用户2026-11-28授权归入海外主机厂研究排除桶，目录实际主机厂为宝马(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.27usedcar.com/zh/cars/models/bmw-i3-imported"
+    }
+  },
+  {
+    "source_model_name": "宝马i4",
+    "values": {
+      "brand_name": "宝马",
+      "brand_code": "BRAND_38682F11C1",
+      "oem_name": "宝马(进口)",
+      "oem_code": "CITY_OEM_ADC625C09DE9AE536F06",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：宝马i4；品牌=宝马；主机厂=宝马(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.dongchedi.com/auto/params-carIds-54255-54256"
+    }
+  },
+  {
+    "source_model_name": "宝马i7",
+    "values": {
+      "brand_name": "宝马",
+      "brand_code": "BRAND_38682F11C1",
+      "oem_name": "宝马(进口)",
+      "oem_code": "CITY_OEM_ADC625C09DE9AE536F06",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：宝马i7；品牌=宝马；主机厂=宝马(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://car.autohome.com.cn/config/series/6427-18482.html"
+    }
+  },
+  {
+    "source_model_name": "宝马iX",
+    "values": {
+      "brand_name": "宝马",
+      "brand_code": "BRAND_38682F11C1",
+      "oem_name": "宝马(进口)",
+      "oem_code": "CITY_OEM_ADC625C09DE9AE536F06",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：宝马iX；品牌=宝马；主机厂=宝马(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://price.pcauto.com.cn/sg23543/config.html"
+    }
+  },
+  {
+    "source_model_name": "宝骏RS-5新能源",
+    "values": {
+      "brand_name": "宝骏",
+      "brand_code": "CITY_BRAND_1041701F34074563070E",
+      "oem_name": "上汽通用五菱",
+      "oem_code": "OEM_BEC3E4C50C",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：宝骏RS-5新能源；品牌=宝骏；主机厂=上汽通用五菱；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://price.pcauto.com.cn/comment/sg26283/"
+    }
+  },
+  {
+    "source_model_name": "小海狮X30 CNG",
+    "values": {
+      "brand_name": "金杯",
+      "brand_code": "BRAND_B2D9D0F490",
+      "oem_name": "鑫源汽车",
+      "oem_code": "OEM_938B704F58",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "其他",
+      "vehicle_type": "其他",
+      "evidence": "2026-11-28联网审核：小海狮X30 CNG；品牌=金杯；主机厂=鑫源汽车；汽油/CNG双燃料归其他能源。普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.17vin.com/model/doh8p.html"
+    }
+  },
+  {
+    "source_model_name": "小米SU7 Ultra",
+    "values": {
+      "brand_name": "小米",
+      "brand_code": "BRAND_2BE4465777",
+      "oem_name": "小米汽车",
+      "oem_code": "OEM_1CB5B213DB",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：小米SU7 Ultra；品牌=小米；主机厂=小米汽车；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://car.autohome.com.cn/diandongche/series-7915-0-3-0-0-0-0-1.html"
+    }
+  },
+  {
+    "source_model_name": "小鹏MONA L05",
+    "values": {
+      "brand_name": "小鹏",
+      "brand_code": "BRAND_0E541FE6A5",
+      "oem_name": "小鹏汽车",
+      "oem_code": "OEM_6B2A91552B",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：小鹏MONA L05；品牌=小鹏；主机厂=小鹏汽车；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.xiaopeng.com/news/company_news/5606.html"
+    }
+  },
+  {
+    "source_model_name": "帕杰罗(进口)",
+    "values": {
+      "brand_name": "三菱",
+      "brand_code": "BRAND_A1ECC08ED9",
+      "oem_name": "海外主机厂不在研究范围内",
+      "oem_code": "OEM_OVERSEAS_OUT_OF_RESEARCH",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：帕杰罗(进口)；品牌=三菱；主机厂=海外主机厂不在研究范围内；按用户2026-11-28授权归入海外主机厂研究排除桶，目录实际主机厂为三菱(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.dongchedi.com/auto/series/1206"
+    }
+  },
+  {
+    "source_model_name": "帕里斯帝",
+    "values": {
+      "brand_name": "现代",
+      "brand_code": "BRAND_0FA79175E1",
+      "oem_name": "现代(进口)",
+      "oem_code": "CITY_OEM_A0A174587EC019985CB9",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：帕里斯帝；品牌=现代；主机厂=现代(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.hyundai.com.cn/news/373.html"
+    }
+  },
+  {
+    "source_model_name": "库里南",
+    "values": {
+      "brand_name": "劳斯莱斯",
+      "brand_code": "CITY_BRAND_9B3ADC4E66B7D9663AD7",
+      "oem_name": "劳斯莱斯",
+      "oem_code": "CITY_OEM_9B3ADC4E66B7D9663AD7",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：库里南；品牌=劳斯莱斯；主机厂=劳斯莱斯；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.yiche.com/zhai/list-5390/"
+    }
+  },
+  {
+    "source_model_name": "思域(进口)",
+    "values": {
+      "brand_name": "本田",
+      "brand_code": "BRAND_3B01FA6D21",
+      "oem_name": "海外主机厂不在研究范围内",
+      "oem_code": "OEM_OVERSEAS_OUT_OF_RESEARCH",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：思域(进口)；品牌=本田；主机厂=海外主机厂不在研究范围内；按用户2026-11-28授权归入海外主机厂研究排除桶，目录实际主机厂为本田(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://qa-model.pcauto.com.cn/auto/sg11/config.html"
+    }
+  },
+  {
+    "source_model_name": "恒天L4600",
+    "values": {
+      "brand_name": "恒天",
+      "brand_code": "CITY_BRAND_C836FADF58B9D2BC7BCB",
+      "oem_name": "恒天汽车",
+      "oem_code": "CITY_OEM_5C7FEEF149A4CB1BA406",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：恒天L4600；品牌=恒天；主机厂=恒天汽车；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.autohome.com.cn/4946/price.html"
+    }
+  },
+  {
+    "source_model_name": "恒驰5",
+    "values": {
+      "brand_name": "恒驰",
+      "brand_code": "CITY_BRAND_B95AB188A41A7003A51E",
+      "oem_name": "恒驰汽车",
+      "oem_code": "CITY_OEM_416E1DC0B376DE11100E",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：恒驰5；品牌=恒驰；主机厂=恒驰汽车；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://car.autohome.com.cn/config/series/5852-17612.html"
+    }
+  },
+  {
+    "source_model_name": "悦01",
+    "values": {
+      "brand_name": "电动屋",
+      "brand_code": "BRAND_2949A80418",
+      "oem_name": "电动屋",
+      "oem_code": "OEM_2949A80418",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：悦01；品牌=电动屋；主机厂=电动屋；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.autohome.com.cn/news/202310/1289419.html"
+    }
+  },
+  {
+    "source_model_name": "捷尼赛思G80",
+    "values": {
+      "brand_name": "捷尼赛思",
+      "brand_code": "CITY_BRAND_0FB17EDE93E9C29B3FCB",
+      "oem_name": "捷尼赛思",
+      "oem_code": "CITY_OEM_0FB17EDE93E9C29B3FCB",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：捷尼赛思G80；品牌=捷尼赛思；主机厂=捷尼赛思；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.autohome.com.cn/news/202406/1297213.html?from=m&platform-key=pc"
+    }
+  },
+  {
+    "source_model_name": "捷尼赛思GV70",
+    "values": {
+      "brand_name": "捷尼赛思",
+      "brand_code": "CITY_BRAND_0FB17EDE93E9C29B3FCB",
+      "oem_name": "捷尼赛思",
+      "oem_code": "CITY_OEM_0FB17EDE93E9C29B3FCB",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：捷尼赛思GV70；品牌=捷尼赛思；主机厂=捷尼赛思；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://chejiahao.m.autohome.com.cn/info/12617636"
+    }
+  },
+  {
+    "source_model_name": "捷尼赛思GV80",
+    "values": {
+      "brand_name": "捷尼赛思",
+      "brand_code": "CITY_BRAND_0FB17EDE93E9C29B3FCB",
+      "oem_name": "捷尼赛思",
+      "oem_code": "CITY_OEM_0FB17EDE93E9C29B3FCB",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：捷尼赛思GV80；品牌=捷尼赛思；主机厂=捷尼赛思；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://price.pcauto.com.cn/sg21564/config.html"
+    }
+  },
+  {
+    "source_model_name": "捷豹F-PACE",
+    "values": {
+      "brand_name": "捷豹",
+      "brand_code": "CITY_BRAND_087910C424F8CA3067BA",
+      "oem_name": "捷豹(进口)",
+      "oem_code": "CITY_OEM_6A64F6A208E69EE5995D",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：捷豹F-PACE；品牌=捷豹；主机厂=捷豹(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.12365auto.com/series/1802/index.shtml"
+    }
+  },
+  {
+    "source_model_name": "捷豹F-TYPE",
+    "values": {
+      "brand_name": "捷豹",
+      "brand_code": "CITY_BRAND_087910C424F8CA3067BA",
+      "oem_name": "捷豹(进口)",
+      "oem_code": "CITY_OEM_6A64F6A208E69EE5995D",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "其他",
+      "evidence": "2026-11-28联网审核：捷豹F-TYPE；品牌=捷豹；主机厂=捷豹(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://price.pcauto.com.cn/sg580/config.html"
+    }
+  },
+  {
+    "source_model_name": "捷途X70 PRO",
+    "values": {
+      "brand_name": "捷途",
+      "brand_code": "CITY_BRAND_5D149A7959262F6A2909",
+      "oem_name": "奇瑞汽车",
+      "oem_code": "OEM_A993E4D1D4",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：捷途X70 PRO；品牌=捷途；主机厂=奇瑞汽车；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://car.autohome.com.cn/config/series/7319.html"
+    }
+  },
+  {
+    "source_model_name": "捷途X70M",
+    "values": {
+      "brand_name": "捷途",
+      "brand_code": "CITY_BRAND_5D149A7959262F6A2909",
+      "oem_name": "奇瑞汽车",
+      "oem_code": "OEM_A993E4D1D4",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：捷途X70M；品牌=捷途；主机厂=奇瑞汽车；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://baike.pcauto.com.cn/766194.html"
+    }
+  },
+  {
+    "source_model_name": "捷途X70S",
+    "values": {
+      "brand_name": "捷途",
+      "brand_code": "CITY_BRAND_5D149A7959262F6A2909",
+      "oem_name": "奇瑞汽车",
+      "oem_code": "OEM_A993E4D1D4",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：捷途X70S；品牌=捷途；主机厂=奇瑞汽车；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.12365auto.com/series/2455/index.shtml"
+    }
+  },
+  {
+    "source_model_name": "揽胜",
+    "values": {
+      "brand_name": "路虎",
+      "brand_code": "CITY_BRAND_EE875A961B9A4FD0B4D6",
+      "oem_name": "路虎(进口)",
+      "oem_code": "CITY_OEM_FD4F58F515E0D089C6B6",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：揽胜；品牌=路虎；主机厂=路虎(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.landrover.com.cn/experiences/news/24rangerover.html"
+    }
+  },
+  {
+    "source_model_name": "揽胜星脉",
+    "values": {
+      "brand_name": "路虎",
+      "brand_code": "CITY_BRAND_EE875A961B9A4FD0B4D6",
+      "oem_name": "路虎(进口)",
+      "oem_code": "CITY_OEM_FD4F58F515E0D089C6B6",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：揽胜星脉；品牌=路虎；主机厂=路虎(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.dongchedi.com/auto/series/989"
+    }
+  },
+  {
+    "source_model_name": "揽胜运动",
+    "values": {
+      "brand_name": "路虎",
+      "brand_code": "CITY_BRAND_EE875A961B9A4FD0B4D6",
+      "oem_name": "路虎(进口)",
+      "oem_code": "CITY_OEM_FD4F58F515E0D089C6B6",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：揽胜运动；品牌=路虎；主机厂=路虎(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.landrover.com.cn/experiences/news/24rangerover.html"
+    }
+  },
+  {
+    "source_model_name": "斯巴鲁BRZ",
+    "values": {
+      "brand_name": "斯巴鲁",
+      "brand_code": "CITY_BRAND_F1D9ACF04E561DF5516B",
+      "oem_name": "斯巴鲁",
+      "oem_code": "CITY_OEM_F1D9ACF04E561DF5516B",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "其他",
+      "evidence": "2026-11-28联网审核：斯巴鲁BRZ；品牌=斯巴鲁；主机厂=斯巴鲁；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://car.autohome.com.cn/config/series/2557.html"
+    }
+  },
+  {
+    "source_model_name": "新海狮S",
+    "values": {
+      "brand_name": "金杯",
+      "brand_code": "BRAND_B2D9D0F490",
+      "oem_name": "鑫源汽车",
+      "oem_code": "OEM_938B704F58",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "其他",
+      "evidence": "2026-11-28联网审核：新海狮S；品牌=金杯；主机厂=鑫源汽车；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://price.pcauto.com.cn/sg23628/config.html?ad=25008"
+    }
+  },
+  {
+    "source_model_name": "新海狮X30L CNG",
+    "values": {
+      "brand_name": "金杯",
+      "brand_code": "BRAND_B2D9D0F490",
+      "oem_name": "鑫源汽车",
+      "oem_code": "OEM_938B704F58",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "其他",
+      "vehicle_type": "其他",
+      "evidence": "2026-11-28联网审核：新海狮X30L CNG；品牌=金杯；主机厂=鑫源汽车；汽油/CNG双燃料归其他能源。普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://car.autohome.com.cn/config/spec/1021020.html"
+    }
+  },
+  {
+    "source_model_name": "旭豹",
+    "values": {
+      "brand_name": "斯巴鲁",
+      "brand_code": "CITY_BRAND_F1D9ACF04E561DF5516B",
+      "oem_name": "斯巴鲁",
+      "oem_code": "CITY_OEM_F1D9ACF04E561DF5516B",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：旭豹；品牌=斯巴鲁；主机厂=斯巴鲁；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://db.auto.sohu.com/model_7055"
+    }
+  },
+  {
+    "source_model_name": "昂科威S",
+    "values": {
+      "brand_name": "别克",
+      "brand_code": "BRAND_3EE9FB2C87",
+      "oem_name": "上汽通用别克",
+      "oem_code": "OEM_09154B5047",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：昂科威S；品牌=别克；主机厂=上汽通用别克；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.qcwp.com/series/741/parameter"
+    }
+  },
+  {
+    "source_model_name": "昂科拉PLUS",
+    "values": {
+      "brand_name": "别克",
+      "brand_code": "BRAND_3EE9FB2C87",
+      "oem_name": "上汽通用别克",
+      "oem_code": "OEM_09154B5047",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：昂科拉PLUS；品牌=别克；主机厂=上汽通用别克；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://sgmsupply.portal.covisint.com/-/-25t-?inheritRedirect=true"
+    }
+  },
+  {
+    "source_model_name": "昌河北斗星",
+    "values": {
+      "brand_name": "昌河",
+      "brand_code": "BRAND_3A7FF741DD",
+      "oem_name": "北汽昌河",
+      "oem_code": "OEM_FD8EA807F1",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：昌河北斗星；品牌=昌河；主机厂=北汽昌河；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://detail.zol.com.cn/2127/2126803/param.shtml"
+    }
+  },
+  {
+    "source_model_name": "昌河北斗星X5",
+    "values": {
+      "brand_name": "昌河",
+      "brand_code": "BRAND_3A7FF741DD",
+      "oem_name": "北汽昌河",
+      "oem_code": "OEM_FD8EA807F1",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：昌河北斗星X5；品牌=昌河；主机厂=北汽昌河；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.12365auto.com/series/2819/index.shtml"
+    }
+  },
+  {
+    "source_model_name": "星光560",
+    "values": {
+      "brand_name": "五菱",
+      "brand_code": "BRAND_B181B14331",
+      "oem_name": "上汽通用五菱",
+      "oem_code": "OEM_BEC3E4C50C",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：星光560；品牌=五菱；主机厂=上汽通用五菱；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.sgmw.com.cn/carDetail?id=316"
+    }
+  },
+  {
+    "source_model_name": "星海X5",
+    "values": {
+      "brand_name": "风行",
+      "brand_code": "BRAND_93A1BBA6DF",
+      "oem_name": "东风风行",
+      "oem_code": "OEM_EAC3564ED9",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：星海X5；品牌=风行；主机厂=东风风行；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://price.pcauto.com.cn/sg30999/config.html"
+    }
+  },
+  {
+    "source_model_name": "星纪元 ES",
+    "values": {
+      "brand_name": "星途",
+      "brand_code": "BRAND_D5AA429BF8",
+      "oem_name": "星途",
+      "oem_code": "OEM_D5AA429BF8",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：星纪元 ES；品牌=星途；主机厂=星途；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.evlook.com/xingjiyuanES"
+    }
+  },
+  {
+    "source_model_name": "星越L PLUS",
+    "values": {
+      "brand_name": "吉利",
+      "brand_code": "BRAND_BCB56023BC",
+      "oem_name": "吉利汽车",
+      "oem_code": "OEM_87AF04ED67",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：星越L PLUS；品牌=吉利；主机厂=吉利汽车；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.autohome.com.cn/info/202609/1317503.html"
+    }
+  },
+  {
+    "source_model_name": "星越L智擎",
+    "values": {
+      "brand_name": "吉利",
+      "brand_code": "BRAND_BCB56023BC",
+      "oem_name": "吉利汽车",
+      "oem_code": "OEM_87AF04ED67",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：星越L智擎；品牌=吉利；主机厂=吉利汽车；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://detail.zol.com.cn/series/2530/18671/param_10848910_0_1.html"
+    }
+  },
+  {
+    "source_model_name": "普拉多(进口)",
+    "values": {
+      "brand_name": "丰田",
+      "brand_code": "BRAND_C77696CAAD",
+      "oem_name": "海外主机厂不在研究范围内",
+      "oem_code": "OEM_OVERSEAS_OUT_OF_RESEARCH",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：普拉多(进口)；品牌=丰田；主机厂=海外主机厂不在研究范围内；按用户2026-11-28授权归入海外主机厂研究排除桶，目录实际主机厂为丰田(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.12365auto.com/series/300/index.shtml"
+    }
+  },
+  {
+    "source_model_name": "极氪001 FR",
+    "values": {
+      "brand_name": "极氪",
+      "brand_code": "BRAND_18A96A0DC3",
+      "oem_name": "极氪",
+      "oem_code": "OEM_18A96A0DC3",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：极氪001 FR；品牌=极氪；主机厂=极氪；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://car.autohome.com.cn/config/series/7698.html"
+    }
+  },
+  {
+    "source_model_name": "极狐 阿尔法S6",
+    "values": {
+      "brand_name": "极狐",
+      "brand_code": "CITY_BRAND_5D07532193AE11000FFA",
+      "oem_name": "北汽新能源",
+      "oem_code": "OEM_028CF3DF43",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：极狐 阿尔法S6；品牌=极狐；主机厂=北汽新能源；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.arcfox.com.cn/S6/index.html"
+    }
+  },
+  {
+    "source_model_name": "极石ADAMAS",
+    "values": {
+      "brand_name": "极石",
+      "brand_code": "BRAND_DFAE144586",
+      "oem_name": "北京汽车制造厂",
+      "oem_code": "OEM_6A4D7A6E78",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：极石ADAMAS；品牌=极石；主机厂=北京汽车制造厂；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://m.pcauto.com.cn/auto/sg31094/config.html"
+    }
+  },
+  {
+    "source_model_name": "枫叶80v L",
+    "values": {
+      "brand_name": "睿蓝",
+      "brand_code": "BRAND_78BC650446",
+      "oem_name": "睿蓝汽车",
+      "oem_code": "OEM_F55C2B0CB9",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "MPV",
+      "evidence": "2026-11-28联网审核：枫叶80v L；品牌=睿蓝；主机厂=睿蓝汽车；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.pcauto.com.cn/sg30488/price/"
+    }
+  },
+  {
+    "source_model_name": "枫叶80v PRO",
+    "values": {
+      "brand_name": "睿蓝",
+      "brand_code": "BRAND_78BC650446",
+      "oem_name": "睿蓝汽车",
+      "oem_code": "OEM_F55C2B0CB9",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "MPV",
+      "evidence": "2026-11-28联网审核：枫叶80v PRO；品牌=睿蓝；主机厂=睿蓝汽车；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.pcauto.com.cn/aichat/198413.html"
+    }
+  },
+  {
+    "source_model_name": "柯迪亚克GT",
+    "values": {
+      "brand_name": "斯柯达",
+      "brand_code": "CITY_BRAND_2C922F07DE0C750D9710",
+      "oem_name": "上汽大众斯柯达",
+      "oem_code": "OEM_20AC367190",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：柯迪亚克GT；品牌=斯柯达；主机厂=上汽大众斯柯达；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://so.yiche.com/qiche/%E6%9F%AF%E8%BF%AA%E4%BA%9A%E5%85%8BGT/"
+    }
+  },
+  {
+    "source_model_name": "森林人",
+    "values": {
+      "brand_name": "斯巴鲁",
+      "brand_code": "CITY_BRAND_F1D9ACF04E561DF5516B",
+      "oem_name": "斯巴鲁",
+      "oem_code": "CITY_OEM_F1D9ACF04E561DF5516B",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：森林人；品牌=斯巴鲁；主机厂=斯巴鲁；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://car.autohome.com.cn/config/series/285-519.html"
+    }
+  },
+  {
+    "source_model_name": "森雅鸿雁",
+    "values": {
+      "brand_name": "一汽",
+      "brand_code": "BRAND_AFFC34F705",
+      "oem_name": "一汽吉林",
+      "oem_code": "OEM_5E3AD01121",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：森雅鸿雁；品牌=一汽；主机厂=一汽吉林；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.qcwp.com/series/6769/parameter"
+    }
+  },
+  {
+    "source_model_name": "欧拉好猫GT",
+    "values": {
+      "brand_name": "欧拉",
+      "brand_code": "CITY_BRAND_0293C49227EA9C43AC6E",
+      "oem_name": "长城汽车",
+      "oem_code": "OEM_940240A733",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：欧拉好猫GT；品牌=欧拉；主机厂=长城汽车；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.dongchedi.com/auto/series/5269"
+    }
+  },
+  {
+    "source_model_name": "欧麦加",
+    "values": {
+      "brand_name": "华梓汽车",
+      "brand_code": "CITY_BRAND_33B760A9BB6B4C5D9557",
+      "oem_name": "江苏华梓汽车",
+      "oem_code": "CITY_OEM_DD3C92AB7AE6B091B771",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：欧麦加；品牌=华梓汽车；主机厂=江苏华梓汽车；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://car.autohome.com.cn/diandongche/series-6813-0-3.html"
+    }
+  },
+  {
+    "source_model_name": "江淮iEV7",
+    "values": {
+      "brand_name": "江淮",
+      "brand_code": "BRAND_96B2B70AA8",
+      "oem_name": "江淮汽车",
+      "oem_code": "OEM_223FDF3DC4",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：江淮iEV7；品牌=江淮；主机厂=江淮汽车；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.12365auto.com/series/2517/index.shtml"
+    }
+  },
+  {
+    "source_model_name": "沃尔沃V60",
+    "values": {
+      "brand_name": "沃尔沃",
+      "brand_code": "BRAND_FD0762B0BD",
+      "oem_name": "沃尔沃(进口)",
+      "oem_code": "CITY_OEM_7FF543CFC3B4C8481DD1",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：沃尔沃V60；品牌=沃尔沃；主机厂=沃尔沃(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://price.pcauto.com.cn/sg7149/config.html?ad=32385"
+    }
+  },
+  {
+    "source_model_name": "沃尔沃V90",
+    "values": {
+      "brand_name": "沃尔沃",
+      "brand_code": "BRAND_FD0762B0BD",
+      "oem_name": "沃尔沃(进口)",
+      "oem_code": "CITY_OEM_7FF543CFC3B4C8481DD1",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：沃尔沃V90；品牌=沃尔沃；主机厂=沃尔沃(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://price.pcauto.com.cn/sg13807/config.html"
+    }
+  },
+  {
+    "source_model_name": "沃尔沃XC70",
+    "values": {
+      "brand_name": "沃尔沃",
+      "brand_code": "BRAND_FD0762B0BD",
+      "oem_name": "沃尔沃亚太",
+      "oem_code": "OEM_F05D7258C9",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：沃尔沃XC70；品牌=沃尔沃；主机厂=沃尔沃亚太；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://dealer.m.yiche.com/d100212798/price_detail_184484.html?leads_source=m021001"
+    }
+  },
+  {
+    "source_model_name": "沃尔沃XC90",
+    "values": {
+      "brand_name": "沃尔沃",
+      "brand_code": "BRAND_FD0762B0BD",
+      "oem_name": "沃尔沃(进口)",
+      "oem_code": "CITY_OEM_7FF543CFC3B4C8481DD1",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：沃尔沃XC90；品牌=沃尔沃；主机厂=沃尔沃(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://detail.zol.com.cn/2116/2115252/param.shtml"
+    }
+  },
+  {
+    "source_model_name": "沃尔沃XC90插电式混动",
+    "values": {
+      "brand_name": "沃尔沃",
+      "brand_code": "BRAND_FD0762B0BD",
+      "oem_name": "沃尔沃(进口)",
+      "oem_code": "CITY_OEM_7FF543CFC3B4C8481DD1",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：沃尔沃XC90插电式混动；品牌=沃尔沃；主机厂=沃尔沃(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://detail.zol.com.cn/2116/2115252/param.shtml"
+    }
+  },
+  {
+    "source_model_name": "法拉利296",
+    "values": {
+      "brand_name": "法拉利",
+      "brand_code": "CITY_BRAND_B038B1AEB58BE13DB068",
+      "oem_name": "法拉利",
+      "oem_code": "CITY_OEM_B038B1AEB58BE13DB068",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "其他",
+      "evidence": "2026-11-28联网审核：法拉利296；品牌=法拉利；主机厂=法拉利；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.pcauto.com.cn/hq/35589.html"
+    }
+  },
+  {
+    "source_model_name": "法拉利F8",
+    "values": {
+      "brand_name": "法拉利",
+      "brand_code": "CITY_BRAND_B038B1AEB58BE13DB068",
+      "oem_name": "法拉利",
+      "oem_code": "CITY_OEM_B038B1AEB58BE13DB068",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "其他",
+      "evidence": "2026-11-28联网审核：法拉利F8；品牌=法拉利；主机厂=法拉利；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://newcar.xcar.com.cn/f1000507/config.html"
+    }
+  },
+  {
+    "source_model_name": "海马INJOY",
+    "values": {
+      "brand_name": "海马",
+      "brand_code": "BRAND_A79D7951E8",
+      "oem_name": "海马汽车",
+      "oem_code": "OEM_403C24D503",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "MPV",
+      "evidence": "2026-11-28联网审核：海马INJOY；品牌=海马；主机厂=海马汽车；采用郑州海马实际生产企业口径，未按车型网站旧一汽海马目录归类。普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.haima.com/hm/about_1.html ; https://www.xinhuanet.com/auto/20250930/0bc2e534c17149869539bcb046915e84/c.html"
+    }
+  },
+  {
+    "source_model_name": "添越",
+    "values": {
+      "brand_name": "宾利",
+      "brand_code": "CITY_BRAND_2B24609BBFB715824788",
+      "oem_name": "宾利",
+      "oem_code": "CITY_OEM_2B24609BBFB715824788",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：添越；品牌=宾利；主机厂=宾利；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.12365auto.com/series/1756/index.shtml"
+    }
+  },
+  {
+    "source_model_name": "炫界Pro",
+    "values": {
+      "brand_name": "凯翼",
+      "brand_code": "BRAND_2BD5062322",
+      "oem_name": "凯翼汽车",
+      "oem_code": "OEM_56D3EA9149",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：炫界Pro；品牌=凯翼；主机厂=凯翼汽车；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://car.autohome.com.cn/config/series/6396-14243.html"
+    }
+  },
+  {
+    "source_model_name": "牧马人",
+    "values": {
+      "brand_name": "Jeep",
+      "brand_code": "BRAND_0BFC4B3D2E",
+      "oem_name": "Jeep(进口)",
+      "oem_code": "CITY_OEM_DA84955E121BCBCA3529",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：牧马人；品牌=Jeep；主机厂=Jeep(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.dongchedi.com/auto/series/14"
+    }
+  },
+  {
+    "source_model_name": "牧马人新能源",
+    "values": {
+      "brand_name": "Jeep",
+      "brand_code": "BRAND_0BFC4B3D2E",
+      "oem_name": "Jeep(进口)",
+      "oem_code": "CITY_OEM_DA84955E121BCBCA3529",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：牧马人新能源；品牌=Jeep；主机厂=Jeep(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.autohome.com.cn/5574/price.html"
+    }
+  },
+  {
+    "source_model_name": "瑞虎7 C-DM",
+    "values": {
+      "brand_name": "奇瑞",
+      "brand_code": "BRAND_59C83C7889",
+      "oem_name": "奇瑞汽车",
+      "oem_code": "OEM_A993E4D1D4",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：瑞虎7 C-DM；品牌=奇瑞；主机厂=奇瑞汽车；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://detail.zol.com.cn/car/index2113269.shtml"
+    }
+  },
+  {
+    "source_model_name": "瑞虎7 PLUS",
+    "values": {
+      "brand_name": "奇瑞",
+      "brand_code": "BRAND_59C83C7889",
+      "oem_name": "奇瑞汽车",
+      "oem_code": "OEM_A993E4D1D4",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：瑞虎7 PLUS；品牌=奇瑞；主机厂=奇瑞汽车；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://dealer.yiche.com/100236612/price_detail/181723.html?leads_source=p032006"
+    }
+  },
+  {
+    "source_model_name": "瑞虎8 PLUS",
+    "values": {
+      "brand_name": "奇瑞",
+      "brand_code": "BRAND_59C83C7889",
+      "oem_name": "奇瑞汽车",
+      "oem_code": "OEM_A993E4D1D4",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：瑞虎8 PLUS；品牌=奇瑞；主机厂=奇瑞汽车；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://price.pcauto.com.cn/sg26701/config.html"
+    }
+  },
+  {
+    "source_model_name": "瑞虎8 PLUS C-DM",
+    "values": {
+      "brand_name": "奇瑞",
+      "brand_code": "BRAND_59C83C7889",
+      "oem_name": "奇瑞汽车",
+      "oem_code": "OEM_A993E4D1D4",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：瑞虎8 PLUS C-DM；品牌=奇瑞；主机厂=奇瑞汽车；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.pcauto.com.cn/subsidy/c530-sg30603.html"
+    }
+  },
+  {
+    "source_model_name": "瑞虎8 PRO",
+    "values": {
+      "brand_name": "奇瑞",
+      "brand_code": "BRAND_59C83C7889",
+      "oem_name": "奇瑞汽车",
+      "oem_code": "OEM_A993E4D1D4",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：瑞虎8 PRO；品牌=奇瑞；主机厂=奇瑞汽车；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://price.pcauto.com.cn/sg28464/config.html?ad=32386"
+    }
+  },
+  {
+    "source_model_name": "瑞虎8 PRO新能源",
+    "values": {
+      "brand_name": "奇瑞",
+      "brand_code": "BRAND_59C83C7889",
+      "oem_name": "奇瑞汽车",
+      "oem_code": "OEM_A993E4D1D4",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：瑞虎8 PRO新能源；品牌=奇瑞；主机厂=奇瑞汽车；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.12365auto.com/series/3520/index.shtml"
+    }
+  },
+  {
+    "source_model_name": "瑞虎9新能源",
+    "values": {
+      "brand_name": "奇瑞",
+      "brand_code": "BRAND_59C83C7889",
+      "oem_name": "奇瑞汽车",
+      "oem_code": "OEM_A993E4D1D4",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：瑞虎9新能源；品牌=奇瑞；主机厂=奇瑞汽车；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://wap.zol.com.cn/1996/1995599/index.html"
+    }
+  },
+  {
+    "source_model_name": "瑞风E4",
+    "values": {
+      "brand_name": "江淮",
+      "brand_code": "BRAND_96B2B70AA8",
+      "oem_name": "江淮汽车",
+      "oem_code": "OEM_223FDF3DC4",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "MPV",
+      "evidence": "2026-11-28联网审核：瑞风E4；品牌=江淮；主机厂=江淮汽车；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://refine.jac.com.cn/rfE4/"
+    }
+  },
+  {
+    "source_model_name": "瑞风L5",
+    "values": {
+      "brand_name": "江淮",
+      "brand_code": "BRAND_96B2B70AA8",
+      "oem_name": "江淮汽车",
+      "oem_code": "OEM_223FDF3DC4",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "MPV",
+      "evidence": "2026-11-28联网审核：瑞风L5；品牌=江淮；主机厂=江淮汽车；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://refine.jac.com.cn/rfL5/"
+    }
+  },
+  {
+    "source_model_name": "瑞风M3 PHEV",
+    "values": {
+      "brand_name": "江淮",
+      "brand_code": "BRAND_96B2B70AA8",
+      "oem_name": "江淮汽车",
+      "oem_code": "OEM_223FDF3DC4",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "MPV",
+      "evidence": "2026-11-28联网审核：瑞风M3 PHEV；品牌=江淮；主机厂=江淮汽车；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://car.autohome.com.cn/config/spec/70696.html"
+    }
+  },
+  {
+    "source_model_name": "电动MINI JCW ACEMAN",
+    "values": {
+      "brand_name": "MINI",
+      "brand_code": "CITY_BRAND_8DDEFB0087B1484E5E11",
+      "oem_name": "光束汽车",
+      "oem_code": "OEM_E5C6066735",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：电动MINI JCW ACEMAN；品牌=MINI；主机厂=光束汽车；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.minichina.com.cn/zh_CN/home/range/all-electric-mini-aceman-jcw.html"
+    }
+  },
+  {
+    "source_model_name": "皇冠(进口)",
+    "values": {
+      "brand_name": "丰田",
+      "brand_code": "BRAND_C77696CAAD",
+      "oem_name": "海外主机厂不在研究范围内",
+      "oem_code": "OEM_OVERSEAS_OUT_OF_RESEARCH",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：皇冠(进口)；品牌=丰田；主机厂=海外主机厂不在研究范围内；按用户2026-11-28授权归入海外主机厂研究排除桶，目录实际主机厂为丰田(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://qa-model.pcauto.com.cn/auto/sg12202/price/"
+    }
+  },
+  {
+    "source_model_name": "红杉",
+    "values": {
+      "brand_name": "丰田",
+      "brand_code": "BRAND_C77696CAAD",
+      "oem_name": "丰田(进口)",
+      "oem_code": "CITY_OEM_856BB6716B177B31F6DA",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：红杉；品牌=丰田；主机厂=丰田(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.toyota.com/sequoia/"
+    }
+  },
+  {
+    "source_model_name": "艾瑞泽5 GT",
+    "values": {
+      "brand_name": "奇瑞",
+      "brand_code": "BRAND_59C83C7889",
+      "oem_name": "奇瑞汽车",
+      "oem_code": "OEM_A993E4D1D4",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：艾瑞泽5 GT；品牌=奇瑞；主机厂=奇瑞汽车；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.autohome.com.cn/news/202209/1262206.html?from=m&platform-key=pc"
+    }
+  },
+  {
+    "source_model_name": "英菲尼迪QX55",
+    "values": {
+      "brand_name": "英菲尼迪",
+      "brand_code": "CITY_BRAND_3DEB4358111E782EE503",
+      "oem_name": "英菲尼迪(进口)",
+      "oem_code": "CITY_OEM_2EAA162FE7BCE2894E76",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：英菲尼迪QX55；品牌=英菲尼迪；主机厂=英菲尼迪(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://price.pcauto.com.cn/sg25697/config.html"
+    }
+  },
+  {
+    "source_model_name": "荣威i6 MAX",
+    "values": {
+      "brand_name": "荣威",
+      "brand_code": "CITY_BRAND_0A05D53C46C22516804C",
+      "oem_name": "上汽集团",
+      "oem_code": "OEM_3735315737",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：荣威i6 MAX；品牌=荣威；主机厂=上汽集团；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://car.autohome.com.cn/config/series/5801.html"
+    }
+  },
+  {
+    "source_model_name": "蓝电E3",
+    "values": {
+      "brand_name": "蓝电",
+      "brand_code": "BRAND_7AE0DF12CD",
+      "oem_name": "赛力斯蓝电",
+      "oem_code": "OEM_B25EEC0016",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：蓝电E3；品牌=蓝电；主机厂=赛力斯蓝电；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.landian.com.cn/config/"
+    }
+  },
+  {
+    "source_model_name": "蔚揽",
+    "values": {
+      "brand_name": "大众",
+      "brand_code": "BRAND_C3F70203DA",
+      "oem_name": "大众(进口)",
+      "oem_code": "CITY_OEM_B6510012E90919F505E7",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：蔚揽；品牌=大众；主机厂=大众(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://price.pcauto.com.cn/sg23853/config.html"
+    }
+  },
+  {
+    "source_model_name": "豪越PRO",
+    "values": {
+      "brand_name": "吉利",
+      "brand_code": "BRAND_BCB56023BC",
+      "oem_name": "吉利汽车",
+      "oem_code": "OEM_87AF04ED67",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：豪越PRO；品牌=吉利；主机厂=吉利汽车；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://car.autohome.com.cn/config/series/7440.html"
+    }
+  },
+  {
+    "source_model_name": "路虎卫士",
+    "values": {
+      "brand_name": "路虎",
+      "brand_code": "CITY_BRAND_EE875A961B9A4FD0B4D6",
+      "oem_name": "路虎(进口)",
+      "oem_code": "CITY_OEM_FD4F58F515E0D089C6B6",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：路虎卫士；品牌=路虎；主机厂=路虎(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://zh.wikipedia.org/wiki/%E8%B7%AF%E8%99%8E%E5%8D%AB%E5%A3%AB_%28L663%29"
+    }
+  },
+  {
+    "source_model_name": "迈巴赫GLS",
+    "values": {
+      "brand_name": "奔驰",
+      "brand_code": "BRAND_1DF1AA9A0A",
+      "oem_name": "奔驰(进口)",
+      "oem_code": "CITY_OEM_456464FA180266281754",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：迈巴赫GLS；品牌=奔驰；主机厂=奔驰(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://price.pcauto.com.cn/sg23784/config.html"
+    }
+  },
+  {
+    "source_model_name": "迈巴赫S级",
+    "values": {
+      "brand_name": "奔驰",
+      "brand_code": "BRAND_1DF1AA9A0A",
+      "oem_name": "奔驰(进口)",
+      "oem_code": "CITY_OEM_456464FA180266281754",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：迈巴赫S级；品牌=奔驰；主机厂=奔驰(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://price.pcauto.com.cn/sg29453/config.html"
+    }
+  },
+  {
+    "source_model_name": "迈迈",
+    "values": {
+      "brand_name": "迈迈",
+      "brand_code": "CITY_BRAND_28F426304BEEE21B65D6",
+      "oem_name": "金华青年汽车制造有限公司",
+      "oem_code": "CITY_OEM_16336980F7F25E0C5669",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：迈迈；品牌=迈迈；主机厂=金华青年汽车制造有限公司；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.autohome.com.cn/news/201911/949658.html"
+    }
+  },
+  {
+    "source_model_name": "途乐",
+    "values": {
+      "brand_name": "日产",
+      "brand_code": "BRAND_048253BD53",
+      "oem_name": "日产(进口)",
+      "oem_code": "CITY_OEM_B5EEDFABDEB31D5A51D2",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：途乐；品牌=日产；主机厂=日产(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.autohome.com.cn/news/202407/1298612.html?from=m&platform-key=pc"
+    }
+  },
+  {
+    "source_model_name": "途锐",
+    "values": {
+      "brand_name": "大众",
+      "brand_code": "BRAND_C3F70203DA",
+      "oem_name": "大众(进口)",
+      "oem_code": "CITY_OEM_B6510012E90919F505E7",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：途锐；品牌=大众；主机厂=大众(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://car.autohome.com.cn/config/series/82-146.html"
+    }
+  },
+  {
+    "source_model_name": "鑫源向上V6",
+    "values": {
+      "brand_name": "鑫源",
+      "brand_code": "BRAND_98AD72838C",
+      "oem_name": "鑫源汽车",
+      "oem_code": "OEM_938B704F58",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "MPV",
+      "evidence": "2026-11-28联网审核：鑫源向上V6；品牌=鑫源；主机厂=鑫源汽车；本来源裸名对应1.8L燃油紧凑型MPV；新能源版本有独立完整车型名，不混并。普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://detail.zol.com.cn/2171/2170554/param.shtml"
+    }
+  },
+  {
+    "source_model_name": "鑫源小海狮X30",
+    "values": {
+      "brand_name": "鑫源",
+      "brand_code": "BRAND_98AD72838C",
+      "oem_name": "鑫源汽车",
+      "oem_code": "OEM_938B704F58",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "其他",
+      "evidence": "2026-11-28联网审核：鑫源小海狮X30；品牌=鑫源；主机厂=鑫源汽车；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://dealer.m.yiche.com/100255520/price_detail_189011.html?fromCMT=3A99D1C6-0DAF-4FD5-8D98-69E1949A38A9&leads_source=m002010"
+    }
+  },
+  {
+    "source_model_name": "长安V3",
+    "values": {
+      "brand_name": "长安跨越",
+      "brand_code": "CITY_BRAND_87025D0D75955AB64DB4",
+      "oem_name": "重庆长安跨越车辆有限公司",
+      "oem_code": "CITY_OEM_3A31E0202C073D2CC07A",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "其他",
+      "evidence": "2026-11-28联网审核：长安V3；品牌=长安跨越；主机厂=重庆长安跨越车辆有限公司；车型为长安跨越V3，不与长安汽车本部混同。普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://car.autohome.com.cn/config/series/4181-8950.html"
+    }
+  },
+  {
+    "source_model_name": "长安欧尚530",
+    "values": {
+      "brand_name": "长安",
+      "brand_code": "BRAND_F466E62EAD",
+      "oem_name": "长安汽车",
+      "oem_code": "OEM_71EF3844E8",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：长安欧尚530；品牌=长安；主机厂=长安汽车；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.autohome.com.cn/spec/77771"
+    }
+  },
+  {
+    "source_model_name": "长安欧尚科尚EV",
+    "values": {
+      "brand_name": "长安",
+      "brand_code": "BRAND_F466E62EAD",
+      "oem_name": "长安汽车",
+      "oem_code": "OEM_71EF3844E8",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "MPV",
+      "evidence": "2026-11-28联网审核：长安欧尚科尚EV；品牌=长安；主机厂=长安汽车；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.12365auto.com/series/2816/index.shtml"
+    }
+  },
+  {
+    "source_model_name": "阿维塔07 L",
+    "values": {
+      "brand_name": "阿维塔",
+      "brand_code": "BRAND_7CDE1B2C59",
+      "oem_name": "阿维塔科技",
+      "oem_code": "OEM_E0FC4C46D6",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：阿维塔07 L；品牌=阿维塔；主机厂=阿维塔科技；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://price.pcauto.com.cn/pk/m141921.html"
+    }
+  },
+  {
+    "source_model_name": "雷克萨斯ES",
+    "values": {
+      "brand_name": "雷克萨斯",
+      "brand_code": "CITY_BRAND_44EDBC815B13B22B7EC7",
+      "oem_name": "雷克萨斯",
+      "oem_code": "CITY_OEM_44EDBC815B13B22B7EC7",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：雷克萨斯ES；品牌=雷克萨斯；主机厂=雷克萨斯；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.lexus.com.cn/node/2052"
+    }
+  },
+  {
+    "source_model_name": "雷克萨斯GX",
+    "values": {
+      "brand_name": "雷克萨斯",
+      "brand_code": "CITY_BRAND_44EDBC815B13B22B7EC7",
+      "oem_name": "雷克萨斯",
+      "oem_code": "CITY_OEM_44EDBC815B13B22B7EC7",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：雷克萨斯GX；品牌=雷克萨斯；主机厂=雷克萨斯；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.lexus.com.cn/models/gx"
+    }
+  },
+  {
+    "source_model_name": "雷克萨斯LM",
+    "values": {
+      "brand_name": "雷克萨斯",
+      "brand_code": "CITY_BRAND_44EDBC815B13B22B7EC7",
+      "oem_name": "雷克萨斯",
+      "oem_code": "CITY_OEM_44EDBC815B13B22B7EC7",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "MPV",
+      "evidence": "2026-11-28联网审核：雷克萨斯LM；品牌=雷克萨斯；主机厂=雷克萨斯；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.lexus.com.cn/models/lm/spec"
+    }
+  },
+  {
+    "source_model_name": "雷克萨斯LS",
+    "values": {
+      "brand_name": "雷克萨斯",
+      "brand_code": "CITY_BRAND_44EDBC815B13B22B7EC7",
+      "oem_name": "雷克萨斯",
+      "oem_code": "CITY_OEM_44EDBC815B13B22B7EC7",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：雷克萨斯LS；品牌=雷克萨斯；主机厂=雷克萨斯；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.lexus.com.cn/models/ls"
+    }
+  },
+  {
+    "source_model_name": "雷克萨斯LX",
+    "values": {
+      "brand_name": "雷克萨斯",
+      "brand_code": "CITY_BRAND_44EDBC815B13B22B7EC7",
+      "oem_name": "雷克萨斯",
+      "oem_code": "CITY_OEM_44EDBC815B13B22B7EC7",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：雷克萨斯LX；品牌=雷克萨斯；主机厂=雷克萨斯；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.12365auto.com/series/537/index.shtml"
+    }
+  },
+  {
+    "source_model_name": "雷克萨斯NX",
+    "values": {
+      "brand_name": "雷克萨斯",
+      "brand_code": "CITY_BRAND_44EDBC815B13B22B7EC7",
+      "oem_name": "雷克萨斯",
+      "oem_code": "CITY_OEM_44EDBC815B13B22B7EC7",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：雷克萨斯NX；品牌=雷克萨斯；主机厂=雷克萨斯；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.lexus.com.cn/models/nx/spec"
+    }
+  },
+  {
+    "source_model_name": "雷克萨斯NX新能源",
+    "values": {
+      "brand_name": "雷克萨斯",
+      "brand_code": "CITY_BRAND_44EDBC815B13B22B7EC7",
+      "oem_name": "雷克萨斯",
+      "oem_code": "CITY_OEM_44EDBC815B13B22B7EC7",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：雷克萨斯NX新能源；品牌=雷克萨斯；主机厂=雷克萨斯；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://car.autohome.com.cn/config/series/6261-20664.html"
+    }
+  },
+  {
+    "source_model_name": "雷克萨斯RX",
+    "values": {
+      "brand_name": "雷克萨斯",
+      "brand_code": "CITY_BRAND_44EDBC815B13B22B7EC7",
+      "oem_name": "雷克萨斯",
+      "oem_code": "CITY_OEM_44EDBC815B13B22B7EC7",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：雷克萨斯RX；品牌=雷克萨斯；主机厂=雷克萨斯；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.lexus.com.cn/models/rx"
+    }
+  },
+  {
+    "source_model_name": "雷克萨斯RX新能源",
+    "values": {
+      "brand_name": "雷克萨斯",
+      "brand_code": "CITY_BRAND_44EDBC815B13B22B7EC7",
+      "oem_name": "雷克萨斯",
+      "oem_code": "CITY_OEM_44EDBC815B13B22B7EC7",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：雷克萨斯RX新能源；品牌=雷克萨斯；主机厂=雷克萨斯；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.autohome.com.cn/spec/70425/"
+    }
+  },
+  {
+    "source_model_name": "雷克萨斯RZ",
+    "values": {
+      "brand_name": "雷克萨斯",
+      "brand_code": "CITY_BRAND_44EDBC815B13B22B7EC7",
+      "oem_name": "雷克萨斯",
+      "oem_code": "CITY_OEM_44EDBC815B13B22B7EC7",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：雷克萨斯RZ；品牌=雷克萨斯；主机厂=雷克萨斯；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.12365auto.com/series/3493/index.shtml"
+    }
+  },
+  {
+    "source_model_name": "雷克萨斯UX",
+    "values": {
+      "brand_name": "雷克萨斯",
+      "brand_code": "CITY_BRAND_44EDBC815B13B22B7EC7",
+      "oem_name": "雷克萨斯",
+      "oem_code": "CITY_OEM_44EDBC815B13B22B7EC7",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：雷克萨斯UX；品牌=雷克萨斯；主机厂=雷克萨斯；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.12365auto.com/series/2817/index.shtml"
+    }
+  },
+  {
+    "source_model_name": "雷克萨斯UX新能源",
+    "values": {
+      "brand_name": "雷克萨斯",
+      "brand_code": "CITY_BRAND_44EDBC815B13B22B7EC7",
+      "oem_name": "雷克萨斯",
+      "oem_code": "CITY_OEM_44EDBC815B13B22B7EC7",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：雷克萨斯UX新能源；品牌=雷克萨斯；主机厂=雷克萨斯；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.12365auto.com/series/2817/index.shtml"
+    }
+  },
+  {
+    "source_model_name": "领克02 Hatchback",
+    "values": {
+      "brand_name": "领克",
+      "brand_code": "BRAND_71E1016F80",
+      "oem_name": "领克",
+      "oem_code": "OEM_71E1016F80",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：领克02 Hatchback；品牌=领克；主机厂=领克；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.yiche.com/youxuan/cxczjh-7485-46899.html"
+    }
+  },
+  {
+    "source_model_name": "领界EV",
+    "values": {
+      "brand_name": "福特",
+      "brand_code": "BRAND_895A57FE6B",
+      "oem_name": "江铃福特",
+      "oem_code": "OEM_35EAA0D160",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：领界EV；品牌=福特；主机厂=江铃福特；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://car.autohome.com.cn/config/series/5339-14492.html"
+    }
+  },
+  {
+    "source_model_name": "领睿新能源",
+    "values": {
+      "brand_name": "福特",
+      "brand_code": "BRAND_895A57FE6B",
+      "oem_name": "江铃福特",
+      "oem_code": "OEM_35EAA0D160",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：领睿新能源；品牌=福特；主机厂=江铃福特；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://qa-model.pcauto.com.cn/auto/sg30513/config.html"
+    }
+  },
+  {
+    "source_model_name": "领航员",
+    "values": {
+      "brand_name": "林肯",
+      "brand_code": "BRAND_175A0BBEB7",
+      "oem_name": "林肯(进口)",
+      "oem_code": "CITY_OEM_7DC19FD5C7E842429321",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：领航员；品牌=林肯；主机厂=林肯(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://dealer.yiche.com/100264912/price_detail/177287.html?leads_source=p032006"
+    }
+  },
+  {
+    "source_model_name": "颐驰06",
+    "values": {
+      "brand_name": "江铃",
+      "brand_code": "BRAND_1F7097CD07",
+      "oem_name": "江铃集团新能源",
+      "oem_code": "OEM_134A04C74D",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "MPV",
+      "evidence": "2026-11-28联网审核：颐驰06；品牌=江铃；主机厂=江铃集团新能源；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.jmev.com/detail/yiChi06/"
+    }
+  },
+  {
+    "source_model_name": "风云T6",
+    "values": {
+      "brand_name": "奇瑞",
+      "brand_code": "BRAND_59C83C7889",
+      "oem_name": "奇瑞汽车",
+      "oem_code": "OEM_A993E4D1D4",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：风云T6；品牌=奇瑞；主机厂=奇瑞汽车；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.12365auto.com/series/3981/index.shtml"
+    }
+  },
+  {
+    "source_model_name": "风云X3 PLUS",
+    "values": {
+      "brand_name": "奇瑞",
+      "brand_code": "BRAND_59C83C7889",
+      "oem_name": "奇瑞汽车",
+      "oem_code": "OEM_A993E4D1D4",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：风云X3 PLUS；品牌=奇瑞；主机厂=奇瑞汽车；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://price.pcauto.com.cn/sg30961/config.html"
+    }
+  },
+  {
+    "source_model_name": "风云X3L",
+    "values": {
+      "brand_name": "奇瑞",
+      "brand_code": "BRAND_59C83C7889",
+      "oem_name": "奇瑞汽车",
+      "oem_code": "OEM_A993E4D1D4",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：风云X3L；品牌=奇瑞；主机厂=奇瑞汽车；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://price.pcauto.com.cn/pk/m140261.html"
+    }
+  },
+  {
+    "source_model_name": "风景G5",
+    "values": {
+      "brand_name": "福田",
+      "brand_code": "BRAND_87C331694A",
+      "oem_name": "福田汽车",
+      "oem_code": "OEM_1149229350",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "其他",
+      "vehicle_type": "其他",
+      "evidence": "2026-11-28联网审核：风景G5；品牌=福田；主机厂=福田汽车；同名覆盖汽油、柴油及天然气，混合能源归其他。普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://so.yiche.com/qiche/%E9%A3%8E%E6%99%AFG5/"
+    }
+  },
+  {
+    "source_model_name": "风景智蓝G5新能源",
+    "values": {
+      "brand_name": "福田",
+      "brand_code": "BRAND_87C331694A",
+      "oem_name": "福田汽车",
+      "oem_code": "OEM_1149229350",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "其他",
+      "evidence": "2026-11-28联网审核：风景智蓝G5新能源；品牌=福田；主机厂=福田汽车；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://car.autohome.com.cn/config/spec/1017683.html"
+    }
+  },
+  {
+    "source_model_name": "风行CM7",
+    "values": {
+      "brand_name": "风行",
+      "brand_code": "BRAND_93A1BBA6DF",
+      "oem_name": "东风风行",
+      "oem_code": "OEM_EAC3564ED9",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "MPV",
+      "evidence": "2026-11-28联网审核：风行CM7；品牌=风行；主机厂=东风风行；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.dflzm.com.cn/index.php/product/productinfo/10"
+    }
+  },
+  {
+    "source_model_name": "风行M7",
+    "values": {
+      "brand_name": "风行",
+      "brand_code": "BRAND_93A1BBA6DF",
+      "oem_name": "东风风行",
+      "oem_code": "OEM_EAC3564ED9",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "MPV",
+      "evidence": "2026-11-28联网审核：风行M7；品牌=风行；主机厂=东风风行；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://car.autohome.com.cn/config/spec/64654.html"
+    }
+  },
+  {
+    "source_model_name": "风行S60EV",
+    "values": {
+      "brand_name": "风行",
+      "brand_code": "BRAND_93A1BBA6DF",
+      "oem_name": "东风风行",
+      "oem_code": "OEM_EAC3564ED9",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：风行S60EV；品牌=风行；主机厂=东风风行；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.12365auto.com/series/3201/index.shtml"
+    }
+  },
+  {
+    "source_model_name": "风行T5L",
+    "values": {
+      "brand_name": "风行",
+      "brand_code": "BRAND_93A1BBA6DF",
+      "oem_name": "东风风行",
+      "oem_code": "OEM_EAC3564ED9",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：风行T5L；品牌=风行；主机厂=东风风行；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.jdches.com/auto/config?sid=1020"
+    }
+  },
+  {
+    "source_model_name": "风行游艇新能源",
+    "values": {
+      "brand_name": "风行",
+      "brand_code": "BRAND_93A1BBA6DF",
+      "oem_name": "东风风行",
+      "oem_code": "OEM_EAC3564ED9",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "MPV",
+      "evidence": "2026-11-28联网审核：风行游艇新能源；品牌=风行；主机厂=东风风行；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.12365auto.com/series/4386/index.shtml"
+    }
+  },
+  {
+    "source_model_name": "飞驰",
+    "values": {
+      "brand_name": "宾利",
+      "brand_code": "CITY_BRAND_2B24609BBFB715824788",
+      "oem_name": "宾利",
+      "oem_code": "CITY_OEM_2B24609BBFB715824788",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：飞驰；品牌=宾利；主机厂=宾利；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://car.autohome.com.cn/config/series/6287-18734.html"
+    }
+  },
+  {
+    "source_model_name": "飞驰插电混动",
+    "values": {
+      "brand_name": "宾利",
+      "brand_code": "CITY_BRAND_2B24609BBFB715824788",
+      "oem_name": "宾利",
+      "oem_code": "CITY_OEM_2B24609BBFB715824788",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：飞驰插电混动；品牌=宾利；主机厂=宾利；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://car.autohome.com.cn/config/series/6287-18734.html"
+    }
+  },
+  {
+    "source_model_name": "马自达MX-5",
+    "values": {
+      "brand_name": "马自达",
+      "brand_code": "BRAND_D3F636D0C0",
+      "oem_name": "马自达(进口)",
+      "oem_code": "CITY_OEM_1358EDB9A525264F6C5E",
+      "production_type": "imported",
+      "import_channel": "unknown",
+      "energy_type": "燃油",
+      "vehicle_type": "其他",
+      "evidence": "2026-11-28联网审核：马自达MX-5；品牌=马自达；主机厂=马自达(进口)；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://m.pcauto.com.cn/auto/sg4016/price/"
+    }
+  },
+  {
+    "source_model_name": "骏驰EA",
+    "values": {
+      "brand_name": "骏驰",
+      "brand_code": "CITY_BRAND_78F314DFA3F701D83E9C",
+      "oem_name": "吉麦新能源",
+      "oem_code": "OEM_CFD9427212",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "轿车",
+      "evidence": "2026-11-28联网审核：骏驰EA；品牌=骏驰；主机厂=吉麦新能源；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://db.m.auto.sohu.com/trim_178023"
+    }
+  },
+  {
+    "source_model_name": "魏牌 蓝山新能源",
+    "values": {
+      "brand_name": "魏牌",
+      "brand_code": "CITY_BRAND_61C4D074E99D465E4150",
+      "oem_name": "长城汽车",
+      "oem_code": "OEM_940240A733",
+      "production_type": "domestic",
+      "import_channel": "unknown",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "evidence": "2026-11-28联网审核：魏牌 蓝山新能源；品牌=魏牌；主机厂=长城汽车；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.autohome.com.cn/spec/79142"
+    }
+  }
+]

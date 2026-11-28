@@ -78,4 +78,6 @@ def build_parser() -> argparse.ArgumentParser:
                         help='应用用户确认的34个非研究范围车企归属，不发送消息')
     parser.add_argument('--repair-gaoshan-identities', metavar='REPORT_JSON',
                         help='区分高山HEV/PHEV并修正已核实的历史车型别名')
+    parser.add_argument('--apply-city-model-reviews', metavar='REPORT_JSON',
+                        help='按本地九字段审核清单增量确认城市车型，不发送消息')
     return parser
