@@ -78,6 +78,7 @@ def create_scheduler(*, catch_up: bool = False):
         )
     for task in ("manual", "resume"):
         scheduler.add_job(run_scheduled, "cron", args=(task,), id=task, minute="*/5", **startup)
+    scheduler.add_job(run_scheduled,'cron',args=('snapshot-retention',),id='snapshot-retention',hour=2,minute=30)
     return scheduler
 
 
@@ -86,6 +87,9 @@ def run_tick(task: str) -> bool:
 
     state = State()
     now = datetime.now(ZoneInfo(TIMEZONE))
+    if task == 'snapshot-retention':
+        from scheduler.snapshot_retention import run_daily
+        return not run_daily(state,ROOT).get('errors')
     if task == 'ownership-research':
         from scheduler.ownership_research import run
         return run(state)
@@ -108,11 +112,10 @@ def run_tick(task: str) -> bool:
             results.append(process_month(state, task, period, prefer_resume=True))
         return all(results)
     if task == "manual":
-        from scheduler.ads_workflow import poll as poll_ads
-        from scheduler.manual_workflow import poll
-
-        from scheduler.city_model_sync import run
         from base_infra.config import get_settings
+        from scheduler.ads_workflow import poll as poll_ads
+        from scheduler.city_model_sync import run
+        from scheduler.manual_workflow import poll
         city_ok = run(state) if get_settings().ETL_CITY_MODEL_SYNC_ENABLED else True
         manual_ok = poll(state)
         ads_ok = poll_ads(state)
@@ -122,6 +125,10 @@ def run_tick(task: str) -> bool:
 
         return poll(state)
     if task == "resume":
+        # Existing resident schedulers already launch a fresh resume subprocess
+        # every five minutes, so daily retention does not require a restart.
+        from scheduler.snapshot_retention import run_daily
+        run_daily(state,ROOT)
         okay = resume_ready(state)
         state.service("resume", "ok" if okay else "incomplete")
         state.export()

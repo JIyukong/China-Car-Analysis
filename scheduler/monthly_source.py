@@ -131,6 +131,7 @@ def _validated_csv(csv_path: Path, manifest_path: Path, chain: str, period: str)
                    'raw_sha256': manifest['csv_sha256'], 'raw_rows': source_total,
                    'accepted_rows': len(selected), 'excluded': excluded}
         csv_path.with_suffix('.review.json').write_text(json.dumps(receipt, ensure_ascii=False, indent=2), encoding='utf-8')
+    if excluded or selected != raw_rows:
         output = io.StringIO(newline='')
         writer = csv.DictWriter(output, fieldnames=header)
         writer.writeheader()
@@ -164,10 +165,10 @@ def _ods_content(conn, loader, chain: str, period: str, *, lock: bool) -> dict:
     return _content(conn.execute(text(query), params).mappings(), fields)
 
 
-def _reconcile_ods(loader, chain: str, period: str, rows: list[dict]) -> str:
+def _reconcile_ods(loader, chain: str, period: str, rows: list[dict], *, connection=None) -> str:
     fields = _content_fields(chain)
     expected = _content(rows, fields)
-    with loader.engine.begin() as conn:
+    with (loader.engine.begin() if connection is None else nullcontext(connection)) as conn:
         existing = _ods_content(conn, loader, chain, period, lock=True)
         renamed = set()
         if chain in ('style', 'city'):

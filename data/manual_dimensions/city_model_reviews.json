@@ -4800,5 +4800,33 @@
       "vehicle_type": "SUV",
       "evidence": "2026-11-28联网审核：魏牌 蓝山新能源；品牌=魏牌；主机厂=长城汽车；普通油混/48V归燃油，插混/增程/纯电归新能源；跑车/微面/轻客按仓库其他大类；车型资料不证明实际进口渠道，保留unknown。来源：https://www.autohome.com.cn/spec/79142"
     }
+  },
+  {
+    "source_model_name": "22款红旗H5",
+    "values": {
+      "brand_code": "BRAND_FACECCE1C4",
+      "brand_name": "红旗",
+      "oem_code": "OEM_C328DF2962",
+      "oem_name": "一汽红旗",
+      "energy_type": "燃油",
+      "vehicle_type": "轿车",
+      "production_type": "unknown",
+      "import_channel": "unknown",
+      "evidence": "用户2026-11-28核准；全国2026-10 /s/129831/ 应为长城H6L 新能源；城市15.98-22.58红旗H5独立为22款红旗H5，燃油含普通HEV，不是PHEV；https://www.hongqi-auto.com/；https://www.autohome.com.cn/news/202207/1255586.html"
+    }
+  },
+  {
+    "source_model_name": "长城H6L 新能源",
+    "values": {
+      "brand_code": "BRAND_592C5CD944",
+      "brand_name": "长城",
+      "oem_code": "OEM_940240A733",
+      "oem_name": "长城汽车",
+      "energy_type": "新能源",
+      "vehicle_type": "SUV",
+      "production_type": "unknown",
+      "import_channel": "unknown",
+      "evidence": "用户2026-11-28核准；全国2026-10 /s/129831/ 应为长城H6L 新能源；城市15.98-22.58红旗H5独立为22款红旗H5，燃油含普通HEV，不是PHEV; https://www.16888.com/s/129831/"
+    }
   }
 ]

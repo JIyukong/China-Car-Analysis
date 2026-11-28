@@ -136,7 +136,7 @@ PAGE_TIMEOUT_MS = 30_000
 # CSV 列名（对应用户要求的字段 + 排名 + 月份）
 CSV_COLUMNS = [
     "month", "rank", "model_name", "city",
-    "sales_volume", "level", "price_range",
+    "sales_volume", "level", "price_range", "source_href", "source_id",
 ]
 
 
@@ -364,6 +364,8 @@ _EXTRACT_ROWS_JS = """() => {
             return m ? parseInt(m[0], 10) : 0;
         };
         out.push({
+            source_href:  tds[1]?.querySelector('a')?.getAttribute('href') || '',
+            source_id:    (tds[1]?.querySelector('a')?.getAttribute('href') || '').match(/(?:^|\\/)(\\d+)(?:\\.shtml|\\/|$)/)?.[1] || '',
             rank:         num(tds[0]?.querySelector('strong')),
             model_name:   txt(tds[1]?.querySelector('a')),
             city:         txt(tds[2]?.querySelector('a')),

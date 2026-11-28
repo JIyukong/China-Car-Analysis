@@ -1,0 +1,25 @@
+{
+  "authority": "User approved 2026-11-28 city H5 price identity and national October source correction",
+  "style": {
+    "period": "2026-10",
+    "csv": "pipelines/ingest/sales/crawl_16888_style/data/snapshots/2026-10/tmpe4fs39t2/style_2026-10.csv",
+    "sha256": "d29c3cc353a19e1bec50c5af00fb95901cee919baf5a4a3e82fca4ea442413f2"
+  },
+  "city": [
+    {
+      "period": "2023-03",
+      "csv": "pipelines/ingest/sales/crawl_16888_city/data/snapshots/2023-03/tmp3fq1_0py/city_2023-03.csv",
+      "sha256": "2e99f65bb70da35fbbdda0f679d3e464e41dbe7278197a45c336233d61c72562"
+    },
+    {
+      "period": "2023-04",
+      "csv": "pipelines/ingest/sales/crawl_16888_city/data/snapshots/2023-04/tmp476ymwry/city_2023-04.csv",
+      "sha256": "43ae768913cd777af328dbdc2eed7c45ca675159462c917058513b6831dc8e71"
+    },
+    {
+      "period": "2023-05",
+      "csv": "pipelines/ingest/sales/crawl_16888_city/data/snapshots/2023-05/tmpu4xzodn_/city_2023-05.csv",
+      "sha256": "fafb76f3153a84371a325659f7fb7fdafd38a8ba957993b2e7980c6f7ef8ec1b"
+    }
+  ]
+}

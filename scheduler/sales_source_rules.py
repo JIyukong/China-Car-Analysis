@@ -34,7 +34,18 @@ def _sales(row):
     return int(value.replace(',', ''))
 
 
+def normalize_city_row(row):
+    """Copy a row, applying only the approved city H5 price identity."""
+    result = dict(row)
+    price = str(row.get('price_range', '')).strip()
+    if str(row.get('model_name', '')).strip() == '\u7ea2\u65d7H5' and re.fullmatch(r'15\.98\s*[-\u2014\u2013~\uff5e]\s*22\.58', price):
+        result['model_name'] = '22\u6b3e\u7ea2\u65d7H5'
+    return result
+
+
 def select_rows(rows, chain):
+    if chain == 'city':
+        return [normalize_city_row(row) for row in rows], []
     if chain != 'style':
         return list(rows), []
     groups = defaultdict(list)
