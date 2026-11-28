@@ -239,7 +239,21 @@ def _repair_gaoshan_identities(parser, args):
         return 1
 
 
+def _apply_city_model_reviews(parser, args):
+    reject_other_flags(parser, args, allowed=('apply_city_model_reviews', 'plan'),
+                       message='--apply-city-model-reviews 需要单独运行')
+    from scheduler.city_review_apply import load_reviews, run
+    reviews = load_reviews(_root() / 'data/manual_dimensions/city_model_reviews.json')
+    if args.plan:
+        print(json.dumps({'plan': True, 'reviews': len(reviews)}, ensure_ascii=False))
+        return 0
+    require_etl_account(parser)
+    print(json.dumps(run(reviews, args.apply_city_model_reviews), ensure_ascii=False, default=str))
+    return 0
+
+
 _STANDALONE_HANDLERS = (
+    ('apply_city_model_reviews', _apply_city_model_reviews),
     ('repair_gaoshan_identities', _repair_gaoshan_identities),
     ('apply_research_exclusions', _apply_research_exclusions),
     ('seed_reviewed_private_companies', _seed_reviewed_private_companies),
