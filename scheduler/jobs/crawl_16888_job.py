@@ -100,7 +100,7 @@ def _duplicate_pages(pages: list[list[dict]], chain: str) -> set[int]:
     raw = [record for records in pages for record in records]
     raw_duplicates = duplicate_source_ids(raw) if chain == 'style' else set()
     kept, _ = select_rows(raw, chain)
-    selected = {id(row) for row in kept}
+    selected = {id(row) for row in kept} if chain == 'style' else {id(row) for row in raw}
     seen = {}
     duplicate_pages = set()
     column = 'manufacturer' if chain == 'style' else 'city'
@@ -110,6 +110,9 @@ def _duplicate_pages(pages: list[list[dict]], chain: str) -> set[int]:
                 duplicate_pages.add(number)
             if id(record) not in selected:
                 continue
+            if chain == 'city':
+                from scheduler.sales_source_rules import normalize_city_row
+                record = normalize_city_row(record)
             key = (record.get('model_name', '').strip(), record.get(column, '').strip())
             if not all(key):
                 raise ValueError('来源业务键缺失，不能局部修复')

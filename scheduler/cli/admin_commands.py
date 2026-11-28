@@ -252,7 +252,33 @@ def _apply_city_model_reviews(parser, args):
     return 0
 
 
+def _apply_sales_source_review(parser, args):
+    reject_other_flags(parser,args,allowed=('apply_sales_source_review','plan'),
+                       message='--apply-sales-source-review 需要单独运行')
+    from scheduler.reviewed_sales_revision import run
+    if not args.plan:
+        require_etl_account(parser)
+    result = run(args.apply_sales_source_review,plan=args.plan)
+    print(json.dumps(result,ensure_ascii=False,default=str))
+    return 0 if args.plan or all(r['published'] for r in result['publication']) else 1
+
+
+def _cleanup_sales_snapshots(parser,args):
+    reject_other_flags(parser,args,allowed=('cleanup_sales_snapshots','plan'),
+                       message='--cleanup-sales-snapshots 需要单独运行')
+    from scheduler.snapshot_retention import cleanup, run_daily
+    if args.plan:
+        result = cleanup(_root())
+    else:
+        from scheduler.workflow import State
+        result = run_daily(State(),_root(),force=True)
+    print(json.dumps(result,ensure_ascii=False,default=str))
+    return 0 if not result.get('errors') else 1
+
+
 _STANDALONE_HANDLERS = (
+    ('apply_sales_source_review', _apply_sales_source_review),
+    ('cleanup_sales_snapshots', _cleanup_sales_snapshots),
     ('apply_city_model_reviews', _apply_city_model_reviews),
     ('repair_gaoshan_identities', _repair_gaoshan_identities),
     ('apply_research_exclusions', _apply_research_exclusions),

@@ -74,6 +74,7 @@ def test_scheduler_checks_monthly_sources_every_day_and_polls_feishu():
     scheduler = create_scheduler()
     now = datetime(2026, 11, 11, tzinfo=ZoneInfo("Asia/Shanghai"))
     expected = {
+        "snapshot-retention": "2026-11-11T02:30:00+08:00",
         "style": "2026-11-11T03:00:00+08:00",
         "city": "2026-11-11T03:30:00+08:00",
         "load_stock_daily": "2026-11-11T23:30:00+08:00",

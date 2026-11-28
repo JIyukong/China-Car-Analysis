@@ -12,7 +12,7 @@ from datetime import datetime
 from scheduler.task_config import CHAINS, DAILY_TIMES, MONTHLY_CRON
 
 # 调度器内部 tick 标识（含 APScheduler 不会直接配置的手工/恢复任务）
-TICKS = (*MONTHLY_CRON, *DAILY_TIMES, "manual", "resume", "ads", "city-models", "ownership-research")
+TICKS = (*MONTHLY_CRON, *DAILY_TIMES, "manual", "resume", "ads", "city-models", "ownership-research", "snapshot-retention")
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -80,4 +80,8 @@ def build_parser() -> argparse.ArgumentParser:
                         help='区分高山HEV/PHEV并修正已核实的历史车型别名')
     parser.add_argument('--apply-city-model-reviews', metavar='REPORT_JSON',
                         help='按本地九字段审核清单增量确认城市车型，不发送消息')
+    parser.add_argument('--apply-sales-source-review', metavar='SPEC_JSON',
+                        help='应用已核准的城市H5和全国2026-10来源修订，不发送消息')
+    parser.add_argument('--cleanup-sales-snapshots', action='store_true',
+                        help='清理已结束且超过120小时的销量下载快照；--plan仅预览')
     return parser
